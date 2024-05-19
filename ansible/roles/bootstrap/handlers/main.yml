@@ -1,0 +1,17 @@
+---
+- name: restart sshd
+  ansible.builtin.service:
+    name: ssh
+    state: restarted
+
+- name: reload ufw
+  ansible.builtin.ufw:
+    state: reloaded
+
+- name: restart fail2ban
+  ansible.builtin.service:
+    name: fail2ban
+    state: restarted
+
+- name: Mount drives
+  ansible.builtin.command: mount -a -t nofuse.mergerfs

@@ -1,0 +1,78 @@
+---
+- name: Upload authorized keys for user {{ ansible_ssh_user }}
+  ansible.builtin.authorized_key:
+    user: "{{ ansible_ssh_user }}"
+    key: "{{ item }}"
+    state: present
+  with_items: "{{ ssh_public_keys }}"
+  when: ssh_public_keys is defined
+
+- name: Disable ssh remote root login
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: ^#?PermitRootLogin
+    line: PermitRootLogin no
+    state: present
+  notify:
+    - restart sshd
+
+- name: Enable ssh strict mode
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: ^#?StrictModes
+    line: StrictModes yes
+    state: present
+  notify:
+    - restart sshd
+
+- name: Disable X11 forwarding
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: ^#?X11Forwarding
+    line: X11Forwarding no
+    state: present
+  notify:
+    - restart sshd
+
+# - name: Disable ssh password login
+#   ansible.builtin.lineinfile:
+#     dest: /etc/ssh/sshd_config
+#     regexp: "{{ item.regexp }}"
+#     line: "{{ item.line }}"
+#     state: present
+#   with_items:
+#     - regexp: ^#?PasswordAuthentication
+#       line: PasswordAuthentication no
+#     - regexp: ^#?ChallengeResponseAuthentication
+#       line: ChallengeResponseAuthentication no
+#     - regexp: ^#?UsePAM
+#       line: UsePAM no
+#     - regexp: ^#?PermitEmptyPasswords
+#       line: PermitEmptyPasswords no
+#   notify:
+#     - restart sshd
+
+- name: Set ssh allowed users to {{ ansible_ssh_user }}
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: ^#?AllowUsers
+    line: "AllowUsers {{ ansible_ssh_user }}"
+  notify:
+    - restart sshd
+
+- name: Add ssh banner info
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: ^#?Banner
+    line: Banner /etc/issue.net
+    state: present
+  notify:
+    - restart sshd
+
+# - name: Update ssh banner
+#   ansible.builtin.copy:
+#     content: "{{ ssh_banner }}"
+#     dest: /etc/issue.net
+#   when: ssh_banner != None
+#   notify:
+#     - restart sshd
