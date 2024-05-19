@@ -8,3 +8,7 @@ wheels/
 
 # venv
 .venv
+
+# vagrant
+vagrant/.vagrant
+vagrant/*.vdi

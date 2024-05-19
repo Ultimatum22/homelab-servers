@@ -1,0 +1,54 @@
+[all]
+node1 ansible_host=192.168.56.11
+node2 ansible_host=192.168.56.12
+node3 ansible_host=192.168.56.13
+node4 ansible_host=192.168.56.14
+
+[all:vars]
+ansible_user=system
+ansible_python_interpreter=/usr/bin/python3
+ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+
+[bootstrap]
+node1
+node2
+node3
+node4 apt_caching_proxy=true
+
+[bootstrap:vars]
+ansible_connection=ssh
+ansible_ssh_user=vagrant
+ansible_ssh_pass=vagrant
+
+[cluster]
+node1
+node2
+node3
+node4
+
+[consul_cluster]
+node1 consul_node_role=both
+node2 consul_node_role=both
+node3 consul_node_role=client
+node4 consul_node_role=server
+
+
+[nomad_cluster]
+node1 nomad_node_role=client
+node2 nomad_node_role=client
+node3 nomad_node_role=both
+node4 nomad_node_role=server
+
+[vault_cluster]
+node1
+node2
+node3
+
+[drbd_cluster]
+node1 drbd_node=primary
+node2 drbd_node=secondary
+node3 drbd_node=backup
+
+[heartbeat_cluster]
+node1
+node2
