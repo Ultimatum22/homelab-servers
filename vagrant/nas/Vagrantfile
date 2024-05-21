@@ -1,6 +1,6 @@
 Vagrant.configure("2") do |config|
 
-  config.vm.network "private_network", ip: "192.168.56.50"
+  config.vm.network "private_network", ip: "192.168.56.50", auto_config: false
 
   config.vm.define "nas-archlinux" do |cfg|
     cfg.vm.box = "archlinux/archlinux"
@@ -24,5 +24,8 @@ Vagrant.configure("2") do |config|
         vb.customize ["storageattach", :id, "--storagectl", "SATAController", "--port", i, "--device", 0, "--type", "hdd", "--medium", disk]
       end
     end
+
+    # Provision with the shell script to set static IP
+    cfg.vm.provision "shell", path: "set_ip.sh"
   end
 end

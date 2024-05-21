@@ -39,7 +39,7 @@ Vagrant.configure("2") do |config|
         vb.customize ["modifyvm", :id, "--memory", info[:mem], "--cpus", info[:cpus], "--hwvirtex", "on" ]
 
         # Create a second disk (1G)
-        disk = "storage-disk-#{hostname}.vdi"
+        disk = "disks/storage-disk-#{hostname}.vdi"
         unless File.exist? (disk)
           vb.customize ['createhd', '--filename', disk, '--size', 1 * 1024]
         end
