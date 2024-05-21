@@ -7,8 +7,8 @@
 - name: Upgrade system
   ansible.builtin.include_tasks: 00-packages-{{ ansible_facts['os_family'] | lower }}.yml
 
-- name: Set hostname
-  ansible.builtin.include_tasks: 01-hostname.yml
+# - name: Set hostname
+#   ansible.builtin.include_tasks: 01-hostname.yml
 
 - name: Set timezone
   ansible.builtin.include_tasks: 02-timezone.yml
