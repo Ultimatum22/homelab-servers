@@ -5,6 +5,10 @@ dev.install:
 dev.docs:
 	mdbook serve docs --open
 
+# Ansible
+ansible.install:
+	cd ansible && ansible-galaxy install -r requirements.yml
+
 # Vagrant
 vagrant.up:
 	cd vagrant/$(VAGRANTSERVER) && VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 vagrant up
