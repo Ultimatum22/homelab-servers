@@ -1,57 +1,29 @@
-base_dir = File.expand_path(File.dirname(__FILE__))
-cluster = {
-  "archlinux" => { :ip => "192.168.56.20", :cpus => 1, :mem => 1024 },
-}
-vm_box = "archlinux/archlinux"
-
-# required_plugins = %w(vagrant-share vagrant-vbguest vagrant-libvirt vagrant-cachier)
-required_plugins = %w(vagrant-cachier)
-
 Vagrant.configure("2") do |config|
+  config.vm.define "nas-archlinux" do |cfg|
+    cfg.vm.box = "archlinux/archlinux"
 
-  plugins_to_install = required_plugins.select { |plugin| not Vagrant.has_plugin? plugin }
-  if not plugins_to_install.empty?
-    puts "Installing plugins: #{plugins_to_install.join(' ')}"
-    if system "vagrant plugin install #{plugins_to_install.join(' ')}"
-      exec "vagrant #{ARGV.join(' ')}"
-    else
-      abort "Installation of one or more plugins has failed. Aborting."
+    # Set the hostname
+    cfg.vm.hostname = "nas-archlinux"
+
+    # Configure the static IP
+    cfg.vm.network "private_network", ip: "192.168.56.20"
+
+    cfg.vm.provider "virtualbox" do |vb|
+      # Set the VM name in VirtualBox
+      vb.name = "nas-archlinux"
+
+      # Define the SATA controller
+      vb.customize ["storagectl", :id, "--name", "SATAController", "--add", "sata", "--controller", "IntelAHCI"]
+
+      # Adding 6 additional drives
+      (1..6).each do |i|
+        # Create a second disk (1G)
+        disk = "disks/nas-disk-#{i}.vdi"
+        unless File.exist? (disk)
+          vb.customize ['createhd', '--filename', disk, '--size', 1 * 1024]
+        end
+        vb.customize ["storageattach", :id, "--storagectl", "SATAController", "--port", i, "--device", 0, "--type", "hdd", "--medium", disk]
+      end
     end
   end
-
-  # config.cache.scope = :machine
-  # config.cache.enable :apt
-
-  cluster.each_with_index do |(hostname, info), index|
-    config.vm.define hostname do |cfg|
-
-      cfg.ssh.insert_key = false
-      cfg.ssh.private_key_path = ["~/.vagrant.d/insecure_private_key", "_keys/id_rsa"]
-
-      cfg.vm.provider :virtualbox do |vb, override|
-        config.vm.box = vm_box
-        override.vm.network :private_network, ip: "#{info[:ip]}"
-
-        vb.name = 'vagrant-' + hostname
-        vb.customize ["modifyvm", :id, "--memory", info[:mem], "--cpus", info[:cpus], "--hwvirtex", "on" ]
-      end
-
-      # provision nodes with ansible
-      if index == cluster.size - 1
-        cfg.vm.provision :ansible do |ansible|
-          # ansible.verbose = "vvvv"
-
-          ansible.config_file = "./ansible.cfg"
-          ansible.inventory_path = "inventory/hosts"
-          ansible.playbook = "./playbook.yml"
-          ansible.limit = "all"# "#{info[:ip]}" # Ansible hosts are identified by ip
-          ansible.extra_vars = './ansible-extra-vars.yml'
-
-        end # end provision
-      end #end if
-
-    end # end config
-
-  end #end cluster
-
-end #end vagrant
+end
