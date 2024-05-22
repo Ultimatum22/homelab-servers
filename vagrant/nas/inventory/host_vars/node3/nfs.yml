@@ -1,4 +1,0 @@
----
-nfs_filesystem: ext4
-nfs_mountpoint: /mnt/storage
-nfs_dev: /dev/sdb

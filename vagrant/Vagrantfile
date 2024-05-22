@@ -1,0 +1,87 @@
+base_dir = File.expand_path(File.dirname(__FILE__))
+
+# Define machine groups
+cluster_nodes = {
+  "cluster-node1" => { :ip => "192.168.56.11", :cpus => 1, :mem => 1024, :box => "debian/bookworm64" },
+  "cluster-node2" => { :ip => "192.168.56.12", :cpus => 1, :mem => 1024, :box => "debian/bookworm64" },
+  "cluster-node3" => { :ip => "192.168.56.13", :cpus => 1, :mem => 1024, :box => "debian/bookworm64" },
+  "cluster-node4" => { :ip => "192.168.56.14", :cpus => 1, :mem => 1024, :box => "debian/bookworm64" },
+}
+
+nas_archlinux = {
+  "nas-archlinux" => { :ip => "192.168.56.20", :cpus => 1, :mem => 1024, :box => "archlinux/archlinux" },
+}
+
+required_plugins = %w(vagrant-cachier)
+
+Vagrant.configure("2") do |config|
+  plugins_to_install = required_plugins.select { |plugin| not Vagrant.has_plugin? plugin }
+  if not plugins_to_install.empty?
+    puts "Installing plugins: #{plugins_to_install.join(' ')}"
+    if system "vagrant plugin install #{plugins_to_install.join(' ')}"
+      exec "vagrant #{ARGV.join(' ')}"
+    else
+      abort "Installation of one or more plugins has failed. Aborting."
+    end
+  end
+
+  # Configure cluster nodes
+  cluster_nodes.each_with_index do |(hostname, info), index|
+    config.vm.define hostname do |cfg|
+      cfg.ssh.insert_key = false
+      cfg.ssh.private_key_path = ["~/.vagrant.d/insecure_private_key", "_keys/id_rsa"]
+
+      cfg.vm.provider :virtualbox do |vb, override|
+        override.vm.box = "#{info[:box]}"
+        override.vm.network :private_network, ip: "#{info[:ip]}"
+
+        vb.name = 'vagrant-' + hostname
+        vb.customize ["modifyvm", :id, "--memory", info[:mem], "--cpus", info[:cpus], "--hwvirtex", "on" ]
+
+        # Create a second disk (1G)
+        disk = "disks/disk-#{hostname}.vdi"
+        unless File.exist? (disk)
+          vb.customize ['createhd', '--filename', disk, '--size', 1 * 1024]
+        end
+        vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type',  'hdd', '--medium', disk]
+      end
+
+      # provision nodes with ansible
+      if index == cluster_nodes.size - 1
+        cfg.vm.provision :ansible do |ansible|
+          ansible.config_file = "./ansible.cfg"
+          ansible.inventory_path = "inventory/hosts"
+          ansible.playbook = "./playbook.yml"
+          ansible.limit = "all"
+          ansible.extra_vars = './ansible-extra-vars.yml'
+        end
+      end
+    end
+  end
+
+  # Configure NAS Arch Linux
+  nas_archlinux.each do |hostname, info|
+    config.vm.define hostname do |cfg|
+      cfg.ssh.insert_key = false
+      cfg.ssh.private_key_path = ["~/.vagrant.d/insecure_private_key", "_keys/id_rsa"]
+
+      cfg.vm.provider :virtualbox do |vb, override|
+        override.vm.box = "#{info[:box]}"
+        override.vm.network :private_network, ip: "#{info[:ip]}"
+
+        vb.name = 'vagrant-' + hostname
+        vb.customize ["modifyvm", :id, "--memory", info[:mem], "--cpus", info[:cpus], "--hwvirtex", "on" ]
+
+        # Define the SATA controller
+        vb.customize ["storagectl", :id, "--name", "SATAController", "--add", "sata", "--controller", "IntelAHCI"]
+
+        # Create a second disk (1G)
+        disk = "disks/disk-#{hostname}.vdi"
+        unless File.exist? (disk)
+          vb.customize ['createhd', '--filename', disk, '--size', 1 * 1024]
+        end
+        vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type',  'hdd', '--medium', disk]
+      end
+    end
+  end
+end

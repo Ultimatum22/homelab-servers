@@ -1,5 +1,0 @@
----
-drbd_disk:
-  device: /dev/drbd10
-  disk: /dev/sdb
-  partitions: 1
