@@ -1,0 +1,52 @@
+---
+- debug:
+    var: docker_download_url
+
+- name: Ensure Docker is installed
+  block:
+    - name: Test docker
+      ansible.builtin.command: docker --version
+      register: docker_version_test
+      changed_when: false
+
+    - name: Test if correct version is installed
+      ansible.builtin.assert:
+        that:
+          - docker_version in docker_version_test.stdout
+        success_msg: "Docker version {{ docker_version }} is installed"
+        fail_msg: Docker was not successfully installed
+  rescue:
+    - name: Ensure old docker is removed
+      ansible.builtin.file:
+        path: "{{ docker_install_directory }}"
+        state: absent
+
+    - name: Download Docker binary
+      ansible.builtin.get_url:
+        url: "{{ docker_download_url }}"
+        dest: "{{ ANSIBLE_LOCAL_TEMP }}/docker.tgz"
+
+    - name: Extract Docker binary
+      ansible.builtin.unarchive:
+        src: "{{ ANSIBLE_LOCAL_TEMP }}/docker.tgz"
+        dest: "{{ docker_install_directory }}"
+        remote_src: true
+        mode: "0755"
+
+    - name: Create symlinks for Docker binaries
+      ansible.builtin.file:
+        src: "{{ docker_install_directory }}/docker/docker"
+        dest: /usr/local/bin/docker
+        state: link
+        owner: root
+        group: root
+        mode: "0755"
+      with_items:
+        - docker
+        - dockerd
+        - containerd
+        - containerd-shim
+        - ctr
+        - runc
+      loop_control:
+        loop_var: item

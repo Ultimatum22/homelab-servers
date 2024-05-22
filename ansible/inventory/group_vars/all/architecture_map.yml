@@ -1,0 +1,4 @@
+---
+# Generic mapping used for multiple roles
+architecture_map:
+  x86_64: x86_64
