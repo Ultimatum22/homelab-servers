@@ -1,6 +1,0 @@
----
-- name: Include bootstrap
-  ansible.builtin.import_playbook: ./playbooks/bootstrap.yml
-
-- name: Include cluster
-  ansible.builtin.import_playbook: ./playbooks/cluster.yml

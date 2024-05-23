@@ -21,14 +21,22 @@
         path: "{{ docker_install_directory }}"
         state: absent
 
+    - name: Create installation directory
+      ansible.builtin.file:
+        path: "{{ docker_install_directory }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
     - name: Download Docker binary
       ansible.builtin.get_url:
         url: "{{ docker_download_url }}"
-        dest: "{{ ANSIBLE_LOCAL_TEMP }}/docker.tgz"
+        dest: /tmp/docker.tgz
 
     - name: Extract Docker binary
       ansible.builtin.unarchive:
-        src: "{{ ANSIBLE_LOCAL_TEMP }}/docker.tgz"
+        src: /tmp/docker.tgz
         dest: "{{ docker_install_directory }}"
         remote_src: true
         mode: "0755"
@@ -50,3 +58,57 @@
         - runc
       loop_control:
         loop_var: item
+
+    - name: Create Docker systemd service file
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/docker.service
+        content: |
+          [Unit]
+          Description=Docker Application Container Engine
+          Documentation=https://docs.docker.com
+          After=network-online.target firewalld.service
+          Wants=network-online.target
+
+          [Service]
+          Type=notify
+          ExecStart=/usr/local/bin/dockerd
+          ExecReload=/bin/kill -s HUP $MAINPID
+          TimeoutSec=0
+          RestartSec=2
+          Restart=always
+          StartLimitBurst=3
+          StartLimitInterval=60s
+
+          [Install]
+          WantedBy=multi-user.target
+      mode: "0644"
+
+    - name: Start and enable Docker service
+      ansible.builtin.systemd:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Add user to docker group
+      ansible.builtin.user:
+        name: "{{ host.user.wheel.name }}"
+        groups: docker
+        append: true
+
+    - name: Copy docker_prune systemd service file
+      ansible.builtin.copy:
+        src: docker_prune.service
+        dest: /etc/systemd/system/docker_prune.service
+        mode: "0644"
+
+    - name: Copy docker_prune systemd timer file
+      ansible.builtin.copy:
+        src: docker_prune.timer
+        dest: /etc/systemd/system/docker_prune.timer
+        mode: "0644"
+
+    - name: Start docker_prune timer service
+      ansible.builtin.systemd:
+        state: started
+        name: docker_prune.timer
+        enabled: true

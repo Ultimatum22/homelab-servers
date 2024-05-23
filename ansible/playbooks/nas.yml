@@ -1,5 +1,5 @@
 ---
-- hosts: nas
+- hosts: nas-archlinux
   become: true
   roles:
     - role: docker

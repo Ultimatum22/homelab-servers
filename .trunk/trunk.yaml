@@ -19,7 +19,7 @@ lint:
   enabled:
     - bandit@1.7.8
     - black@24.4.2
-    - checkov@3.2.98
+    - checkov@3.2.103
     - git-diff-check
     - isort@5.13.2
     - markdownlint@0.40.0

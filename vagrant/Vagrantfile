@@ -2,14 +2,14 @@ base_dir = File.expand_path(File.dirname(__FILE__))
 
 # Define machine groups
 cluster_nodes = {
-  "cluster-node1" => { :ip => "192.168.56.11", :cpus => 1, :mem => 1024, :box => "debian/bookworm64", disks => 2 },
-  "cluster-node2" => { :ip => "192.168.56.12", :cpus => 1, :mem => 1024, :box => "debian/bookworm64", disks => 2 },
-  "cluster-node3" => { :ip => "192.168.56.13", :cpus => 1, :mem => 1024, :box => "debian/bookworm64", disks => 2 },
-  "cluster-node4" => { :ip => "192.168.56.14", :cpus => 1, :mem => 1024, :box => "debian/bookworm64", disks => 2 },
+  "cluster-node1" => { :ip => "192.168.56.11", :cpus => 1, :mem => 1024, :box => "debian/bookworm64", :disks => 2 },
+  "cluster-node2" => { :ip => "192.168.56.12", :cpus => 1, :mem => 1024, :box => "debian/bookworm64", :disks => 2 },
+  "cluster-node3" => { :ip => "192.168.56.13", :cpus => 1, :mem => 1024, :box => "debian/bookworm64", :disks => 2 },
+  "cluster-node4" => { :ip => "192.168.56.14", :cpus => 1, :mem => 1024, :box => "debian/bookworm64", :disks => 2 },
 }
 
 nas_archlinux = {
-  "nas-archlinux" => { :ip => "192.168.56.20", :cpus => 1, :mem => 1024, :box => "archlinux/archlinux", disks => 6 },
+  "nas-archlinux" => { :ip => "192.168.56.20", :cpus => 1, :mem => 1024, :box => "archlinux/archlinux", :disks => 6 },
 }
 
 required_plugins = %w(vagrant-cachier)
@@ -38,12 +38,17 @@ Vagrant.configure("2") do |config|
         vb.name = 'vagrant-' + hostname
         vb.customize ["modifyvm", :id, "--memory", info[:mem], "--cpus", info[:cpus], "--hwvirtex", "on" ]
 
-        # Create a second disk (1G)
-        disk = "disks/disk-#{hostname}.vdi"
-        unless File.exist? (disk)
-          vb.customize ['createhd', '--filename', disk, '--size', 1 * 1024]
+        # Define the SATA controller
+        vb.customize ["storagectl", :id, "--name", "SATAController", "--add", "sata", "--controller", "IntelAHCI"]
+
+        (1..info[:disks]).each do |i|
+          # Create and attach disks
+          disk = "disks/disk-#{hostname}-#{i}.vdi"
+          unless File.exist? (disk)
+            vb.customize ['createhd', '--filename', disk, '--size', 1 * 1024]
+          end
+          vb.customize ["storageattach", :id, "--storagectl", "SATAController", "--port", i, "--device", 0, "--type", "hdd", "--medium", disk]
         end
-        vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type',  'hdd', '--medium', disk]
       end
 
       # provision nodes with ansible
@@ -75,9 +80,8 @@ Vagrant.configure("2") do |config|
         # Define the SATA controller
         vb.customize ["storagectl", :id, "--name", "SATAController", "--add", "sata", "--controller", "IntelAHCI"]
 
-        # Create a second disk (1G)
-        (1..6).each do |i|
-          # Create a second disk (1G)
+        (1..info[:disks]).each do |i|
+          # Create and attach disks
           disk = "disks/disk-#{hostname}-#{i}.vdi"
           unless File.exist? (disk)
             vb.customize ['createhd', '--filename', disk, '--size', 1 * 1024]
@@ -85,6 +89,33 @@ Vagrant.configure("2") do |config|
           vb.customize ["storageattach", :id, "--storagectl", "SATAController", "--port", i, "--device", 0, "--type", "hdd", "--medium", disk]
         end
       end
+
+      cfg.vm.provision "shell", inline: <<-SHELL
+        mkdir -p /home/vagrant/.ssh
+        cp /vagrant/_keys/id_rsa.pub /home/vagrant/.ssh/authorized_keys
+        chown -R vagrant:vagrant /home/vagrant/.ssh
+        chmod 700 /home/vagrant/.ssh
+        chmod 600 /home/vagrant/.ssh/authorized_keys
+      SHELL
+
+      # Shell provisioner to install Python 3
+      cfg.vm.provision "shell", inline: <<-SHELL
+        sudo pacman -Sy --noconfirm
+        sudo pacman -S --noconfirm python
+        if ! command -v python3 &> /dev/null; then
+          sudo pacman -S --noconfirm python3
+        fi
+      SHELL
+
+      cfg.vm.provision :ansible do |ansible|
+        # ansible.verbose = "vvvv"
+
+        ansible.config_file = "./ansible.cfg"
+        ansible.inventory_path = "inventory/hosts"
+        ansible.playbook = "./playbooks/nas.yml"
+        ansible.limit = "all" # Ansible hosts are identified by ip
+        ansible.extra_vars = './ansible-extra-vars.yml'
+      end # end provision
     end
   end
 end
