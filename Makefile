@@ -10,21 +10,21 @@ ansible.install:
 	cd ansible && ansible-galaxy install -r requirements.yml
 
 # Vagrant
-vagrant.up.cluster:
+vagrant.cluster.up:
 	cd vagrant && VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 vagrant up cluster-node1 cluster-node2 cluster-node3 cluster-node4
 
-vagrant.provision.cluster:
+vagrant.cluster.provision:
 	cd vagrant && vagrant provision cluster-node1 cluster-node2 cluster-node3 cluster-node4
 
-vagrant.restart.cluster: vagrant.destroy vagrant.up.cluster
+vagrant.cluster.restart: vagrant.destroy vagrant.cluster.up
 
-vagrant.up.nas:
+vagrant.nas.up:
 	cd vagrant && VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 vagrant up nas-archlinux
 
-vagrant.provision.nas:
+vagrant.nas.provision:
 	cd vagrant && vagrant provision nas-archlinux
 
-vagrant.restart.nas: vagrant.destroy vagrant.up.nas
+vagrant.nas.restart: vagrant.destroy vagrant.nas.up
 
 vagrant.reload:
 	cd vagrant && vagrant reload

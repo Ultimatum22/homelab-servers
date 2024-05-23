@@ -1,114 +1,31 @@
 ---
-- debug:
-    var: docker_download_url
+- name: Refresh pacman cache
+  community.general.pacman:
+    name:
+      - docker
+      - docker-compose
+    update_cache: true
 
-- name: Ensure Docker is installed
-  block:
-    - name: Test docker
-      ansible.builtin.command: docker --version
-      register: docker_version_test
-      changed_when: false
+- name: Add user to docker group
+  ansible.builtin.user:
+    name: 'vagrant'
+    groups: docker
+    append: true
 
-    - name: Test if correct version is installed
-      ansible.builtin.assert:
-        that:
-          - docker_version in docker_version_test.stdout
-        success_msg: "Docker version {{ docker_version }} is installed"
-        fail_msg: Docker was not successfully installed
-  rescue:
-    - name: Ensure old docker is removed
-      ansible.builtin.file:
-        path: "{{ docker_install_directory }}"
-        state: absent
+- name: Copy docker_prune systemd service file
+  ansible.builtin.copy:
+    src: docker_prune.service
+    dest: /usr/local/lib/systemd/system/
+    mode: '0644'
 
-    - name: Create installation directory
-      ansible.builtin.file:
-        path: "{{ docker_install_directory }}"
-        state: directory
-        owner: root
-        group: root
-        mode: "0755"
+- name: Copy docker_prune systemd timer file
+  ansible.builtin.copy:
+    src: docker_prune.timer
+    dest: /usr/local/lib/systemd/system/
+    mode: '0644'
 
-    - name: Download Docker binary
-      ansible.builtin.get_url:
-        url: "{{ docker_download_url }}"
-        dest: /tmp/docker.tgz
-
-    - name: Extract Docker binary
-      ansible.builtin.unarchive:
-        src: /tmp/docker.tgz
-        dest: "{{ docker_install_directory }}"
-        remote_src: true
-        mode: "0755"
-
-    - name: Create symlinks for Docker binaries
-      ansible.builtin.file:
-        src: "{{ docker_install_directory }}/docker/docker"
-        dest: /usr/local/bin/docker
-        state: link
-        owner: root
-        group: root
-        mode: "0755"
-      with_items:
-        - docker
-        - dockerd
-        - containerd
-        - containerd-shim
-        - ctr
-        - runc
-      loop_control:
-        loop_var: item
-
-    - name: Create Docker systemd service file
-      ansible.builtin.copy:
-        dest: /etc/systemd/system/docker.service
-        content: |
-          [Unit]
-          Description=Docker Application Container Engine
-          Documentation=https://docs.docker.com
-          After=network-online.target firewalld.service
-          Wants=network-online.target
-
-          [Service]
-          Type=notify
-          ExecStart=/usr/local/bin/dockerd
-          ExecReload=/bin/kill -s HUP $MAINPID
-          TimeoutSec=0
-          RestartSec=2
-          Restart=always
-          StartLimitBurst=3
-          StartLimitInterval=60s
-
-          [Install]
-          WantedBy=multi-user.target
-      mode: "0644"
-
-    - name: Start and enable Docker service
-      ansible.builtin.systemd:
-        name: docker
-        state: started
-        enabled: true
-
-    - name: Add user to docker group
-      ansible.builtin.user:
-        name: "{{ host.user.wheel.name }}"
-        groups: docker
-        append: true
-
-    - name: Copy docker_prune systemd service file
-      ansible.builtin.copy:
-        src: docker_prune.service
-        dest: /etc/systemd/system/docker_prune.service
-        mode: "0644"
-
-    - name: Copy docker_prune systemd timer file
-      ansible.builtin.copy:
-        src: docker_prune.timer
-        dest: /etc/systemd/system/docker_prune.timer
-        mode: "0644"
-
-    - name: Start docker_prune timer service
-      ansible.builtin.systemd:
-        state: started
-        name: docker_prune.timer
-        enabled: true
+- name: Start systemd service
+  ansible.builtin.systemd:
+    state: started
+    name: docker_prune.timer
+    enabled: true
