@@ -37,7 +37,7 @@ docker_install_compose: true
 # Fast container image distribution plugin with lazy pulling - https://github.com/containerd/stargz-snapshotter
 # A Docker volume plugin, managing persistent container volumes - https://github.com/rancher/convoy
 # Docker Client Plugins Manager - build new plugins, publish them on Docker Hub - https://github.com/lukaszlach/clip
-docker_no_plugins: false
+docker_no_plugins: true
 # @example #
 # docker_edition:
 #  - subitem: string
