@@ -26,17 +26,11 @@
         return_content: true
       register: docker_compose_checksum_file
       when: install_update_compose
-    - name: Find the Checksum of docker_compose installer
-      set_fact:
-        docker_compose_checksum: "{{ docker_compose_checksum_file.content | regex_search('.*docker-compose-linux-x86_64') | \
-          regex_replace('  docker-compose-linux-x86_64','') }}"
-      when: install_update_compose
-    - name: Install Docker Compose (if configured)
+    - name: Install Docker Compose
       become: true
       get_url:
         url: https://github.com/docker/compose/releases/download/{{ docker_compose_latest_release_tag.json.tag_name }}/docker-compose-Linux-x86_64
         dest: '{{ docker_compose_path }}'
-        checksum: 'sha256:{{ docker_compose_checksum }}'
         mode: 0755
       when: install_update_compose
   when: ansible_architecture == 'x86_64'
