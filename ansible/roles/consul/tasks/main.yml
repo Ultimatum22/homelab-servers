@@ -2,17 +2,6 @@
 - name: Ensure system is prepared for role
   ansible.builtin.include_tasks: prepare.yml
 
-- name: is_server
-  debug:
-    var: _is_server
-  tags: debug_info
-
-- name: is_client
-  debug:
-    var: _is_client
-  tags: debug_info
-
-
 - name: Ensure Consul is installed
   block:
     - name: Test consul
