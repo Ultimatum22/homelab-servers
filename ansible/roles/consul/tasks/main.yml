@@ -2,6 +2,9 @@
 - name: Ensure system is prepared for role
   ansible.builtin.include_tasks: prepare.yml
 
+- name: Configure UFW
+  ansible.builtin.include_tasks: ufw.yml
+
 - name: Ensure Consul is installed
   block:
     - name: Test consul
