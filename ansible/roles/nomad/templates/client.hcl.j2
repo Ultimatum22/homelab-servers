@@ -1,0 +1,12 @@
+client {
+  enabled = true
+  servers = [{% for h in groups['nomad_cluster']%}"{{ hostvars[h].ansible_host }}:4646"{% if not loop.last %},{% endif %}{% endfor %}]
+  meta {
+  }
+}
+
+plugin "docker" {
+  config {
+    allow_caps = [ "ALL" ]
+  }
+}

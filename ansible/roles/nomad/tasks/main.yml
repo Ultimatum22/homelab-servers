@@ -1,0 +1,97 @@
+---
+- name: Ensure Nomad is installed
+  block:
+    - name: Test nomad
+      ansible.builtin.command: nomad --version
+      register: nomad_version_test
+      changed_when: false
+
+    - name: Test if correct version is installed
+      ansible.builtin.assert:
+        that:
+          - nomad_version in nomad_version_test.stdout
+        success_msg: "Nomad version {{ nomad_version }} is installed"
+        fail_msg: Nomad was not successfully installed
+  rescue:
+    - name: Ensure old nomad is removed
+      ansible.builtin.file:
+        path: "{{ nomad_install_dir }}/nomad"
+        state: absent
+
+    - name: Install Nomad
+      ansible.builtin.unarchive:
+        src: "{{ nomad_zip_url }}"
+        dest: "{{ nomad_install_dir }}"
+        owner: root
+        group: root
+        remote_src: true
+        mode: "0777"
+
+- name: Create Nomad group
+  group:
+    name: "{{ nomad_group }}"
+    system: yes
+    state: present
+
+- name: Create Nomad user
+  user:
+    name: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    shell: /bin/false
+    createhome: no
+    system: yes
+    state: present
+
+- name: Create Nomad configuration directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    mode: "0755"
+    state: directory
+  with_items:
+    - "{{ nomad_config_dir }}"
+    - "{{ nomad_data_dir }}"
+
+- name: Create nomad.service configuration
+  template:
+    src: nomad.service.j2
+    dest: /etc/systemd/system/nomad.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart nomad
+
+- name: Create Nomad configuration file
+  template:
+    src: nomad.hcl.j2
+    dest: "{{ nomad_config_dir }}/nomad.hcl"
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    mode: "0644"
+  notify: restart nomad
+
+- name: Create Nomad server configuration file
+  template:
+    src: server.hcl.j2
+    dest: "{{ nomad_config_dir }}/server.hcl"
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    mode: "0644"
+  notify: restart nomad
+
+- name: Create Nomad client configuration file
+  template:
+    src: client.hcl.j2
+    dest: "{{ nomad_config_dir }}/client.hcl"
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    mode: "0644"
+  notify: restart nomad
+
+- name: Ensure Nomad service is started and enabled on boot
+  ansible.builtin.systemd_service:
+    name: nomad
+    state: started
+    enabled: yes
+    daemon_reload: true

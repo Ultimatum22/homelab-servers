@@ -1,0 +1,23 @@
+---
+consul_version: 1.17.1
+
+consul_datacenter: "{{ datacenter_name }}"
+
+consul_user: consul
+consul_group: consul
+
+consul_zip_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_{{ arch[ansible_architecture] }}.zip"
+
+consul_install_dir: /usr/bin
+consul_config_dir: /etc/consul.d
+consul_data_dir: /opt/consul
+
+arch:
+  x86_64: amd64
+  aarch64: arm64
+  armv7l: arm
+
+consul_bootstrap_expect_value: "{{ _consul_lan_servercount | int }}"
+
+required_packages:
+  - unzip

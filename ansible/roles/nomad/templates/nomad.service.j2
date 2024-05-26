@@ -1,0 +1,17 @@
+[Unit]
+Description=nomad agent
+Wants=basic.target
+After=basic.target network.target consul.service
+
+[Service]
+User=root
+Group=bin
+ExecStart={{ nomad_install_dir }}/nomad agent -config={{ nomad_config_dir }}
+
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+RestartSec=42s
+
+[Install]
+WantedBy=multi-user.target

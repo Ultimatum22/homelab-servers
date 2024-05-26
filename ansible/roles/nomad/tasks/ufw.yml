@@ -1,0 +1,10 @@
+---
+- name: Open ports
+  include_role:
+    name: ufw
+  vars:
+    ufw_rules:
+      - { rule: allow, port: 4646, proto: tcp, comment: Nomad HTTP }
+      - { rule: allow, port: 4647, proto: tcp, comment: Nomad RPC }
+      - { rule: allow, port: 4648, proto: tcp, comment: Nomad Serf WAN } # server only
+      - { rule: allow, port: 4648, proto: udp, comment: Nomad Serf WAN } # server only

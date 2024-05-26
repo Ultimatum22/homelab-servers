@@ -1,0 +1,119 @@
+---
+- name: Ensure system is prepared for role
+  ansible.builtin.include_tasks: prepare.yml
+
+- name: is_server
+  debug:
+    var: _is_server
+  tags: debug_info
+
+- name: is_client
+  debug:
+    var: _is_client
+  tags: debug_info
+
+
+- name: Ensure Consul is installed
+  block:
+    - name: Test consul
+      ansible.builtin.command: consul --version
+      register: consul_version_test
+      changed_when: false
+
+    - name: Test if correct version is installed
+      ansible.builtin.assert:
+        that:
+          - consul_version in consul_version_test.stdout
+        success_msg: "Consul version {{ consul_version }} is installed"
+        fail_msg: Consul was not successfully installed
+  rescue:
+    - name: Ensure old consul is removed
+      ansible.builtin.file:
+        path: "{{ consul_install_dir }}/consul"
+        state: absent
+
+    - name: Install Consul
+      ansible.builtin.unarchive:
+        src: "{{ consul_zip_url }}"
+        dest: "{{ consul_install_dir }}"
+        owner: root
+        group: root
+        remote_src: true
+        mode: "0777"
+
+- name: Create Consul group
+  group:
+    name: "{{ consul_group }}"
+    system: yes
+    state: present
+
+- name: Create Consul user
+  user:
+    name: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    shell: /bin/false
+    createhome: no
+    system: yes
+    state: present
+
+- name: Create Consul configuration directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: "0755"
+    state: directory
+  with_items:
+    - "{{ consul_config_dir }}"
+    - "{{ consul_data_dir }}"
+
+- name: Create consul.service configuration
+  template:
+    src: consul.service.j2
+    dest: /etc/systemd/system/consul.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart consul
+
+- name: Create Consul configuration file
+  template:
+    src: etc/consul.d/consul.hcl.j2
+    dest: "{{ consul_config_dir }}/consul.hcl"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: "0644"
+  notify: restart consul
+
+- name: Create Consul server configuration file
+  template:
+    src: etc/consul.d/server.hcl.j2
+    dest: "{{ consul_config_dir }}/server.hcl"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: "0644"
+  notify: restart consul
+  when: _is_server
+
+- name: Create Consul client configuration file
+  template:
+    src: etc/consul.d/client.hcl.j2
+    dest: "{{ consul_config_dir }}/client.hcl"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: "0644"
+  notify: restart consul
+
+- name: Validate consul config
+  ansible.builtin.command:
+    cmd: "{{ consul_install_dir }}/consul validate {{ consul_config_dir }}"
+  register: consul_config_valid
+  changed_when: false
+  failed_when: consul_config_valid.rc != 0
+
+- name: Ensure Consul service is started and enabled on boot
+  ansible.builtin.systemd_service:
+    name: consul
+    state: started
+    enabled: yes
+    daemon_reload: true

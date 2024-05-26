@@ -1,0 +1,75 @@
+- name: Wait for Nomad to be available
+  uri:
+    url: "http://{{ nomad_bind_address }}:{{ nomad_ports['http'] }}/v1/status/leader"
+    status_code: 200
+    headers:
+      User-Agent: "Mozilla/5.0"
+    validate_certs: false
+  register: result
+  until: result.status == 200
+  retries: 30
+  delay: 5
+
+
+- name: Bootstrap ACL if not already done
+  block:
+  - name: Bootstrap ACLs
+    ansible.builtin.command: nomad acl bootstrap -json
+    run_once: true
+    ignore_errors: true
+    register: nomad_bootstrap_result
+
+  - name: Save bootstrap result
+    ansible.builtin.copy:
+      content: "{{ nomad_bootstrap_result.stdout }}"
+      dest: "./nomad_bootstrap.json"
+    when: nomad_bootstrap_result is succeeded
+    # delegate_to: localhost
+    run_once: true
+
+  - name: Read secret
+    ansible.builtin.command: jq -r .SecretID ./nomad_bootstrap.json
+    # delegate_to: localhost
+    run_once: true
+    # no_log: true
+    changed_when: false
+    register: nomad_read_secretid
+
+  - name: Look for policy
+    ansible.builtin.command: nomad acl policy list
+    environment:
+      NOMAD_TOKEN: "{{ nomad_read_secretid.stdout }}"
+    run_once: true
+    register: nomad_policies
+
+  - name: Copy policy
+    ansible.builtin.copy:
+      src: acl/nomad-anon-policy.hcl
+      dest: /tmp/anonymous.policy.hcl
+    run_once: true
+    register: nomad_anon_policy
+
+  - name: Create anon-policy
+    ansible.builtin.command: nomad acl policy apply -description="Anon read only" anonymous /tmp/anonymous.policy.hcl
+    environment:
+      NOMAD_TOKEN: "{{ nomad_read_secretid.stdout }}"
+    when: nomad_policies.stdout == "No policies found" or nomad_anon_policy.changed
+    run_once: true
+
+  - name: Enable service scheduler preemption
+    ansible.builtin.command: nomad operator scheduler set-config -preempt-system-scheduler=true -preempt-service-scheduler=true
+    environment:
+      NOMAD_TOKEN: "{{ nomad_read_secretid.stdout }}"
+    run_once: true
+
+  - name: Get nomad_bootstrap.json
+    ansible.builtin.fetch:
+      src: ./nomad_bootstrap.json
+      dest: ./../../.secrets/.nomad_bootstrap.json
+      flat: true
+    run_once: true
+  rescue:
+    - name: Handle bootstrap ACL error
+      ansible.builtin.debug:
+        msg: "Consul ACL Bootstrap returned an error, probably already bootstrapped."
+

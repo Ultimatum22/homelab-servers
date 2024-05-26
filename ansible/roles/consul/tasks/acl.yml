@@ -1,0 +1,67 @@
+- name: Wait for Consul to be available
+  uri:
+    url: "http://{{ consul_bind_address }}:{{ consul_ports.http }}/v1/status/leader"
+    status_code: 200
+    headers:
+      User-Agent: "Mozilla/5.0"
+    validate_certs: false
+  register: result
+  until: result.status == 200
+  retries: 30
+  delay: 5
+
+- name: Bootstrap ACL if not already done
+  block:
+  - name: Bootstrap ACLs
+    ansible.builtin.command: consul acl bootstrap -format=json
+    run_once: true
+    ignore_errors: true
+    register: consul_bootstrap_result
+
+  - name: Save bootstrap result
+    ansible.builtin.copy:
+      content: "{{ consul_bootstrap_result.stdout }}"
+      dest: "./consul_bootstrap.json"
+    when: consul_bootstrap_result is succeeded
+    # delegate_to: localhost
+    run_once: true
+
+  - name: Read secret
+    ansible.builtin.command: jq -r .SecretID ./consul_bootstrap.json
+    # delegate_to: localhost
+    run_once: true
+    # no_log: true
+    changed_when: false
+    register: consul_read_secretid
+
+  # - name: Look for policy
+  #   ansible.builtin.command: consul acl policy list
+  #   environment:
+  #     CONSUL_HTTP_TOKEN: "{{ consul_read_secretid.stdout }}"
+  #   run_once: true
+  #   register: consul_policies
+
+  # - name: Copy policy
+  #   ansible.builtin.copy:
+  #     src: acl/consul-anon-policy.hcl
+  #     dest: /tmp/anonymous.policy.hcl
+  #   run_once: true
+  #   register: consul_anon_policy
+
+  - name: Create anon-policy
+    ansible.builtin.command: consul acl policy create -name="anon-policy" -description="Anon read only" anonymous /tmp/anonymous.policy.hcl
+    environment:
+      CONSUL_HTTP_TOKEN: "{{ consul_read_secretid.stdout }}"
+    # when: consul_policies.stdout == "No policies found" or consul_anon_policy.changed
+    run_once: true
+
+  - name: Get consul_bootstrap.json
+    ansible.builtin.fetch:
+      src: ./consul_bootstrap.json
+      dest: ./../../.secrets/.consul_bootstrap.json
+      flat: true
+    run_once: true
+  rescue:
+    - name: Handle bootstrap ACL error
+      ansible.builtin.debug:
+        msg: "Consul ACL Bootstrap returned an error, probably already bootstrapped."

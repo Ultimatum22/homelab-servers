@@ -1,0 +1,49 @@
+"addresses" = {
+  "dns" = "0.0.0.0"
+  "grpc" = "0.0.0.0"
+  "http" = "0.0.0.0"
+  "https" = "0.0.0.0"
+}
+
+advertise_addr = "{{ ansible_host }}"
+
+bind_addr = "0.0.0.0"
+
+client_addr = "0.0.0.0"
+
+data_dir = "{{ consul_data_dir }}"
+datacenter = "{{ consul_datacenter }}"
+disable_update_check = false
+domain = "consul"
+
+enable_script_checks = false
+enable_syslog = true
+syslog_facility = "local0"
+encrypt = "{{ consul_gossip_key }}"
+log_level = "INFO"
+node_name = "{{ inventory_hostname }}"
+
+performance = {
+  leave_drain_time = "5s"
+  raft_multiplier = 1
+  rpc_hold_timeout = "7s"
+}
+
+ports = {
+  dns = 8600
+  http = 8500
+  server = 8300
+}
+
+raft_protocol = 3
+retry_interval = "30s"
+{# retry_join = [{% for h in groups['consul_cluster']%}"{{ hostvars[h].ansible_host }}"{% if not loop.last %},{% endif %}{% endfor %}] #}
+retry_join = {{ _retry_join }}
+
+ui_config = {
+  enabled = true
+}
+
+acl = {
+  default_policy = "allow"
+}
