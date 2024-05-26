@@ -1,6 +1,0 @@
----
-- name: Exchange hostnames in hosts file
-  lineinfile:
-    dest: /etc/hosts
-    line: "{{ hostvars[item]['ansible_host'] }} {{ hostvars[item]['inventory_hostname'] }}"
-  loop: "{{ groups['bootstrap'] }}"

@@ -1,5 +1,5 @@
 ---
-nomad_version: 1.7.2
+nomad_version: 1.7.7
 
 nomad_datacenter: "{{ datacenter_name }}"
 

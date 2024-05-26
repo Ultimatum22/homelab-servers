@@ -2,4 +2,5 @@
 - hosts: nas-archlinux
   become: true
   roles:
+    - role: bootstrap
     - role: docker

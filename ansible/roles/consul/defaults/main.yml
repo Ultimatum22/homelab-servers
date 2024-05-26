@@ -1,5 +1,5 @@
 ---
-consul_version: 1.17.1
+consul_version: 1.18.2
 
 consul_datacenter: "{{ datacenter_name }}"
 
@@ -17,7 +17,4 @@ arch:
   aarch64: arm64
   armv7l: arm
 
-consul_bootstrap_expect_value: "{{ _consul_lan_servercount | int }}"
-
-required_packages:
-  - unzip
+consul_bootstrap_expect_value: "{{ _consul_servers_servercount | int }}"

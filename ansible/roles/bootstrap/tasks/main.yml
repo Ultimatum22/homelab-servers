@@ -1,44 +1,6 @@
 ---
-- name: Remove EXTERNALLY-MANAGED from Python
-  ansible.builtin.file:
-    path: /usr/lib/python3.11/EXTERNALLY-MANAGED
-    state: absent
-
-- name: Upgrade system
+- name: Upgrade system for {{ ansible_facts['os_family'] }}
   ansible.builtin.include_tasks: 00-packages-{{ ansible_facts['os_family'] | lower }}.yml
 
-# - name: Set hostname
-#   ansible.builtin.include_tasks: 01-hostname.yml
-
-- name: Set timezone
-  ansible.builtin.include_tasks: 02-timezone.yml
-
-- name: Set keyboard
-  ansible.builtin.include_tasks: 03-keyboard.yml
-
-- name: Set Locale
-  ansible.builtin.include_tasks: 04-locale.yml
-
-- name: Instal pip packages
-  ansible.builtin.include_tasks: 05-pip.yml
-
-# - name: Set all nodes to /etc/hosts on each node
-#   ansible.builtin.include_tasks: 09-hosts.yml
-
-- name: Raspberry Pi
-  ansible.builtin.include_tasks: 10-rpi.yml
-  when: ansible_architecture in ['armv6l', 'armv7l', 'aarch64']
-
-- name: Setup UFW
+- name: Install generic UFW rules
   ansible.builtin.include_tasks: 20-ufw.yml
-
-- name: Setup fail2ban
-  ansible.builtin.include_tasks: 21-fail2ban.yml
-  tags: ban
-
-- name: SSH hardening
-  ansible.builtin.include_tasks: 99-hardening.yml
-
-- name: reboot host
-  ansible.builtin.reboot:
-    msg: Rebooting machine in 5 seconds

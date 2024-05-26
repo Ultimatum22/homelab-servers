@@ -28,16 +28,16 @@ cluster-node3
 cluster-node4
 
 [consul_cluster]
-cluster-node1 consul_cluster-node_role=both
-cluster-node2 consul_cluster-node_role=both
-cluster-node3 consul_cluster-node_role=client
-cluster-node4 consul_cluster-node_role=server
+cluster-node1 consul_node_role=both
+cluster-node2 consul_node_role=both
+cluster-node3 consul_node_role=client
+cluster-node4 consul_node_role=server
 
 [nomad_cluster]
-cluster-node1 nomad_cluster-node_role=client
-cluster-node2 nomad_cluster-node_role=client
-cluster-node3 nomad_cluster-node_role=both
-cluster-node4 nomad_cluster-node_role=server
+cluster-node1 nomad_node_role=client
+cluster-node2 nomad_node_role=client
+cluster-node3 nomad_node_role=both
+cluster-node4 nomad_node_role=server
 
 [vault_cluster]
 cluster-node1

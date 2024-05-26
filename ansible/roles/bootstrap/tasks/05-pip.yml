@@ -1,9 +1,0 @@
----
-- name: Install new pip packages
-  ansible.builtin.pip:
-    name: "{{ item }}"
-    state: present
-  with_items: "{{ pip_new_packages }}"
-  when:
-    - pip_new_packages is defined
-    - pip_new_packages | length > 0

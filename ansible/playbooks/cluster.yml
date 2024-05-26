@@ -2,7 +2,8 @@
 - hosts: cluster
   become: true
   roles:
+    - role: bootstrap
     # - role: docker
     - role: consul
-    # - role: nomad
+    - role: nomad
     # - role: vault

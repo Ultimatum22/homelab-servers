@@ -1,0 +1,3 @@
+---
+ufw_rules:
+  - { rule: allow, port: 22, proto: tcp, comment: SSH }

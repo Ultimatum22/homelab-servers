@@ -54,10 +54,10 @@
   apt:
     name: "{{ item }}"
     state: present
-  with_items: "{{ apt_new_packages }}"
+  with_items: "{{ required_packages }}"
   when:
-    - apt_new_packages is defined
-    - apt_new_packages | length > 0
+    - required_packages is defined
+    - required_packages | length > 0
 
 - name: Perform clean
   apt:
