@@ -1,5 +1,5 @@
 server {
     enabled = true
     raft_protocol = 3
-    bootstrap_expect = {{ groups['nomad_cluster'] | length }}
+    bootstrap_expect = {{ nomad_bootstrap_expect_value | int }}
 }

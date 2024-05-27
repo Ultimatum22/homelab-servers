@@ -34,7 +34,7 @@ cluster-node3 consul_node_role=client
 cluster-node4 consul_node_role=server
 
 [nomad_cluster]
-cluster-node1 nomad_node_role=client
+cluster-node1 nomad_node_role=both
 cluster-node2 nomad_node_role=client
 cluster-node3 nomad_node_role=both
 cluster-node4 nomad_node_role=server

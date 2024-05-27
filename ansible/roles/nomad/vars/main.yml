@@ -1,5 +1,15 @@
 ---
-nomad_servers: []
+_nomad_servers: "\
+  {% set __nomad_servers = [] %}\
+  {% for host in groups['nomad_cluster'] %}\
+    {% set _nomad_node_role = hostvars[host]['nomad_node_role'] | default('client', true) %}\
+    {% if ( _nomad_node_role == 'server' or _nomad_node_role == 'both' ) %}\
+      {% if __nomad_servers.append(host) %}{% endif %}\
+    {% endif %}\
+  {% endfor %}\
+  {{ __nomad_servers }}"
+_nomad_servers_servercount: "{{ (_nomad_servers | length) }}"
+
 
 _nomad_node_client: "{{ (nomad_node_role == 'client') or (nomad_node_role == 'both') }}"
 _nomad_node_server: "{{ (nomad_node_role == 'server') or (nomad_node_role == 'both') }}"

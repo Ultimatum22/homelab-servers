@@ -9,14 +9,14 @@ ports {
 }
 
 advertise {
-    http = "{{ ansible_default_ipv4.address }}"
-    rpc = "{{ ansible_default_ipv4.address }}"
-    serf = "{{ ansible_default_ipv4.address }}"
+    http = "{{ ansible_host }}"
+    rpc = "{{ ansible_host }}"
+    serf = "{{ ansible_host }}"
 }
 
 consul {
     # The address to the Consul agent.
-    address = "{{ ansible_default_ipv4.address }}:8500"
+    address = "{{ ansible_host }}:8500"
     # The service name to register the server and client with Consul.
     server_service_name = "nomad-servers"
     client_service_name = "nomad-clients"
