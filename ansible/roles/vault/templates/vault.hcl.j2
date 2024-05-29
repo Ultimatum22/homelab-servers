@@ -1,0 +1,20 @@
+disable_mlock = true
+
+ui = true
+
+cluster_addr  = "http://{{ ansible_host }}:8201"
+api_addr      = "http://{{ ansible_host }}:8200"
+
+backend "consul" {
+  address = "http://{{ consul_bind_address }}:8500"
+  scheme = "http"
+  path = "vault/"
+}
+
+listener "tcp" {
+  address       = "0.0.0.0:8200"
+  tls_disable = 1
+  telemetry {
+    unauthenticated_metrics_access = true
+  }
+}

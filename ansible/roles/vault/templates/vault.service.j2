@@ -1,0 +1,17 @@
+[Unit]
+Description=Runs Vault server
+Documentation=http://www.vaultproject.io
+Wants=network-online.target
+After=network-online.target
+Wants=consul.service
+After=consul.service
+
+[Service]
+User={{ vault_user }}
+Group={{ vault_group }}
+ExecStart={{ vault_install_dir }}/vault server -config {{ vault_config_dir }}/vault.hcl
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGTERM
+
+[Install]
+WantedBy=multi-user.target

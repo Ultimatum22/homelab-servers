@@ -31,3 +31,29 @@ vagrant.reload:
 
 vagrant.destroy:
 	cd vagrant && vagrant destroy -f
+
+# Terraform
+terraform.init:
+	cd terraform/$(WS) && \
+	terraform init
+
+terraform.plan:
+	cd terraform/$(WS) && \
+	terraform plan \
+		-var "nomad_secret_id=$(shell jq -r .SecretID ./.secrets/.nomad_bootstrap.json)" \
+		-var "consul_secret_id=$(shell jq -r .SecretID ./.secrets/.consul_bootstrap.json)"
+
+terraform.apply:
+	cd terraform/$(WS) && \
+	terraform apply \
+		-auto-approve \
+		-var "nomad_secret_id=$(shell jq -r .SecretID ./.secrets/.nomad_bootstrap.json)" \
+		-var "consul_secret_id=$(shell jq -r .SecretID ./.secrets/.consul_bootstrap.json)"
+
+terraform.refresh:
+	cd terraform/$(WS) && \
+	terraform refresh \
+		-var "nomad_secret_id=$(shell jq -r .SecretID ./.secrets/.nomad_bootstrap.json)" \
+		-var "consul_secret_id=$(shell jq -r .SecretID ./.secrets/.consul_bootstrap.json)"
+
+terraform.apply-all: terraform.init terraform.plan WS=$(WS)

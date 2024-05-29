@@ -6,4 +6,4 @@
     # - role: docker
     - role: consul
     - role: nomad
-    # - role: vault
+    - role: vault

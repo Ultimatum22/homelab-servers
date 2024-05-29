@@ -1,0 +1,15 @@
+---
+- name: restart vault
+  service:
+    name: vault
+    state: restarted
+
+- name: reload vault
+  service:
+    name: vault
+    state: reloaded
+
+- name: restart consul
+  service:
+    name: consul
+    state: restarted

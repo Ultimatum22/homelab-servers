@@ -29,6 +29,21 @@ consul {
     client_auto_join = true
 }
 
+acl {
+  enabled    = true
+  token_ttl  = "30s"
+  policy_ttl = "60s"
+  role_ttl   = "60s"
+}
+
+telemetry {
+  collection_interval        = "15s"
+  disable_hostname           = true
+  prometheus_metrics         = true
+  publish_allocation_metrics = true
+  publish_node_metrics       = true
+}
+
 data_dir = "{{ nomad_data_dir }}"
 
 log_level = "INFO"

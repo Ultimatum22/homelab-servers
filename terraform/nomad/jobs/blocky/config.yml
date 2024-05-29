@@ -1,0 +1,88 @@
+ports:
+  dns: 53
+  http: 4000
+
+bootstrapDns:
+  - upstream: 1.1.1.1
+  - upstream: 1.0.0.1
+
+upstreams:
+  groups:
+    default:
+      - 1.1.1.1
+      - 1.0.0.1
+    quad9:
+      - 9.9.9.9
+      - 149.112.112.112
+      - 2620:fe::fe
+      - 2620:fe::9
+      - https://dns.quad9.net/dns-query
+      - tcp-tls:dns.quad9.net
+    quad9-unsecured:
+      - 9.9.9.10
+      - 149.112.112.10
+      - 2620:fe::10
+      - 2620:fe::fe:10
+      - https://dns10.quad9.net/dns-query
+      - tcp-tls:dns10.quad9.net
+
+conditional:
+  fallbackUpstream: false
+  mapping:
+    home.arpa: 192.168.2.254
+    in-addr.arpa: 192.168.2.254
+    iot: 192.168.2.254
+    local: 192.168.2.254
+    .: 192.168.2.254
+
+hostsFile:
+  sources:
+    - {{ env "NOMAD_TASK_DIR" }}/nomad.hosts
+  hostsTTL: 30s
+  loading:
+    refreshPeriod: 30s
+
+clientLookup:
+  upstream: 192.168.2.254
+
+blocking:
+  blackLists:
+    ads:
+      - https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
+      - http://sysctl.org/cameleon/hosts
+      - https://s3.amazonaws.com/lists.disconnect.me/simple_tracking.txt
+      - https://s3.amazonaws.com/lists.disconnect.me/simple_ad.txt
+      - https://hosts-file.net/ad_servers.txt
+    smarttv:
+      - https://perflyst.github.io/PiHoleBlocklist/SmartTV.txt
+      # - https://perflyst.github.io/PiHoleBlocklist/regex.list
+    wemo:
+      - |
+        # Remote commands
+        api.xbcs.net
+        # Firmware updates
+        fw.xbcs.net
+        # TURN service
+        nat.wemo2.com
+        # Connectivity checks
+        heartbeat.xwemo.com
+    antisocial:
+      - |
+        facebook.com
+        instagram.com
+        reddit.com
+        twitter.com
+        youtube.com
+
+  clientGroupsBlock:
+    default:
+      - ads
+      - custom
+      - smarttv
+      - wemo
+
+customDNS:
+  customTTL: 1h
+  filterUnmappedTypes: true
+  mapping:
+    traefik.codecubed.xyz: 192.168.56.11,192.168.56.12,192.168.56.13,192.168.56.14

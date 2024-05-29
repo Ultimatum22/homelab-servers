@@ -1,0 +1,28 @@
+---
+vault_version: 1.15.5
+
+vault_datacenter: "{{ datacenter_name }}"
+
+vault_user: vault
+vault_group: vault
+
+vault_zip_url: "https://releases.hashicorp.com/vault/{{ vault_version }}/vault_{{ vault_version }}_linux_{{ arch[ansible_architecture] }}.zip"
+
+vault_install_dir: /usr/bin
+vault_config_dir: /etc/vault.d
+vault_data_dir: /opt/vault
+vault_init_secrets_file: "{{ vault_config_dir }}/vault-init-secrets.txt"
+
+consul_config_dir: /etc/consul.d
+consul_bind_address: "{{ ansible_host }}"
+
+vault_unseal_keys_dir: "./../../.secrets/vault-keys"
+vault_token_dir: "./../../.secrets/vault-tokens"
+
+vault_key_shares: 5
+vault_key_threshold: 3
+
+arch:
+  x86_64: amd64
+  aarch64: arm64
+  armv7l: arm

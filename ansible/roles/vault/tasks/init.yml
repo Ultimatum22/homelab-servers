@@ -1,0 +1,36 @@
+---
+- name: Initialise Vault # noqa no-changed-when
+  # no_log: true
+  run_once: true
+  ansible.builtin.command: "vault operator init -key-shares={{ vault_key_shares }} -key-threshold={{ vault_key_threshold }} -format json"
+  environment:
+    VAULT_ADDR: "http://127.0.0.1:8200"
+  register: _vault_init_results
+
+- name: Parse output of 'vault init'
+  # no_log: true
+  ansible.builtin.set_fact: _vault_init_parsed="{{ _vault_init_results.stdout | from_json }}"
+
+- debug:
+    var: _vault_init_parsed
+
+- name: Write unseal keys to files
+  # no_log: true
+  ansible.builtin.fetch:
+    dest: "{{ vault_unseal_keys_dir }}/unseal_key_{{ item.0 }}"
+    content: "{{ item.1 }}"
+    mode: 0600
+  with_indexed_items: "{{ _vault_init_parsed.unseal_keys_hex }}"
+
+- name: Save root token
+  delegate_to: localhost
+  # no_log: true
+  ansible.builtin.set_fact: vault_root_token="{{ _vault_init_parsed.root_token }}"
+
+- name: Write root token to file
+  delegate_to: localhost
+  # no_log: true
+  ansible.builtin.copy:
+    content: "{{ vault_root_token }}"
+    dest: "{{ vault_token_dir }}/root-token"
+    mode: 0600

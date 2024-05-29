@@ -1,0 +1,36 @@
+{
+    "services": [
+      {
+        "name": "vault",
+        "tags": [
+          "master"
+        ],
+        "address": "ansible_default_ipv4.address",
+        "port": 8200,
+        "enableTagOverride": false,
+        "check": {
+          "id": "vault",
+          "name": "Vault Health Check",
+          "http": "http://{{ ansible_default_ipv4.address }}:8200/v1/sys/health",
+          "interval": "20s",
+          "timeout": "2s"
+        }
+      },
+      {
+        "name": "vault",
+        "tags": [
+          "slave"
+        ],
+        "address": "{{ ansible_default_ipv4.address }}",
+        "port": 8200,
+        "enableTagOverride": false,
+        "check": {
+          "id": "vault",
+          "name": "Vault Health Check",
+          "http": "http://{{ ansible_default_ipv4.address }}:8200/v1/sys/health",
+          "interval": "20s",
+          "timeout": "2s"
+        }
+      }
+    ]
+  }

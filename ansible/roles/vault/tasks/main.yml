@@ -1,0 +1,127 @@
+---
+- name: Ensure Vault is installed
+  block:
+    - name: Test vault
+      ansible.builtin.command: vault --version
+      register: vault_version_test
+      changed_when: false
+
+    - name: Test if correct version is installed
+      ansible.builtin.assert:
+        that:
+          - vault_version in vault_version_test.stdout
+        success_msg: "Vault version {{ vault_version }} is installed"
+        fail_msg: Vault was not successfully installed
+  rescue:
+    - name: Ensure old vault is removed
+      ansible.builtin.file:
+        path: "{{ vault_install_dir }}/vault"
+        state: absent
+
+    - name: Install Vault
+      ansible.builtin.unarchive:
+        src: "{{ vault_zip_url }}"
+        dest: "{{ vault_install_dir }}"
+        owner: root
+        group: root
+        remote_src: true
+        mode: "0777"
+
+- name: Create Vault group
+  group:
+    name: "{{ vault_group }}"
+    system: yes
+    state: present
+
+- name: Create Vault user
+  user:
+    name: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    shell: /bin/false
+    createhome: no
+    system: yes
+    state: present
+
+- name: Create Vault configuration directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    mode: "0755"
+    state: directory
+  with_items:
+    - "{{ vault_config_dir }}"
+    - "{{ vault_data_dir }}"
+    - "{{ vault_config_dir }}/services.d/"
+
+- name: Create vault.service configuration
+  template:
+    src: vault.service.j2
+    dest: /etc/systemd/system/vault.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart vault
+
+- name: Create Vault configuration file
+  template:
+    src: vault.hcl.j2
+    dest: "{{ vault_config_dir }}/vault.hcl"
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    mode: "0644"
+  notify: restart vault
+
+- name: Ensure Vault service is started and enabled on boot
+  ansible.builtin.systemd_service:
+    name: vault
+    state: started
+    enabled: yes
+    daemon_reload: true
+
+# - name: Initialize Vault
+#   ansible.builtin.command: "{{ vault_install_dir }}/vault operator init -format=json"
+#   environment:
+#     VAULT_ADDR: "http://{{ ansible_host }}:8200"
+# #     VAULT_TOKEN: "{{ vault_root_token }}"
+#   register: vault_init
+#   when: vault_init.stdout is not defined
+#   run_once: true
+
+# - debug:
+#     var: vault_init.stdout
+
+# - name: Save vault keys
+#   ansible.builtin.copy:
+#     content: "{{ vault_init.stdout }}"
+#     dest: "./vault_keys.json"
+#   when: vault_init.stdout is defined
+#   # delegate_to: localhost
+#   run_once: true
+
+# - name: Unseal Vault
+#   ansible.builtin.command: "{{ vault_install_dir }}/vault operator unseal {{ item }}"
+#   with_items: "{{ vault_init.stdout | from_json | json_query('unseal_keys_b64') }}"
+#   environment:
+#     VAULT_ADDR: "http://{{ ansible_host }}:8200"
+#   when: vault_init.stdout is defined
+#   run_once: true
+
+# - name: Wait for Vault to be available
+#   uri:
+#     url: "http://{{ ansible_host }}:8200"
+#     status_code: 200
+#     headers:
+#       User-Agent: "Mozilla/5.0"
+#     validate_certs: false
+#   register: result
+#   until: result.status == 200
+#   retries: 30
+#   delay: 5
+
+# - name: Get consul_bootstrap.json
+#   ansible.builtin.fetch:
+#     src: ./vault_keys.json
+#     dest: ./../../.secrets/.vault_keys.json
+#     flat: true
+#  run_once: true
