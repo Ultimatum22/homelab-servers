@@ -43,6 +43,7 @@ cluster-node4 nomad_node_role=server
 cluster-node1
 cluster-node2
 cluster-node3
+cluster-node4
 
 [drbd_cluster]
 cluster-node1 drbd_cluster-node=primary
