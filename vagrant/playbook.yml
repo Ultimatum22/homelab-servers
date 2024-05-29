@@ -1,0 +1,6 @@
+---
+- name: Run cluster
+  ansible.builtin.import_playbook: ./playbooks/cluster.yml
+
+- name: Run vault unseal
+  ansible.builtin.import_playbook: ./playbooks/vault-init-unseal.yml
