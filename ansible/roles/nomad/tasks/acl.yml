@@ -1,6 +1,6 @@
 - name: Wait for Nomad to be available
   uri:
-    url: "http://{{ nomad_bind_address }}:{{ nomad_ports['http'] }}/v1/status/leader"
+    url: "http://{{ ansible_host }}:{{ nomad_ports['http'] }}/v1/status/leader"
     status_code: 200
     headers:
       User-Agent: "Mozilla/5.0"

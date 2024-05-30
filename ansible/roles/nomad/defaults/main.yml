@@ -17,4 +17,9 @@ arch:
   aarch64: arm64
   armv7l: arm
 
+nomad_ports:
+  http: "4646"
+  rpc: "4647"
+  serf: "4648"
+
 nomad_bootstrap_expect_value: "{{ _nomad_servers_servercount | int }}"
