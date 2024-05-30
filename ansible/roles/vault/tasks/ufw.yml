@@ -1,0 +1,7 @@
+---
+- name: Open ports
+  include_role:
+    name: ufw
+  vars:
+    ufw_rules:
+      - { rule: allow, port: 8200, proto: tcp, comment: Vault UI }

@@ -1,179 +1,108 @@
-job "traefik" {
-  type = "system"
+resource "nomad_job" "traefik" {
+  jobspec = <<-EOT
+  job "traefik" {
+    datacenters = ["dc1"]
 
-  update {
-    max_parallel = 1
-    stagger      = "30s"
-    auto_revert = true
-  }
+    group "traefik" {
+      count = 1
 
-  group "traefik" {
+      task "traefik" {
+        driver = "docker"
 
-    restart {
-      attempts = 10
-      interval = "5m"
-      delay = "25s"
-      mode = "delay"
-    }
+        config {
+          image = "traefik:v2.9"
+          ports = ["http", "https"]
 
-    vault {
-      policies = ["nomad-traefik-policy"]
-    }
+          volumes = [
+            "local/traefik.toml:/etc/traefik/traefik.toml",
+            "local/certs:/certs"
+          ]
+        }
 
-    volume "acme_volume" {
-      type = "host"
-      source = "acme_volume"
-      read_only = false
-    }
+        env {
+          VAULT_ADDR = "http://127.0.0.1:8200"
+          VAULT_TOKEN = "your-vault-token"
+        }
 
-    network {
-      mode = "bridge"
+        resources {
+          cpu    = 500
+          memory = 512
+        }
 
-      port "http" {
-        static = 80
-        to     = 80
-      }
+        service {
+          name = "traefik"
+          tags = ["traefik", "http"]
+          port = "http"
+        }
 
-      port "https" {
-        static = 443
-        to     = 443
-      }
+        service {
+          name = "traefik-https"
+          tags = ["traefik", "https"]
+          port = "https"
+        }
 
-      port "metrics" {
-        static = 8899
-        to     = 8899
-      }
-    }
+        template {
+          data = <<EOH
+          # traefik.toml configuration file
 
-    service {
-      name = "traefik-ingress"
-      port = "http"
-      task = "traefik"
+          [entryPoints]
+            [entryPoints.http]
+              address = ":80"
+            [entryPoints.https]
+              address = ":443"
 
-      tags = [
-        "traefik",
-        "traefik.enable=true",
-        "traefik.http.routers.dashboard.rule=Host(`traefik.dashboards.codecubed.xyz`)",
-        "traefik.http.routers.dashboard.service=api@internal",
-        "traefik.http.routers.dashboard.entrypoints=https",
-        // "traefik.http.routers.nomad.rule=Host(`nomad.dashboards.codecubed.xyz`)",
-        // "traefik.http.routers.nomad.service=nomad-ui@consul",
-        // "traefik.http.routers.nomad.entrypoints=https",
-	      // "traefik.http.routers.consul.rule=Host(`consul.dashboards.codecubed.xyz`)",
-        // "traefik.http.routers.consul.service=consul-ui@consul",
-        // "traefik.http.routers.consul.entrypoints=https",
+          [certificatesResolvers.myresolver.acme]
+            email = "your-email@example.com"
+            storage = "acme.json"
+            [certificatesResolvers.myresolver.acme.httpChallenge]
+              entryPoint = "http"
 
-      ]
-
-      check {
-        name     = "alive"
-        type     = "tcp"
-        port     = "http"
-        interval = "10s"
-        timeout  = "2s"
-      }
-
-      connect {
-        native = true
-      }
-    }
-
-    task "traefik" {
-      driver = "docker"
-
-      volume_mount {
-        volume = "acme_volume"
-        destination = "/data"
-      }
-
-      config {
-        image = "traefik:v3.0"
-        
-        args = [
-          "--configFile=/local/conf/traefik.toml",
-        ]
-      }
-
-      template {
-        destination = "${NOMAD_TASK_DIR}/conf/traefik.toml"
-        env = false
-        change_mode = "restart"
-        splay = "1m"
-        data = <<-EOH
-          [entryPoints.http]
-            address = ":80"
-
-          [entryPoints.http.forwardedHeaders]
-            trustedIPs = ["136.144.151.253","136.144.151.254","136.144.151.255","89.41.168.61","89.41.168.62","89.41.168.63"]
-
-          [entryPoints.http.http]
-            [entryPoints.http.http.redirections.entryPoint]
-              to = "https"
-              scheme = "https"
-              permanent = false  # Change this to false to avoid permanent redirection
-
-          [entryPoints.https]
-            address = ":443"
-            [entryPoints.https.http]
-              middlewares = ["hsts@file"]
-              [entryPoints.https.http.tls]
-
-          [entryPoints.metrics]
-            address = ":8899"
-
-        [providers]
           [providers.file]
-            directory = "/local/conf/dynamic"
+            directory = "/etc/traefik/dynamic/"
+          EOH
+          destination = "local/traefik.toml"
+        }
 
-          [providers.consulCatalog]
-            connectAware = true
-            exposedByDefault = false
-            connectByDefault = false
-            serviceName = "traefik-ingress"
-            cache = true
+        template {
+          data = <<EOH
+          # dynamic.toml configuration file
 
-        [metrics]
-          [metrics.prometheus]
-            entryPoint = "metrics"
+          [[tls.certificates]]
+            certFile = "/certs/traefik.crt"
+            keyFile = "/certs/traefik.key"
+          EOH
+          destination = "local/dynamic.toml"
+        }
 
-        [log]
-          format = "json"
-          level = "DEBUG"
+        template {
+          data = <<EOH
+          {{ with secret "pki/issue/traefik" "common_name=traefik.example.com" }}
+          {{ .Data.certificate }}{{ end }}
+          EOH
+          destination = "local/certs/traefik.crt"
+          change_mode = "restart"
+        }
 
-        [accessLog]
-          format = "json"
-
-        [api]
-          dashboard = true
-          insecure = true
-          debug = true
-        EOH
+        template {
+          data = <<EOH
+          {{ with secret "pki/issue/traefik" "common_name=traefik.example.com" }}
+          {{ .Data.private_key }}{{ end }}
+          EOH
+          destination = "local/certs/traefik.key"
+          change_mode = "restart"
+        }
       }
 
-      template {
-        destination = "${NOMAD_TASK_DIR}/conf/dynamic/traefik.toml"
-        env = false
-        change_mode = "noop"
-        splay = "1m"
-        data = <<-EOH
-        [http]
-          [http.middlewares]
-            [http.middlewares.hsts.headers]
-              stsSeconds=63072000
-              stsIncludeSubdomains=true
-              stsPreload=true
-        EOH
-      }
+      network {
+        port "http" {
+          static = 8080
+        }
 
-      service {
-        name = "traefik-metrics"
-        port = "metrics"
-
-        tags = [
-          "traefik-metrics",
-          "prometheus",
-        ]
+        port "https" {
+          static = 8443
+        }
       }
     }
   }
+  EOT
 }
