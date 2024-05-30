@@ -30,14 +30,13 @@ performance = {
 }
 
 ports = {
-  dns = 8600
-  http = 8500
-  server = 8300
+  dns = {{ consul_ports['dns'] }}
+  http = {{ consul_ports['http'] }}
+  server = {{ consul_ports['server'] }}
 }
 
 raft_protocol = 3
 retry_interval = "30s"
-{# retry_join = [{% for h in groups['consul_cluster']%}"{{ hostvars[h].ansible_host }}"{% if not loop.last %},{% endif %}{% endfor %}] #}
 retry_join = {{ _retry_join }}
 
 ui_config = {
@@ -45,5 +44,7 @@ ui_config = {
 }
 
 acl = {
+  enabled = true
   default_policy = "allow"
+  enable_token_persistence = true
 }

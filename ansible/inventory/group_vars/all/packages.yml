@@ -2,3 +2,4 @@
 required_packages:
   - unzip
   - ufw
+  - jq
