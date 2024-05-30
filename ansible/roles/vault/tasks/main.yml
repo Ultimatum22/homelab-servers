@@ -1,4 +1,7 @@
 ---
+- name: Configure UFW
+  ansible.builtin.include_tasks: ufw.yml
+  
 - name: Ensure Vault is installed
   block:
     - name: Test vault
@@ -125,6 +128,3 @@
 #     dest: ./../../.secrets/.vault_keys.json
 #     flat: true
 #  run_once: true
-
-- name: ACL
-  ansible.builtin.include_tasks: ./acl.yml

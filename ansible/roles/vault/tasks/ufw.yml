@@ -5,3 +5,4 @@
   vars:
     ufw_rules:
       - { rule: allow, port: 8200, proto: tcp, comment: Vault UI }
+      - { rule: allow, port: 8201, proto: tcp, comment: Vault Cluster Addr }
