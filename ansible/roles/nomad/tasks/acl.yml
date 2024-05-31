@@ -66,6 +66,7 @@
     ansible.builtin.fetch:
       src: ./nomad_bootstrap.json
       dest: ./../../.secrets/.nomad_bootstrap.json
+      flat: true
     run_once: true
   rescue:
     - name: Handle bootstrap ACL error
