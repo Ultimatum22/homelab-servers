@@ -39,7 +39,7 @@
           msg: "Vault keys: {{ vault_keys }}"
 
       - name: Save Vault root token to file
-        ansible.builtin.copy:
+        ansible.builtin.fetch:
           src: "{{ vault_root_token }}"
           dest: ./.secrets/.consul_bootstrap.json
           flat: true
