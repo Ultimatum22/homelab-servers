@@ -1,108 +1,104 @@
-resource "nomad_job" "traefik" {
-  jobspec = <<-EOT
-  job "traefik" {
-    datacenters = ["dc1"]
+job "traefik" {
+  datacenters = ["dc1"]
 
-    group "traefik" {
-      count = 1
+  group "traefik" {
+    count = 1
 
-      task "traefik" {
-        driver = "docker"
+    task "traefik" {
+      driver = "docker"
 
-        config {
-          image = "traefik:v2.9"
-          ports = ["http", "https"]
+      config {
+        image = "traefik:v2.9"
+        ports = ["http", "https"]
 
-          volumes = [
-            "local/traefik.toml:/etc/traefik/traefik.toml",
-            "local/certs:/certs"
-          ]
-        }
-
-        env {
-          VAULT_ADDR = "http://127.0.0.1:8200"
-          VAULT_TOKEN = "your-vault-token"
-        }
-
-        resources {
-          cpu    = 500
-          memory = 512
-        }
-
-        service {
-          name = "traefik"
-          tags = ["traefik", "http"]
-          port = "http"
-        }
-
-        service {
-          name = "traefik-https"
-          tags = ["traefik", "https"]
-          port = "https"
-        }
-
-        template {
-          data = <<EOH
-          # traefik.toml configuration file
-
-          [entryPoints]
-            [entryPoints.http]
-              address = ":80"
-            [entryPoints.https]
-              address = ":443"
-
-          [certificatesResolvers.myresolver.acme]
-            email = "your-email@example.com"
-            storage = "acme.json"
-            [certificatesResolvers.myresolver.acme.httpChallenge]
-              entryPoint = "http"
-
-          [providers.file]
-            directory = "/etc/traefik/dynamic/"
-          EOH
-          destination = "local/traefik.toml"
-        }
-
-        template {
-          data = <<EOH
-          # dynamic.toml configuration file
-
-          [[tls.certificates]]
-            certFile = "/certs/traefik.crt"
-            keyFile = "/certs/traefik.key"
-          EOH
-          destination = "local/dynamic.toml"
-        }
-
-        template {
-          data = <<EOH
-          {{ with secret "pki/issue/traefik" "common_name=traefik.example.com" }}
-          {{ .Data.certificate }}{{ end }}
-          EOH
-          destination = "local/certs/traefik.crt"
-          change_mode = "restart"
-        }
-
-        template {
-          data = <<EOH
-          {{ with secret "pki/issue/traefik" "common_name=traefik.example.com" }}
-          {{ .Data.private_key }}{{ end }}
-          EOH
-          destination = "local/certs/traefik.key"
-          change_mode = "restart"
-        }
+        volumes = [
+          "local/traefik.toml:/etc/traefik/traefik.toml",
+          "local/certs:/certs"
+        ]
       }
 
-      network {
-        port "http" {
-          static = 8080
-        }
+      env {
+        VAULT_ADDR = "http://127.0.0.1:8200"
+        VAULT_TOKEN = "your-vault-token"
+      }
 
-        port "https" {
-          static = 8443
-        }
+      resources {
+        cpu    = 500
+        memory = 512
+      }
+
+      service {
+        name = "traefik"
+        tags = ["traefik", "http"]
+        port = "http"
+      }
+
+      service {
+        name = "traefik-https"
+        tags = ["traefik", "https"]
+        port = "https"
+      }
+
+      template {
+        data = <<EOH
+        # traefik.toml configuration file
+
+        [entryPoints]
+          [entryPoints.http]
+            address = ":80"
+          [entryPoints.https]
+            address = ":443"
+
+        [certificatesResolvers.myresolver.acme]
+          email = "your-email@example.com"
+          storage = "acme.json"
+          [certificatesResolvers.myresolver.acme.httpChallenge]
+            entryPoint = "http"
+
+        [providers.file]
+          directory = "/etc/traefik/dynamic/"
+        EOH
+        destination = "local/traefik.toml"
+      }
+
+      template {
+        data = <<EOH
+        # dynamic.toml configuration file
+
+        [[tls.certificates]]
+          certFile = "/certs/traefik.crt"
+          keyFile = "/certs/traefik.key"
+        EOH
+        destination = "local/dynamic.toml"
+      }
+
+      template {
+        data = <<EOH
+        {{ with secret "pki/issue/traefik" "common_name=traefik.example.com" }}
+        {{ .Data.certificate }}{{ end }}
+        EOH
+        destination = "local/certs/traefik.crt"
+        change_mode = "restart"
+      }
+
+      template {
+        data = <<EOH
+        {{ with secret "pki/issue/traefik" "common_name=traefik.example.com" }}
+        {{ .Data.private_key }}{{ end }}
+        EOH
+        destination = "local/certs/traefik.key"
+        change_mode = "restart"
+      }
+    }
+
+    network {
+      port "http" {
+        static = 8080
+      }
+
+      port "https" {
+        static = 8443
       }
     }
   }
-  EOT
 }
