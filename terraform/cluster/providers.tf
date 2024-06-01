@@ -10,3 +10,8 @@ provider "consul" {
   datacenter = var.consul_datacenter
   token      = var.consul_secret_id
 }
+
+provider "vault" {
+  address    = var.vault_address
+  token      = var.vault_token
+}

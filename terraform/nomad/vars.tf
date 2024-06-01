@@ -3,6 +3,11 @@ variable "nomad_address" {
   default = "http://192.168.56.11:4646"
 }
 
+variable "vault_address" {
+  type    = string
+  default = "http://192.168.56.11:8200"
+}
+
 variable "base_hostname" {
   type        = string
   description = "Base hostname to serve content from"
@@ -23,3 +28,9 @@ variable "consul_secret_id" {
   default     = ""
 }
 
+variable "vault_token" {
+  type        = string
+  description = "Vault token"
+  sensitive   = true
+  default     = ""
+}

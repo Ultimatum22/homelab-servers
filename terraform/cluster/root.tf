@@ -10,6 +10,10 @@ module "consul_acls" {
   source = "./consul_acls"
 }
 
+module "vault_acls" {
+  source = "./vault_acls"
+}
+
 terraform {
   required_version = ">=1.7.2"
 }

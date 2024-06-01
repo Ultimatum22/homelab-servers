@@ -18,8 +18,8 @@ job "traefik" {
       }
 
       env {
-        VAULT_ADDR = "http://127.0.0.1:8200"
-        VAULT_TOKEN = "your-vault-token"
+        VAULT_ADDR = "http://192.168.56.11:8200"
+        VAULT_TOKEN = "hvs.dBzNAkLZ3DrFPt96rGn1L031"
       }
 
       resources {
