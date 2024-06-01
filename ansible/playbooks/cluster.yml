@@ -4,6 +4,6 @@
   roles:
     - role: bootstrap
     - role: docker
-    # - role: consul
-    # - role: nomad
-    # - role: vault
+    - role: consul
+    - role: nomad
+    - role: vault
