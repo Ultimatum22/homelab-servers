@@ -43,10 +43,11 @@
           content: "{{ vault_root_token }}"
           dest: "./vault_root_token.txt"
 
-      - name: Get vault_root_token.json
+      - name: Get vault_root_token.txt
         ansible.builtin.fetch:
           src: ./vault_root_token.txt
           dest: ./../../.secrets/.vault_root_token.txt
+          flat: true
       no_log: false
       run_once: true
       when:
