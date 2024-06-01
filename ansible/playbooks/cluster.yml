@@ -3,7 +3,7 @@
   become: true
   roles:
     - role: bootstrap
-    # - role: docker
-    - role: consul
-    - role: nomad
-    - role: vault
+    - role: docker
+    # - role: consul
+    # - role: nomad
+    # - role: vault
