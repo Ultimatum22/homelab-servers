@@ -1,6 +1,8 @@
 ---
-- name: Upgrade system for {{ ansible_facts['os_family'] }}
-  ansible.builtin.include_tasks: 00-packages-{{ ansible_facts['os_family'] | lower }}.yml
+- name: Include OS-specific package tasks
+  ansible.builtin.include_tasks: "packages/{{ ansible_os_family | lower }}.yml"
+  tags: packages
 
-- name: Install generic UFW rules
-  ansible.builtin.include_tasks: 20-ufw.yml
+- name: Include OS-specific UFW tasks
+  ansible.builtin.include_tasks: "ufw/{{ ansible_os_family | lower }}.yml"
+  tags: ufw

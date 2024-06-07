@@ -1,5 +1,5 @@
 ---
-- hosts: nas-archlinux
+- hosts: nas
   become: true
   roles:
     - role: bootstrap

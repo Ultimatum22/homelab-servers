@@ -1,0 +1,5 @@
+---
+- name: Update all packages on Archlinux
+  pacman:
+    update_cache: yes
+    upgrade: yes

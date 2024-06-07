@@ -1,0 +1,15 @@
+---
+- name: Install UFW on Debian
+  apt:
+    name: ufw
+    state: present
+
+- name: Enable UFW
+  command: ufw --force enable
+
+- name: Configure UFW rules on Debian
+  ufw:
+    rule: "{{ item.rule }}"
+    port: "{{ item.port }}"
+    proto: tcp
+  loop: "{{ ufw_rules }}"

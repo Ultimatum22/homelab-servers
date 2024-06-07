@@ -9,6 +9,9 @@ dev.docs:
 ansible.install:
 	cd ansible && ansible-galaxy install -r requirements.yml
 
+ansible.nas:
+	cd ansible && ansible-playbook playbooks/nas.yml
+
 # Vagrant
 vagrant.cluster.up:
 	cd vagrant && VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 vagrant up cluster-node1 cluster-node2 cluster-node3 cluster-node4
