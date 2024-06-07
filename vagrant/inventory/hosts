@@ -3,23 +3,15 @@ cluster-node1 ansible_host=192.168.56.11
 cluster-node2 ansible_host=192.168.56.12
 cluster-node3 ansible_host=192.168.56.13
 cluster-node4 ansible_host=192.168.56.14
-nas ansible_host=192.168.56.19
+nas-archlinux ansible_host=192.168.56.119
 
 [all:vars]
 ansible_user=vagrant
 ansible_python_interpreter=/usr/bin/python3
 ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
 
-[bootstrap]
-cluster-node1
-cluster-node2
-cluster-node3
-cluster-node4 apt_caching_proxy=true
-
-[bootstrap:vars]
-ansible_connection=ssh
-ansible_ssh_user=vagrant
-ansible_ssh_pass=vagrant
+[nas]
+nas-archlinux
 
 [cluster]
 cluster-node1
