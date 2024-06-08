@@ -1,0 +1,21 @@
+# docker/Dockerfile.archlinux
+FROM archlinux
+
+# Install necessary packages
+RUN pacman -Sy --noconfirm && \
+    pacman -S --noconfirm ansible openssh python
+
+# Setup SSH
+RUN mkdir -p /root/.ssh && \
+    cp _keys/id_rsa.pub /root/.ssh/authorized_keys && \
+    chmod 700 /root/.ssh && \
+    chmod 600 /root/.ssh/authorized_keys
+
+# Copy ansible playbook and configuration
+COPY ansible.cfg /etc/ansible/ansible.cfg
+COPY inventory/hosts /etc/ansible/hosts
+COPY playbooks/nas.yml /root/nas.yml
+COPY ansible-extra-vars.yml /root/ansible-extra-vars.yml
+
+# Run ansible playbook
+CMD ["ansible-playbook", "/root/nas.yml", "-i", "/etc/ansible/hosts", "--extra-vars", "@/root/ansible-extra-vars.yml"]

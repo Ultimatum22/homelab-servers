@@ -1,0 +1,23 @@
+# docker/Dockerfile.debian
+FROM debian:bookworm
+
+# Install necessary packages
+RUN apt-get update && apt-get install -y \
+    ansible \
+    ssh \
+    && apt-get clean
+
+# Copy SSH keys (assuming you have these keys available)
+COPY _keys/id_rsa.pub /root/.ssh/authorized_keys
+RUN chmod 600 /root/.ssh/authorized_keys && \
+    chmod 700 /root/.ssh && \
+    chown -R root:root /root/.ssh
+
+# Copy ansible playbook and configuration
+COPY ansible.cfg /etc/ansible/ansible.cfg
+COPY inventory/hosts /etc/ansible/hosts
+COPY playbook.yml /root/playbook.yml
+COPY ansible-extra-vars.yml /root/ansible-extra-vars.yml
+
+# Run ansible playbook (use ENTRYPOINT or CMD to run this as needed)
+CMD ["ansible-playbook", "/root/playbook.yml", "-i", "/etc/ansible/hosts", "--extra-vars", "@/root/ansible-extra-vars.yml"]

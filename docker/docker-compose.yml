@@ -1,0 +1,57 @@
+services:
+  cluster-node1:
+    build:
+      context: .
+      dockerfile: Dockerfile.debian
+    networks:
+      cluster_net:
+        ipv4_address: 192.168.56.11
+    volumes:
+      - ./disks/cluster-node1:/data
+
+  cluster-node2:
+    build:
+      context: .
+      dockerfile: Dockerfile.debian
+    networks:
+      cluster_net:
+        ipv4_address: 192.168.56.12
+    volumes:
+      - ./disks/cluster-node2:/data
+
+  cluster-node3:
+    build:
+      context: .
+      dockerfile: Dockerfile.debian
+    networks:
+      cluster_net:
+        ipv4_address: 192.168.56.13
+    volumes:
+      - ./disks/cluster-node3:/data
+
+  cluster-node4:
+    build:
+      context: .
+      dockerfile: Dockerfile.debian
+    networks:
+      cluster_net:
+        ipv4_address: 192.168.56.14
+    volumes:
+      - ./disks/cluster-node4:/data
+
+  nas-archlinux:
+    build:
+      context: .
+      dockerfile: Dockerfile.archlinux
+    networks:
+      cluster_net:
+        ipv4_address: 192.168.56.20
+    volumes:
+      - ./disks/nas-archlinux:/data
+
+networks:
+  cluster_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.56.0/24
