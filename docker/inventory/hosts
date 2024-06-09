@@ -3,12 +3,12 @@ cluster-node1 ansible_host=192.168.56.11
 cluster-node2 ansible_host=192.168.56.12
 cluster-node3 ansible_host=192.168.56.13
 cluster-node4 ansible_host=192.168.56.14
-nas-archlinux ansible_host=192.168.56.21
+nas-archlinux ansible_host=192.168.56.20
 
 [all:vars]
-ansible_user=vagrant
+ansible_user=ansible
 ansible_python_interpreter=/usr/bin/python3
-ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+ansible_ssh_private_key_file=_keys/id_rsa
 
 [nas]
 nas-archlinux
