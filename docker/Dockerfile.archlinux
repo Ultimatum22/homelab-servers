@@ -3,7 +3,7 @@ FROM archlinux:latest
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN pacman -Syu --noconfirm && \
-    pacman -S --noconfirm openssh python python-pip sudo iptables ufw && \
+    pacman -S --noconfirm openssh python python-pip sudo iptables ufw tar curl && \
     pacman -Scc --noconfirm
 
 RUN useradd -m ansible && echo "ansible:ansible" | chpasswd && \
@@ -26,6 +26,7 @@ RUN mkdir /var/run/sshd && \
 # Disable IPv6 in ufw
 RUN sed -i 's/IPV6=yes/IPV6=no/' /etc/default/ufw
 
-EXPOSE 22
-
+# Start sshd as the main process
 CMD ["/usr/sbin/sshd", "-D"]
+
+EXPOSE 22

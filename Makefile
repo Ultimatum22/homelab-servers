@@ -12,6 +12,23 @@ ansible.install:
 ansible.nas:
 	cd ansible && ansible-playbook playbooks/nas.yml
 
+# Docker
+docker.nas.up:
+	cd docker && docker compose up -d nas-archlinux
+
+docker.nas.restart:
+	cd docker && docker rm -f nas-archlinux && docker compose up -d nas-archlinux
+
+docker.nas.destroy:
+	cd docker && docker rm -f nas-archlinux
+
+docker.nas.provision:
+	cd docker && ansible-playbook playbooks/nas.yml
+
+docker.nas.up.build:
+	cd docker && docker compose up -d nas-archlinux --build
+
+
 # Vagrant
 vagrant.cluster.up:
 	cd vagrant && VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 vagrant up cluster-node1 cluster-node2 cluster-node3 cluster-node4
