@@ -1,7 +1,17 @@
 ---
-# roles/docker/handlers/main.yml
-
 - name: restart docker
-  systemd:
+  become: true
+  service:
     name: docker
+    state: '{{ docker_restart_handler_state }}'
+
+- name: reload systemd daemon
+  become: true
+  systemd:
+    daemon_reload: true
+
+- name: restart containerd
+  become: true
+  systemd:
+    name: containerd
     state: restarted
