@@ -44,18 +44,18 @@ services:
       - ./disks/cluster-node4:/data
 
   nas-archlinux:
-    container_name: nas-archlinux
     build:
       context: .
       dockerfile: Dockerfile.archlinux
     networks:
       cluster_net:
         ipv4_address: 192.168.56.20
+    privileged: true
     volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
       - ./disks/nas-archlinux:/data
-    privileged: true  # Add this line
-    cap_add:
-      - NET_ADMIN
+    ports:
+      - "22:22"
 
 networks:
   cluster_net:

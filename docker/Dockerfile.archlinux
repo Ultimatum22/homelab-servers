@@ -3,7 +3,7 @@ FROM archlinux:latest
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN pacman -Syu --noconfirm && \
-    pacman -S --noconfirm openssh python python-pip sudo iptables ufw tar curl && \
+    pacman -S --noconfirm openssh python python-pip sudo iptables ufw tar curl docker wget && \
     pacman -Scc --noconfirm
 
 RUN useradd -m ansible && echo "ansible:ansible" | chpasswd && \
@@ -18,15 +18,20 @@ RUN echo "ansible ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 RUN ssh-keygen -A
 
-RUN mkdir /var/run/sshd && \
-    echo 'PermitRootLogin no' >> /etc/ssh/sshd_config && \
+RUN echo 'PermitRootLogin no' >> /etc/ssh/sshd_config && \
     echo 'PasswordAuthentication no' >> /etc/ssh/sshd_config && \
     echo 'AllowUsers ansible' >> /etc/ssh/sshd_config
 
 # Disable IPv6 in ufw
 RUN sed -i 's/IPV6=yes/IPV6=no/' /etc/default/ufw
 
-# Start sshd as the main process
-CMD ["/usr/sbin/sshd", "-D"]
+# Enable systemd
+RUN mkdir -p /etc/systemd/system
+RUN systemctl mask dev-mqueue.mount sys-fs-fuse-connections.mount sys-kernel-config.mount
+RUN systemctl set-default multi-user.target
+
+VOLUME [ "/sys/fs/cgroup" ]
 
 EXPOSE 22
+
+CMD ["/usr/lib/systemd/systemd"]
