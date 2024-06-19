@@ -43,23 +43,20 @@ services:
     volumes:
       - ./disks/cluster-node4:/data
 
-  nas-archlinux:
+  nas:
+    container_name: nas
     build:
       context: .
-      dockerfile: Dockerfile.archlinux
+      dockerfile: Dockerfile.debian
     networks:
       cluster_net:
-        ipv4_address: 192.168.56.20
-    privileged: true
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-      - ./disks/nas-archlinux:/data
+        ipv4_address: 172.18.0.22
     ports:
-      - "22:22"
+      - "2222:22"
 
 networks:
   cluster_net:
     driver: bridge
     ipam:
       config:
-        - subnet: 192.168.56.0/24
+        - subnet: 172.18.0.0/16

@@ -1,4 +1,4 @@
-# docker/Dockerfile.debian
+# Use the official Debian image from the Docker Hub
 FROM debian:bookworm
 
 # Install necessary packages
@@ -7,17 +7,20 @@ RUN apt-get update && apt-get install -y \
     ssh \
     && apt-get clean
 
-# Copy SSH keys (assuming you have these keys available)
-COPY _keys/id_rsa.pub /root/.ssh/authorized_keys
-RUN chmod 600 /root/.ssh/authorized_keys && \
-    chmod 700 /root/.ssh && \
-    chown -R root:root /root/.ssh
+# Create Ansible user with passwordless sudo
+RUN useradd -ms /bin/bash ansible && \
+    echo 'ansible ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-# Copy ansible playbook and configuration
-COPY ansible.cfg /etc/ansible/ansible.cfg
-COPY inventory/hosts /etc/ansible/hosts
-COPY playbook.yml /root/playbook.yml
-COPY ansible-extra-vars.yml /root/ansible-extra-vars.yml
+# Set up SSH for Ansible
+RUN mkdir /var/run/sshd
+RUN echo 'ansible:ansible' | chpasswd
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+RUN mkdir /home/ansible/.ssh && \
+    touch /home/ansible/.ssh/authorized_keys
 
-# Run ansible playbook (use ENTRYPOINT or CMD to run this as needed)
-CMD ["ansible-playbook", "/root/playbook.yml", "-i", "/etc/ansible/hosts", "--extra-vars", "@/root/ansible-extra-vars.yml"]
+# Expose SSH port
+EXPOSE 22
+
+# Start SSH service
+CMD ["/usr/sbin/sshd", "-D"]

@@ -14,20 +14,19 @@ ansible.nas:
 
 # Docker
 docker.nas.up:
-	cd docker && docker compose up -d nas-archlinux
+	cd docker && docker compose up -d nas
+
+docker.nas.up.build:
+	cd docker && docker compose up -d nas --build
 
 docker.nas.restart:
-	cd docker && docker rm -f nas-archlinux && docker compose up -d nas-archlinux
+	cd docker && docker rm -f nas && docker compose up -d nas
 
 docker.nas.destroy:
-	cd docker && docker rm -f nas-archlinux
+	cd docker && docker rm -f nas
 
 docker.nas.provision:
 	cd docker && ansible-playbook playbooks/nas.yml
-
-docker.nas.up.build:
-	cd docker && docker compose up -d nas-archlinux --build
-
 
 # Vagrant
 vagrant.cluster.up:
