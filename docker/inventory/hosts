@@ -3,7 +3,7 @@ cluster-node1 ansible_host=192.168.56.11
 cluster-node2 ansible_host=192.168.56.12
 cluster-node3 ansible_host=192.168.56.13
 cluster-node4 ansible_host=192.168.56.14
-nas ansible_host=localhost ansible_port=2222
+nas ansible_host=172.18.0.22 ansible_user=root ansible_password=root ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
 
 [all:vars]

@@ -51,8 +51,11 @@ services:
     networks:
       cluster_net:
         ipv4_address: 172.18.0.22
+    privileged: true
     ports:
       - "2222:22"
+    volumes:
+      - ./ansible:/ansible
 
 networks:
   cluster_net:

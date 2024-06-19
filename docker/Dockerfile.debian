@@ -1,26 +1,25 @@
-# Use the official Debian image from the Docker Hub
-FROM debian:bookworm
+FROM debian:latest
 
-# Install necessary packages
-RUN apt-get update && apt-get install -y \
-    ansible \
-    ssh \
-    && apt-get clean
+# Install required packages
+RUN apt-get update && \
+    apt-get install -y ansible sudo sshpass openssh-server iproute2
 
-# Create Ansible user with passwordless sudo
-RUN useradd -ms /bin/bash ansible && \
-    echo 'ansible ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-# Set up SSH for Ansible
-RUN mkdir /var/run/sshd
-RUN echo 'ansible:ansible' | chpasswd
-RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-RUN sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
-RUN mkdir /home/ansible/.ssh && \
-    touch /home/ansible/.ssh/authorized_keys
+# Create a directory for the Ansible playbook
+RUN mkdir /ansible
+
+# Set the working directory
+WORKDIR /ansible
+
+# Configure SSH server
+RUN mkdir /var/run/sshd && \
+    echo 'root:root' | chpasswd && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config && \
+    echo "export VISIBLE=now" >> /etc/profile
 
 # Expose SSH port
 EXPOSE 22
 
-# Start SSH service
+# Command to start SSH service
 CMD ["/usr/sbin/sshd", "-D"]
