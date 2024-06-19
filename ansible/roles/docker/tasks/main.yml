@@ -1,47 +1,50 @@
 ---
-# @todo Improvement: Complete documentation
-# @todo Test: Complete
-- name: Include variables based on the operating system
-  include_vars: '{{ ansible_os_family }}.yml'
+# roles/docker/tasks/main.yml
 
-- name: Ensure old versions of Docker are not installed
-  become: true
-  block:
-    - name: Ensure "docker" is not installed
-      package:
-        name: docker
-        state: absent
-    - name: Ensure "docker-common" is not installed
-      package:
-        name: docker-common
-        state: absent
-    - name: Ensure "docker-engine" is not installed
-      package:
-        name: docker-engine
-        state: absent
+- name: Ensure necessary dependencies are installed
+  pacman:
+    name:
+      - tar
+      - curl
+    state: present
+    update_cache: yes
 
-- name: Include tasks based on the operating system
-  become: true
-  block:
-    - include_tasks: 'install-{{ ansible_os_family }}.yml'
+- name: Download Docker tarball
+  command: curl -L -o /tmp/docker-20.10.7.tgz https://download.docker.com/linux/static/stable/x86_64/docker-20.10.7.tgz
+  register: download_docker
+  changed_when: "'/tmp/docker-20.10.7.tgz' in download_docker.stdout"
 
-- name: Ensure handlers are notified now to avoid firewall conflicts.
-  meta: flush_handlers
+- name: Extract Docker tarball
+  command: tar -xzf /tmp/docker-20.10.7.tgz -C /usr/local/bin --strip-components=1
 
-# @action Installs docker-compose
-# Installs docker-compose if the `docker_install_compose` variable is set to true.
-# docker-compose allows you to configure Docker containers in groups.
-- name: Install Docker Compose (based on OS)
-  become: true
-  block:
-    - include_tasks: 'compose-{{ ansible_os_family }}.yml'
-  when: docker_install_compose | bool
+- name: Set permissions for Docker binaries
+  file:
+    path: "/usr/local/bin/{{ item }}"
+    mode: '0755'
+  with_items:
+    - docker
+    - containerd
+    - containerd-shim
+    - ctr
+    - dockerd
+    - docker-init
+    - docker-proxy
+    - runc
 
-# @action Adds specified users to docker group
-# If the variable `docker_users` is set to an array of usernames then those users
-# will be added to the docker group which allows them access to Docker.
-- name: Add users to the "docker" group (based on OS)
-  become: true
-  block:
-    - include_tasks: 'users-{{ ansible_os_family }}.yml'
-  when: docker_users | length > 0
+- name: Copy Docker systemd service file
+  copy:
+    src: docker.service
+    dest: /etc/systemd/system/docker.service
+    mode: '0644'
+  notify:
+    - restart docker
+
+- name: Reload systemd daemon to apply Docker service
+  systemd:
+    daemon_reload: yes
+
+- name: Enable and start Docker service
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
