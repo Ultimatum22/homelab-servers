@@ -1,0 +1,40 @@
+name: venv
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1=conda_forge
+  - _openmp_mutex=4.5=2_gnu
+  - ansible=10.1.0=pyh707e725_0
+  - ansible-core=2.17.1=pyh707e725_0
+  - bzip2=1.0.8=h5eee18b_6
+  - ca-certificates=2024.6.2=hbcca054_0
+  - cffi=1.16.0=py311hb3a22ac_0
+  - cryptography=42.0.8=py311h4a61cc7_0
+  - jinja2=3.1.4=pyhd8ed1ab_0
+  - ld_impl_linux-64=2.38=h1181459_1
+  - libffi=3.4.4=h6a678d5_1
+  - libgcc-ng=13.2.0=h77fa898_10
+  - libgomp=13.2.0=h77fa898_10
+  - libstdcxx-ng=11.2.0=h1234567_1
+  - libuuid=1.41.5=h5eee18b_0
+  - markupsafe=2.1.5=py311h459d7ec_0
+  - ncurses=6.4=h6a678d5_0
+  - openssl=3.3.1=h4ab18f5_0
+  - packaging=24.1=pyhd8ed1ab_0
+  - pip=24.0=py311h06a4308_0
+  - pycparser=2.22=pyhd8ed1ab_0
+  - python=3.11.9=h955ad1f_0
+  - python_abi=3.11=2_cp311
+  - pyyaml=6.0.1=py311h459d7ec_1
+  - readline=8.2=h5eee18b_0
+  - resolvelib=1.0.1=pyhd8ed1ab_0
+  - setuptools=69.5.1=py311h06a4308_0
+  - sqlite=3.45.3=h5eee18b_0
+  - tk=8.6.14=h39e8969_0
+  - tzdata=2024a=h04d1e81_0
+  - wheel=0.43.0=py311h06a4308_0
+  - xz=5.4.6=h5eee18b_1
+  - yaml=0.2.5=h7f98852_2
+  - zlib=1.2.13=h5eee18b_1
+prefix: /home/dave/anaconda3/envs/venv
