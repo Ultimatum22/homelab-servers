@@ -1,9 +1,9 @@
 ---
-- name: Install Python packages from requirements file
+- name: Install lxml
   become: true
-  ansible.builtin.pip:
-    name: lxml
-    state: latest
+  ansible.builtin.package:
+    name: python3-lxml
+    state: present
 
 - name: Create directories
   ansible.builtin.file:
