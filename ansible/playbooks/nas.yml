@@ -6,3 +6,6 @@
     - role: docker
     - role: homepage
     - role: vpn
+    - role: radarr
+    - role: readarr
+    - role: sonarr

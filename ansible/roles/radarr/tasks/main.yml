@@ -1,0 +1,50 @@
+---
+- name: Install Python packages from requirements file
+  become: true
+  ansible.builtin.pip:
+    name: lxml
+    state: latest
+
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ docker_radarr.config }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0775
+
+- name: Create and start container
+  community.docker.docker_container:
+    name: radarr
+    image: linuxserver/radarr:5.3.6
+    network_mode: container:vpn
+    pull: yes
+    recreate: true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - "{{ docker_radarr.config }}:/config"
+      - "{{ docker_media_movies }}:/data/movies"
+      - "{{ docker_media_downloads }}:/downloads"
+    restart_policy: unless-stopped
+    state: started
+    labels:
+      homepage.group: PVR
+      homepage.name: Radarr
+      homepage.icon: radarr.svg
+      homepage.href: http://{{ url_radarr }}
+      homepage.description: Movie collection manager for Usenet and BitTorrent users
+      homepage.widget.type: radarr
+      homepage.widget.url: http://192.168.2.200:{{ docker_port_radarr_http }}
+      homepage.widget.key: "{{ secret_radarr_api_key }}"
+    env:
+      TZ: "{{ system_timezone }}"
+      PUID: "1000"
+      PGID: "1000"
+      DOCKER_MODS: ghcr.io/gilbn/theme.park:radarr
+      TP_THEME: "{{ theme_park_theme }}"
+
+- name: Settings Tasks
+  ansible.builtin.include_tasks: "settings.yml"
+
+#- name: VPN Tasks
+#  ansible.builtin.include_tasks: "vpn.yml"

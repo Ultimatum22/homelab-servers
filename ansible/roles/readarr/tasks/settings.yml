@@ -1,0 +1,56 @@
+---
+- name: Wait for 'config.xml' to be created
+  ansible.builtin.wait_for:
+    path: "{{ docker_readarr.config }}/config.xml"
+    state: present
+
+- name: Override API key
+  community.general.xml:
+    path: "{{ docker_readarr.config }}/config.xml"
+    xpath: /Config/ApiKey
+    value: "{{ secret_readarr_api_key }}"
+
+- name: Override AuthenticationRequired settings
+  community.general.xml:
+    path: "{{ docker_readarr.config }}/config.xml"
+    xpath: /Config/AnalyticsEnabled
+    value: "False"
+
+- name: Get infos on Readarr container
+  community.docker.docker_container_info:
+    name: readarr
+  register: container_info
+
+- name: "Wait for Readarr API to come up and returns a status 200"
+  ansible.builtin.uri:
+    url: "http://192.168.2.200:{{ docker_port_readarr_http }}/api/v1/system/status"
+    headers:
+      X-Api-Key: "{{ secret_readarr_api_key }}"
+  register: api_result
+  until: api_result.status == 200
+  retries: 30
+  delay: 1
+
+- name: "Add Root Folder"
+  ansible.builtin.uri:
+    url: "http://192.168.2.200:{{ docker_port_readarr_http }}/api/v1/rootFolder"
+    method: POST
+    status_code:
+      - 201
+      - 400
+    body: "{{ lookup('template', 'post_rootfolder_body.json.j2') }}"
+    body_format: json
+    headers:
+      X-Api-Key: "{{ secret_readarr_api_key }}"
+
+- name: "Add Download Client"
+  ansible.builtin.uri:
+    url: "http://192.168.2.200:{{ docker_port_readarr_http }}/api/v1/downloadclient"
+    method: POST
+    status_code:
+      - 201
+      - 400
+    body: "{{ lookup('template', 'post_downloadclient_body.json.j2') }}"
+    body_format: json
+    headers:
+      X-Api-Key: "{{ secret_readarr_api_key }}"

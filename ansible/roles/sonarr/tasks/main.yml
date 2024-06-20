@@ -1,0 +1,48 @@
+---
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ docker_sonarr.config }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0775
+
+- name: Create and start container
+  community.docker.docker_container:
+    name: sonarr
+    image: linuxserver/sonarr:4.0.2
+    network_mode: container:vpn
+    pull: yes
+    recreate: true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - "{{ docker_sonarr.config }}:/config"
+      - "{{ docker_media_tvshows }}:/data/tv"
+      - "{{ docker_media_downloads }}:/downloads"
+    networks:
+      - name: homelab
+        aliases:
+          - sonarr
+    restart_policy: unless-stopped
+    state: started
+    labels:
+      homepage.group: PVR
+      homepage.name: Sonarr
+      homepage.icon: sonarr.svg
+      homepage.href: http://{{ url_sonarr }}
+      homepage.description: PVR for Usenet and BitTorrent users
+      homepage.widget.type: sonarr
+      homepage.widget.url: http://192.168.2.200:{{ docker_port_sonarr_http }}
+      homepage.widget.key: "{{ secret_sonarr_api_key }}"
+    env:
+      TZ: "{{ system_timezone }}"
+      PUID: "{{ ansible_user_pid | int }}"
+      PGID: "{{ ansible_user_gid | int }}"
+      DOCKER_MODS: ghcr.io/gilbn/theme.park:sonarr
+      TP_THEME: "{{ theme_park_theme }}"
+
+- name: Settings Tasks
+  ansible.builtin.include_tasks: "settings.yml"
+
+#- name: VPN Tasks
+#  ansible.builtin.include_tasks: "vpn.yml"
