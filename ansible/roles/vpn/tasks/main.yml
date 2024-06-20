@@ -23,7 +23,7 @@
     image: "{{ docker_vpn.image }}"
     pull: yes
     recreate: true
-    image_name_mismatch: recreate
+    image_name_mismatch: "recreate"
     restart_policy: unless-stopped
     state: started
     capabilities:
