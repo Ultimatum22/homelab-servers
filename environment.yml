@@ -1,7 +1,7 @@
 name: venv
 channels:
-  - conda-forge
   - defaults
+  - conda-forge
 dependencies:
   - _libgcc_mutex=0.1=conda_forge
   - _openmp_mutex=4.5=2_gnu
@@ -37,4 +37,4 @@ dependencies:
   - xz=5.4.6=h5eee18b_1
   - yaml=0.2.5=h7f98852_2
   - zlib=1.2.13=h5eee18b_1
-prefix: /home/dave/anaconda3/envs/venv
+prefix: /home/dave/miniforge3/envs/venv
