@@ -1,0 +1,14 @@
+---
+# this is the user that has ssh access to these machines
+ansible_user: system
+ansible_user_pid: 1000
+ansible_user_gid: 1000
+
+# Set your timezone
+system_timezone: "Europe/Amsterdam"
+
+tmp_dir: "{{ x_ansible_download_dir | default(ansible_env.HOME + '/.ansible/tmp') }}"
+
+required_packages:
+  - figlet
+  - apt-config-auto-update

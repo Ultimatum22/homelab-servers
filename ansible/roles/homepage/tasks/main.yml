@@ -1,0 +1,56 @@
+---
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0775
+  with_items:
+    - "{{ docker_homepage.config }}"
+
+- name: Create network
+  docker_network:
+    name: homelab
+
+- name: Create and start dockerproxy container
+  community.general.docker_container:
+    name: dockerproxy
+    image: ghcr.io/tecnativa/docker-socket-proxy:latest
+    pull: yes
+    image_name_mismatch: recreate
+    recreate: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro  # Mounted as read-only
+    networks:
+      - name: homelab
+        aliases:
+          - dockerproxy
+    ports:
+      - 2375:2375
+    restart_policy: unless-stopped
+    state: started
+    env:
+      CONTAINERS: "1"  # Allow access to viewing containers
+      POST: "0"  # Disallow any POST operations (effectively read-only)
+
+- name: Create and start homepage container
+  community.general.docker_container:
+    name: homepage
+    image: ghcr.io/gethomepage/homepage:v0.8.10
+    pull: yes
+    recreate: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro  # Mounted as read-only
+      - "{{ docker_homepage.config }}:/app/config"
+    networks:
+      - name: homelab
+        aliases:
+          - homepage
+    ports:
+      - "{{ docker_port_homepage_http }}:{{ docker_port_homepage_http | int }}"
+    restart_policy: unless-stopped
+    state: started
+
+- name: Homepage Settings Tasks
+  ansible.builtin.include_tasks: "settings.yml"

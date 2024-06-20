@@ -1,0 +1,9 @@
+---
+docker_subnet: 172.28.10.0/24
+docker_gateway: 172.28.10.1
+local_subnet: 192.168.2.0/24
+local_docker_ip: 10.168.1.10
+
+server_countries: au534.nordvpn.com
+
+theme_park_theme: "nord"

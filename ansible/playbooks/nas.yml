@@ -4,3 +4,5 @@
   roles:
     - role: bootstrap
     - role: docker
+    - role: homepage
+    - role: vpn

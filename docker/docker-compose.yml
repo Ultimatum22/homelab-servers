@@ -43,8 +43,8 @@ services:
     volumes:
       - ./disks/cluster-node4:/data
 
-  nas:
-    container_name: nas
+  nas1:
+    container_name: nas1
     build:
       context: .
       dockerfile: Dockerfile.debian

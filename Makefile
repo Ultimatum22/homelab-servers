@@ -1,3 +1,6 @@
+VAULT_FILES=ansible/inventory/group_vars/*/secrets/*.yml
+VAULT_ID=default@.vault_pass
+
 # Dev
 dev.install:
 	rye sync
@@ -85,3 +88,11 @@ conda.export:
 
 conda.update:
 	conda update -n base -c conda-forge conda
+
+vault.encrypt:
+	@echo "Encrypt all Ansible vault files"
+	ansible-vault encrypt --vault-id $(VAULT_ID) $(VAULT_FILES)
+
+vault.decrypt:
+	@echo "Decrypt all Ansible vault files"
+	ansible-vault decrypt --vault-id $(VAULT_ID) $(VAULT_FILES)

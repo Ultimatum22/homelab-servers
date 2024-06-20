@@ -8,3 +8,6 @@ wheels/
 
 # venv
 .venv
+
+# ansible vault password
+.vault_pass

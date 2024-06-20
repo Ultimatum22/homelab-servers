@@ -1,0 +1,140 @@
+---
+docker_data_root: /mnt/data/docker/data
+docker_config_root: /mnt/data/docker/config
+
+docker_media: /mnt/data/media
+docker_media_audiobooks: "{{ docker_media }}/audiobooks"
+docker_media_ebooks: "{{ docker_media }}/ebooks"
+docker_media_comics: "{{ docker_media }}/comics"
+docker_media_movies: "{{ docker_media }}/movies"
+docker_media_music: "{{ docker_media }}/music"
+docker_media_tvshows: "{{ docker_media }}/tvshows"
+docker_media_adult: "{{ docker_media }}/adult"
+docker_media_blackhole: "{{ docker_media }}/blackhole"
+docker_media_downloads: "{{ docker_media }}/downloads"
+docker_media_downloads_complete: "{{ docker_media_downloads }}/complete"
+docker_media_downloads_incomplete: "{{ docker_media_downloads }}/incomplete"
+docker_media_downloads_watch: "{{ docker_media_downloads }}/watch"
+docker_media_arm: "{{ docker_media }}/arm"
+
+docker_homer:
+  data: "{{ docker_data_root }}/homer"
+  config: "{{ docker_config_root }}/homer"
+  title: "Homelab"
+  subtitle: "Homelab subtitle"
+  services:
+    - name: Download
+      icon: "fas fa-cloud-download-alt"
+    - name: PVR
+      icon: "fas fa-tv"
+    - name: homelab
+      icon: "fas fa-compact-disc"
+    - name: Tools
+      icon: "fas fa-tools"
+    - name: Monitoring
+      icon: "far fa-eye"
+    - name: Management
+      icon: "fas fa-user-shield"
+    - name: Finance
+      icon: "fas fa-user-shield"
+    - name: HomeAutomation
+      icon: "fas fa-user-shield"
+
+docker_data_flood: "{{ docker_data_root }}/flood"
+docker_config_flood: "{{ docker_config_root }}/flood"
+
+docker_jellyfin:
+  data: "{{ docker_data_root }}/jellyfin"
+  config: "{{ docker_config_root }}/jellyfin"
+
+docker_jellyfin_beta:
+  data: "{{ docker_data_root }}/jellyfin_beta"
+  config: "{{ docker_config_root }}/jellyfin_beta"
+
+docker_jellyseerr:
+  config: "{{ docker_config_root }}/jellyseerr"
+
+docker_scrutiny:
+  data: "{{ docker_data_root }}/scrutiny"
+  config: "{{ docker_config_root }}/scrutiny"
+
+docker_qbittorrent:
+  config: "{{ docker_config_root }}/qbittorrent"
+
+docker_utorrent:
+  data: "{{ docker_data_root }}/utorrent"
+
+docker_prowlarr:
+  config: "{{ docker_config_root }}/prowlarr"
+
+docker_radarr:
+  config: "{{ docker_config_root }}/radarr"
+
+docker_readarr:
+  config: "{{ docker_config_root }}/readarr"
+
+docker_sonarr:
+  config: "{{ docker_config_root }}/sonarr"
+
+docker_whisparr:
+  config: "{{ docker_config_root }}/whisparr"
+
+docker_jackett:
+  config: "{{ docker_config_root }}/jackett"
+
+docker_bazarr:
+  config: "{{ docker_config_root }}/bazarr"
+
+docker_speedtesttracker:
+  config: "{{ docker_config_root }}/speedtesttracker"
+
+docker_librespeed:
+  config: "{{ docker_config_root }}/librespeed"
+
+docker_stash:
+  config: "{{ docker_config_root }}/stash"
+  data: "{{ docker_data_root }}/stash"
+
+docker_sabnzbd:
+  config: "{{ docker_config_root }}/sabnzbd"
+
+docker_firefly_iii:
+  upload: "{{ docker_config_root }}/firefly_iii/upload"
+  export: "{{ docker_config_root }}/firefly_iii/export"
+  database: "{{ docker_config_root }}/firefly_iii/database"
+
+docker_esphome:
+  config: "{{ docker_config_root }}/esphome"
+
+docker_homepage:
+  config: "{{ docker_config_root }}/homepage"
+  image: ghcr.io/gethomepage/homepage:v0.9.2
+
+docker_gotify:
+  data: "{{ docker_data_root }}/gotify"
+
+docker_diun:
+  data: "{{ docker_data_root }}/diun"
+
+docker_tgtg:
+  config: "{{ docker_config_root }}/tgtg"
+
+docker_duplicati:
+  config: "{{ docker_config_root }}/duplicati"
+  data: "{{ docker_data_root }}/duplicati"
+
+docker_backup:
+  restic: "{{ docker_data_root }}/restic"
+
+docker_vpn:
+  config: "{{ docker_config_root }}/vpn"
+  image: qmcgaw/gluetun:v3.38
+
+minecraft:
+  data_modpacks: "{{ docker_data_root }}/minecraft/modpacks"
+  data_create: "{{ docker_data_root }}/minecraft/create"
+  data_pixelmon: "{{ docker_data_root }}/minecraft/pixelmon"
+
+core_keeper:
+  files: "{{ docker_data_root }}/core_keeper/files"
+  data: "{{ docker_data_root }}/core_keeper/data"
