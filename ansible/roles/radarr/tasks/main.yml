@@ -16,10 +16,11 @@
 - name: Create and start container
   community.docker.docker_container:
     name: radarr
-    image: linuxserver/radarr:5.3.6
+    image: "{{ docker_radarr.image }}"
     network_mode: container:vpn
     pull: yes
     recreate: true
+    image_name_mismatch: "recreate"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - "{{ docker_radarr.config }}:/config"
@@ -34,7 +35,7 @@
       homepage.href: http://{{ url_radarr }}
       homepage.description: Movie collection manager for Usenet and BitTorrent users
       homepage.widget.type: radarr
-      homepage.widget.url: http://192.168.2.200:{{ docker_port_radarr_http }}
+      homepage.widget.url: http://{{ host_poseidon_ip }}:{{ docker_port_radarr_http }}
       homepage.widget.key: "{{ secret_radarr_api_key }}"
     env:
       TZ: "{{ system_timezone }}"

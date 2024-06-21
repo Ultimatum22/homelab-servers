@@ -69,12 +69,15 @@ docker_prowlarr:
 
 docker_radarr:
   config: "{{ docker_config_root }}/radarr"
+  image: linuxserver/radarr:5.7.0
 
 docker_readarr:
   config: "{{ docker_config_root }}/readarr"
+  image: linuxserver/readarr:0.3.28-develop
 
 docker_sonarr:
   config: "{{ docker_config_root }}/sonarr"
+  image: linuxserver/sonarr:4.0.5
 
 docker_whisparr:
   config: "{{ docker_config_root }}/whisparr"

@@ -1,5 +1,5 @@
 [all]
-poseidon ansible_host=192.168.2.200
+poseidon ansible_host={{ host_poseidon_ip }}
 
 [all:vars]
 ansible_user=system

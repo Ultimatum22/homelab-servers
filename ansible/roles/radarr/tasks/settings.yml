@@ -23,7 +23,7 @@
 
 - name: "Wait for Radarr API to come up and returns a status 200"
   ansible.builtin.uri:
-    url: "http://192.168.2.200:{{ docker_port_radarr_http }}/api/v3/system/status"
+    url: "http://{{ host_poseidon_ip }}:{{ docker_port_radarr_http }}/api/v3/system/status"
     headers:
       X-Api-Key: "{{ secret_radarr_api_key }}"
   register: api_result
@@ -33,7 +33,7 @@
 
 - name: "Add Root Folder"
   ansible.builtin.uri:
-    url: "http://192.168.2.200:{{ docker_port_radarr_http }}/api/v3/rootFolder"
+    url: "http://{{ host_poseidon_ip }}:{{ docker_port_radarr_http }}/api/v3/rootFolder"
     method: POST
     status_code:
       - 201
@@ -45,7 +45,7 @@
 
 - name: "Add Download Client"
   ansible.builtin.uri:
-    url: "http://192.168.2.200:{{ docker_port_radarr_http }}/api/v3/downloadclient"
+    url: "http://{{ host_poseidon_ip }}:{{ docker_port_radarr_http }}/api/v3/downloadclient"
     method: POST
     status_code:
       - 201
@@ -57,7 +57,7 @@
 
 - name: "Add Notification"
   ansible.builtin.uri:
-    url: "http://192.168.2.200:{{ docker_port_radarr_http }}/api/v3/notification"
+    url: "http://{{ host_poseidon_ip }}:{{ docker_port_radarr_http }}/api/v3/notification"
     method: POST
     status_code:
       - 201
@@ -69,7 +69,7 @@
 
 - name: "Add MediaManagementConfig"
   ansible.builtin.uri:
-    url: "http://192.168.2.200:{{ docker_port_radarr_http }}/api/v3/config/mediamanagement/1"
+    url: "http://{{ host_poseidon_ip }}:{{ docker_port_radarr_http }}/api/v3/config/mediamanagement/1"
     method: PUT
     status_code:
       - 202
@@ -81,7 +81,7 @@
 
 - name: "Add Naming"
   ansible.builtin.uri:
-    url: "http://192.168.2.200:{{ docker_port_radarr_http }}/api/v3/config/naming/1"
+    url: "http://{{ host_poseidon_ip }}:{{ docker_port_radarr_http }}/api/v3/config/naming/1"
     method: PUT
     status_code:
       - 202

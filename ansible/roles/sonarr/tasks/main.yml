@@ -10,10 +10,11 @@
 - name: Create and start container
   community.docker.docker_container:
     name: sonarr
-    image: linuxserver/sonarr:4.0.2
+    image: "{{ docker_sonarr.image }}"
     network_mode: container:vpn
     pull: yes
     recreate: true
+    image_name_mismatch: "recreate"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - "{{ docker_sonarr.config }}:/config"
@@ -32,7 +33,7 @@
       homepage.href: http://{{ url_sonarr }}
       homepage.description: PVR for Usenet and BitTorrent users
       homepage.widget.type: sonarr
-      homepage.widget.url: http://192.168.2.200:{{ docker_port_sonarr_http }}
+      homepage.widget.url: http://{{ host_poseidon_ip }}:{{ docker_port_sonarr_http }}
       homepage.widget.key: "{{ secret_sonarr_api_key }}"
     env:
       TZ: "{{ system_timezone }}"

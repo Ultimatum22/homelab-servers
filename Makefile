@@ -29,7 +29,7 @@ docker.nas.destroy:
 	cd docker && docker rm -f nas
 
 docker.nas.provision:
-	cd docker && ansible-playbook --vault-id default@../.vault_pass playbooks/nas.yml
+	cd docker && ansible-playbook --extra-vars "@./ansible-extra-vars.yml" --vault-id default@../.vault_pass playbooks/nas.yml
 
 # Vagrant
 vagrant.cluster.up:

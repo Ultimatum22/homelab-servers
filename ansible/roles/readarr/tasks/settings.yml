@@ -23,7 +23,7 @@
 
 - name: "Wait for Readarr API to come up and returns a status 200"
   ansible.builtin.uri:
-    url: "http://192.168.2.200:{{ docker_port_readarr_http }}/api/v1/system/status"
+    url: "http://{{ host_poseidon_ip }}:{{ docker_port_readarr_http }}/api/v1/system/status"
     headers:
       X-Api-Key: "{{ secret_readarr_api_key }}"
   register: api_result
@@ -33,7 +33,7 @@
 
 - name: "Add Root Folder"
   ansible.builtin.uri:
-    url: "http://192.168.2.200:{{ docker_port_readarr_http }}/api/v1/rootFolder"
+    url: "http://{{ host_poseidon_ip }}:{{ docker_port_readarr_http }}/api/v1/rootFolder"
     method: POST
     status_code:
       - 201
@@ -45,7 +45,7 @@
 
 - name: "Add Download Client"
   ansible.builtin.uri:
-    url: "http://192.168.2.200:{{ docker_port_readarr_http }}/api/v1/downloadclient"
+    url: "http://{{ host_poseidon_ip }}:{{ docker_port_readarr_http }}/api/v1/downloadclient"
     method: POST
     status_code:
       - 201
