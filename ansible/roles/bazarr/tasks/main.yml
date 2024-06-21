@@ -1,0 +1,41 @@
+---
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ docker_bazarr.config }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0775
+
+- name: Create and start container
+  community.docker.docker_container:
+    name: bazarr
+    image: "{{ docker_bazarr.image }}"
+    network_mode: container:vpn
+    pull: yes
+    recreate: true
+    volumes:
+      - "{{ docker_bazarr.config }}:/config"
+      - "{{ docker_media_tvshows }}:/data/tv"
+      - "{{ docker_media_movies }}:/data/movies"
+    restart_policy: unless-stopped
+    state: started
+    labels:
+      diun.enable: "true"
+      homepage.group: Tools
+      homepage.name: Bazarr
+      homepage.icon: bazarr.svg
+      homepage.href: http://{{ url_bazarr }}
+      homepage.description: Manage and download subtitles
+      homepage.widget.type: bazarr
+      homepage.widget.url: http://192.168.2.200:{{ docker_port_bazarr_http }}
+      homepage.widget.key: "{{ secret_bazarr_api_key }}"
+    env:
+      TZ: "{{ system_timezone }}"
+      PUID: "1000"
+      PGID: "1000"
+      DOCKER_MODS: ghcr.io/gilbn/theme.park:bazarr
+      TP_THEME: "{{ theme_park_theme }}"
+
+- name: Settings Tasks
+  ansible.builtin.include_tasks: "settings.yml"

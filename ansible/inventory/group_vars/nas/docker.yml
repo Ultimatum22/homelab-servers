@@ -63,9 +63,13 @@ docker_qbittorrent:
 
 docker_utorrent:
   data: "{{ docker_data_root }}/utorrent"
+  
+docker_flaresolverr:
+  image: ghcr.io/flaresolverr/flaresolverr:v3.3.18
 
 docker_prowlarr:
   config: "{{ docker_config_root }}/prowlarr"
+  image: linuxserver/prowlarr:1.18.0
 
 docker_radarr:
   config: "{{ docker_config_root }}/radarr"
@@ -87,6 +91,7 @@ docker_jackett:
 
 docker_bazarr:
   config: "{{ docker_config_root }}/bazarr"
+  image: linuxserver/bazarr:1.4.3
 
 docker_speedtesttracker:
   config: "{{ docker_config_root }}/speedtesttracker"

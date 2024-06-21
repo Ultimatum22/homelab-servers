@@ -1,0 +1,23 @@
+---
+- name: Create and start container
+  community.docker.docker_container:
+    name: flaresolverr
+    image: "{{ docker_flaresolverr.image }}"
+    network_mode: container:vpn
+    pull: yes
+    recreate: true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    restart_policy: unless-stopped
+    state: started
+    labels:
+      homepage.group: Tools
+      homepage.name: FlareSolverr
+      homepage.icon: https://avatars.githubusercontent.com/u/75936191?s=200&v=4
+      homepage.href: https://{{ url_flareresolver }}
+      homepage.description: FlareSolverr is a proxy server to bypass Cloudflare protection
+    env:
+      TZ: "{{ system_timezone }}"
+      LOG_LEVEL: "info"
+      LOG_HTML: "false"
+      CAPTCHA_SOLVER: "none"

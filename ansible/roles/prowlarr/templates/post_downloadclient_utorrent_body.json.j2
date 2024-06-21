@@ -1,0 +1,148 @@
+{
+  "enable": true,
+  "protocol": "torrent",
+  "priority": 1,
+  "categories": [],
+  "supportsCategories": true,
+  "name": "rTorrent",
+  "fields": [
+    {
+      "order": 0,
+      "name": "host",
+      "label": "Host",
+      "value": "localhost",
+      "type": "textbox",
+      "advanced": false,
+      "privacy": "normal",
+      "isFloat": false
+    },
+    {
+      "order": 1,
+      "name": "port",
+      "label": "Port",
+      "value": 8592,
+      "type": "textbox",
+      "advanced": false,
+      "privacy": "normal",
+      "isFloat": false
+    },
+    {
+      "order": 2,
+      "name": "useSsl",
+      "label": "Use SSL",
+      "helpText": "Use secure connection when connecting to ruTorrent",
+      "value": false,
+      "type": "checkbox",
+      "advanced": false,
+      "privacy": "normal",
+      "isFloat": false
+    },
+    {
+      "order": 3,
+      "name": "urlBase",
+      "label": "Url Path",
+      "helpText": "Path to the XMLRPC endpoint, see http(s)://[host]:[port]/[urlPath]. When using ruTorrent this usually is RPC2 or (path to ruTorrent)/plugins/rpc/rpc.php",
+      "value": "RPC2",
+      "type": "textbox",
+      "advanced": false,
+      "privacy": "normal",
+      "isFloat": false
+    },
+    {
+      "order": 4,
+      "name": "username",
+      "label": "Username",
+      "type": "textbox",
+      "advanced": false,
+      "privacy": "userName",
+      "isFloat": false
+    },
+    {
+      "order": 5,
+      "name": "password",
+      "label": "Password",
+      "type": "password",
+      "advanced": false,
+      "privacy": "password",
+      "isFloat": false
+    },
+    {
+      "order": 6,
+      "name": "category",
+      "label": "Default Category",
+      "helpText": "Default fallback category if no mapped category exists for a release. Adding a category specific to Prowlarr avoids conflicts with unrelated downloads, but it's optional.",
+      "value": "prowlarr",
+      "type": "textbox",
+      "advanced": false,
+      "privacy": "normal",
+      "isFloat": false
+    },
+    {
+      "order": 7,
+      "name": "directory",
+      "label": "Directory",
+      "helpText": "Optional location to put downloads in, leave blank to use the default rTorrent location",
+      "type": "textbox",
+      "advanced": true,
+      "privacy": "normal",
+      "isFloat": false
+    },
+    {
+      "order": 8,
+      "name": "priority",
+      "label": "Priority",
+      "helpText": "Priority to use when grabbing items",
+      "value": 2,
+      "type": "select",
+      "advanced": false,
+      "selectOptions": [
+        {
+          "value": 0,
+          "name": "DoNotDownload",
+          "order": 0,
+          "hint": "(0)"
+        },
+        {
+          "value": 1,
+          "name": "Low",
+          "order": 1,
+          "hint": "(1)"
+        },
+        {
+          "value": 2,
+          "name": "Normal",
+          "order": 2,
+          "hint": "(2)"
+        },
+        {
+          "value": 3,
+          "name": "High",
+          "order": 3,
+          "hint": "(3)"
+        }
+      ],
+      "privacy": "normal",
+      "isFloat": false
+    },
+    {
+      "order": 9,
+      "name": "addStopped",
+      "label": "Add Stopped",
+      "helpText": "Enabling will add torrents and magnets to ruTorrent in a stopped state",
+      "value": false,
+      "type": "checkbox",
+      "advanced": false,
+      "privacy": "normal",
+      "isFloat": false
+    }
+  ],
+  "implementationName": "rTorrent",
+  "implementation": "RTorrent",
+  "configContract": "RTorrentSettings",
+  "infoLink": "https://wiki.servarr.com/prowlarr/supported#rtorrent",
+  "message": {
+    "message": "Prowlarr is unable to remove torrents that have finished seeding when using rTorrent",
+    "type": "warning"
+  },
+  "tags": []
+}

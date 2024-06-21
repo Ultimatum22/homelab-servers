@@ -1,0 +1,71 @@
+---
+- name: Wait for 'config.ini' to be created
+  ansible.builtin.wait_for:
+    path: "{{ docker_bazarr.config }}/config/config.ini"
+    state: present
+
+- name: Override API key
+  community.general.ini_file:
+    path: "{{ docker_bazarr.config }}/config/config.ini"
+    section: auth
+    option: apikey
+    value: "{{ secret_bazarr_api_key }}"
+    state: present
+    exclusive: true
+
+- name: Enale radarr and sonarr
+  community.general.ini_file:
+    path: "{{ docker_bazarr.config }}/config/config.ini"
+    section: general
+    option: "{{ item }}"
+    value: True
+    state: present
+    exclusive: true
+  with_items:
+    - use_sonarr
+    - use_radarr
+
+- name: Set API key sonarr
+  community.general.ini_file:
+    path: "{{ docker_bazarr.config }}/config/config.ini"
+    section: sonarr
+    option: apikey
+    value: "{{ secret_sonarr_api_key }}"
+    state: present
+    exclusive: true
+
+- name: Set API key radarr
+  community.general.ini_file:
+    path: "{{ docker_bazarr.config }}/config/config.ini"
+    section: radarr
+    option: apikey
+    value: "{{ secret_radarr_api_key }}"
+    state: present
+    exclusive: true
+
+- name: Set providers
+  community.general.ini_file:
+    path: "{{ docker_bazarr.config }}/config/config.ini"
+    section: general
+    option: enabled_providers
+    value: "['opensubtitlescom', 'tvsubtitles', 'subf2m']"
+    state: present
+    exclusive: true
+
+- name: Set Opensubtitles.com providers credentials
+  community.general.ini_file:
+    path: "{{ docker_bazarr.config }}/config/config.ini"
+    section: opensubtitlescom
+    option: username
+    value: "{{ secret_bazarr_opensubtitlescom_username }}"
+    state: present
+    exclusive: true
+
+- name: Set Opensubtitles.com providers credentials
+  community.general.ini_file:
+    path: "{{ docker_bazarr.config }}/config/config.ini"
+    section: opensubtitlescom
+    option: password
+    value: "{{ secret_bazarr_opensubtitlescom_password }}"
+    state: present
+    exclusive: true

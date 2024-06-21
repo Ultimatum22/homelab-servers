@@ -1,0 +1,118 @@
+---
+- name: Wait for 'config.xml' to be created
+  ansible.builtin.wait_for:
+    path: "{{ docker_prowlarr.config }}/config.xml"
+    state: present
+
+- name: Override API key setting
+  community.general.xml:
+    path: "{{ docker_prowlarr.config }}/config.xml"
+    xpath: /Config/ApiKey
+    value: "{{ secret_prowlarr_api_key }}"
+
+- name: Override AuthenticationMethod settings
+  community.general.xml:
+    path: "{{ docker_prowlarr.config }}/config.xml"
+    xpath: /Config/AuthenticationMethod
+    value: "Basic"
+
+- name: Override AuthenticationRequired settings
+  community.general.xml:
+    path: "{{ docker_prowlarr.config }}/config.xml"
+    xpath: /Config/AuthenticationRequired
+    value: "DisabledForLocalAddresses"
+
+- name: Override AuthenticationRequired settings
+  community.general.xml:
+    path: "{{ docker_prowlarr.config }}/config.xml"
+    xpath: /Config/AnalyticsEnabled
+    value: "False"
+
+- name: Get infos on Prowlarr container
+  community.docker.docker_container_info:
+    name: prowlarr
+  register: container_info
+
+- name: "Wait for Prowlarr API to come up and returns a status 200"
+  ansible.builtin.uri:
+    url: "http://192.168.2.200:{{ docker_port_prowlarr_http }}/api/v1/system/status"
+    headers:
+      X-Api-Key: "{{ secret_prowlarr_api_key }}"
+  register: api_result
+  until: api_result.status == 200
+  retries: 30
+  delay: 1
+
+- name: "Add Download Client"
+  ansible.builtin.uri:
+    url: "http://192.168.2.200:{{ docker_port_prowlarr_http }}/api/v1/downloadclient"
+    method: POST
+    status_code:
+      - 201
+      - 400
+    body: "{{ lookup('template', 'post_downloadclient_utorrent_body.json.j2') }}"
+    body_format: json
+    headers:
+      X-Api-Key: "{{ secret_prowlarr_api_key }}"
+
+- name: "Add Tag"
+  ansible.builtin.uri:
+    url: "http://192.168.2.200:{{ docker_port_prowlarr_http }}/api/v1/tag"
+    method: POST
+    status_code:
+      - 201
+      - 400
+    body: "{{ lookup('template', 'post_tag_body.json.j2') }}"
+    body_format: json
+    headers:
+      X-Api-Key: "{{ secret_prowlarr_api_key }}"
+
+- name: "Add IndexerProxy"
+  ansible.builtin.uri:
+    url: "http://192.168.2.200:{{ docker_port_prowlarr_http }}/api/v1/indexerproxy"
+    method: POST
+    status_code:
+      - 201
+      - 400
+    body: "{{ lookup('template', 'post_indexerproxy_body.json.j2') }}"
+    body_format: json
+    headers:
+      X-Api-Key: "{{ secret_prowlarr_api_key }}"
+
+- name: "Add Indexer"
+  ansible.builtin.uri:
+    url: "http://192.168.2.200:{{ docker_port_prowlarr_http }}/api/v1/indexer"
+    method: POST
+    status_code:
+      - 201
+      - 400
+    body: "{{ lookup('template', 'post_indexer_{{ item }}_body.json.j2') }}"
+    body_format: json
+    headers:
+      X-Api-Key: "{{ secret_prowlarr_api_key }}"
+  with_items:
+    - magnet
+    - 1337x
+    - limetorrents
+    - yts
+    - btsow
+    - crackingpatching
+    - eztv
+    - pornotorrent
+
+- name: "Add Application"
+  ansible.builtin.uri:
+    url: "http://192.168.2.200:{{ docker_port_prowlarr_http }}/api/v1/applications"
+    method: POST
+    status_code:
+      - 201
+      - 400
+    body: "{{ lookup('template', 'post_application_{{ item }}_body.json.j2') }}"
+    body_format: json
+    headers:
+      X-Api-Key: "{{ secret_prowlarr_api_key }}"
+  with_items:
+    - radarr
+    - readarr
+    - sonarr
+    - whisparr

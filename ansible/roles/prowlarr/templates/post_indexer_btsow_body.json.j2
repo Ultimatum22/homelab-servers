@@ -1,0 +1,151 @@
+{
+  "indexerUrls": [
+    "https://btsow.bond/"
+  ],
+  "legacyUrls": [
+    "https://btsow.digital/",
+    "https://btsow.shop/",
+    "https://btsow.us/",
+    "https://btsow.one/",
+    "https://btsow.rest/",
+    "https://btsow.bar/",
+    "https://btsow.click/",
+    "https://btsow.cfd/",
+    "https://btsow.sbs/",
+    "https://btsow.quest/",
+    "https://btsow.autos/",
+    "https://btsow.beauty/",
+    "https://btsow.mom/",
+    "https://btsow.boats/",
+    "https://btsow.hair/"
+  ],
+  "definitionName": "btsow",
+  "description": "BTSOW is a Public torrent indexer",
+  "language": "en-US",
+  "encoding": "Unicode (UTF-8)",
+  "enable": true,
+  "redirect": false,
+  "supportsRss": true,
+  "supportsSearch": true,
+  "supportsRedirect": false,
+  "supportsPagination": false,
+  "appProfileId": 1,
+  "protocol": "torrent",
+  "privacy": "public",
+  "capabilities": {
+    "limitsMax": 100,
+    "limitsDefault": 100,
+    "categories": [
+      {
+        "id": 0,
+        "name": "Other",
+        "subCategories": []
+      }
+    ],
+    "supportsRawSearch": false,
+    "searchParams": [
+      "q",
+      "q"
+    ],
+    "tvSearchParams": [
+      "q",
+      "season",
+      "ep"
+    ],
+    "movieSearchParams": [
+      "q"
+    ],
+    "musicSearchParams": [
+      "q"
+    ],
+    "bookSearchParams": [
+      "q"
+    ]
+  },
+  "priority": 25,
+  "added": "2023-05-28T19:40:48Z",
+  "sortName": "btsow",
+  "name": "BTSOW",
+  "fields": [
+    {
+      "order": 0,
+      "name": "definitionFile",
+      "value": "btsow",
+      "type": "textbox",
+      "advanced": false,
+      "hidden": "hidden"
+    },
+    {
+      "order": 1,
+      "name": "baseUrl",
+      "label": "Base Url",
+      "helpText": "Select which baseurl Prowlarr will use for requests to the site",
+      "type": "select",
+      "advanced": false,
+      "selectOptionsProviderAction": "getUrls"
+    },
+    {
+      "order": 2,
+      "name": "baseSettings.queryLimit",
+      "label": "Query Limit",
+      "helpText": "The number of queries within a rolling 24 hour period Prowlarr will allow to the site",
+      "type": "number",
+      "advanced": true
+    },
+    {
+      "order": 3,
+      "name": "baseSettings.grabLimit",
+      "label": "Grab Limit",
+      "helpText": "The number of grabs within a rolling 24 hour period Prowlarr will allow to the site",
+      "type": "number",
+      "advanced": true
+    },
+    {
+      "order": 4,
+      "name": "torrentBaseSettings.appMinimumSeeders",
+      "label": "Apps Minimum Seeders",
+      "helpText": "Minimum seeders required by the Applications for the indexer to grab, empty is Sync profile's default",
+      "type": "number",
+      "advanced": true
+    },
+    {
+      "order": 5,
+      "name": "torrentBaseSettings.seedRatio",
+      "label": "Seed Ratio",
+      "helpText": "The ratio a torrent should reach before stopping, empty is app's default",
+      "type": "textbox",
+      "advanced": true
+    },
+    {
+      "order": 6,
+      "name": "torrentBaseSettings.seedTime",
+      "label": "Seed Time",
+      "unit": "minutes",
+      "helpText": "The time a torrent should be seeded before stopping, empty is app's default",
+      "type": "number",
+      "advanced": true
+    },
+    {
+      "order": 7,
+      "name": "torrentBaseSettings.packSeedTime",
+      "label": "Pack Seed Time",
+      "unit": "minutes",
+      "helpText": "The time a pack (season or discography) torrent should be seeded before stopping, empty is app's default",
+      "type": "number",
+      "advanced": true
+    },
+    {
+      "order": 0,
+      "name": "info_8000",
+      "label": "About BTSOW Categories",
+      "value": "BTSOW does not return categories in its search results.</br>To add to your Apps' Torznab indexer, replace all categories with 8000(Other).",
+      "type": "info",
+      "advanced": false
+    }
+  ],
+  "implementationName": "Cardigann",
+  "implementation": "Cardigann",
+  "configContract": "CardigannSettings",
+  "infoLink": "https://wiki.servarr.com/prowlarr/supported-indexers#btsow",
+  "tags": []
+}

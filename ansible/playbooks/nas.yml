@@ -2,10 +2,13 @@
 - hosts: nas
   become: true
   roles:
-    - role: bootstrap
-    - role: docker
+    # - role: bootstrap
+    # - role: docker
     - role: homepage
     - role: vpn
+    - role: flaresolverr
     - role: radarr
     - role: readarr
     - role: sonarr
+    - role: bazarr
+    - role: prowlarr

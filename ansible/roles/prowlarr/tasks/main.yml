@@ -1,0 +1,42 @@
+---
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ docker_prowlarr.config }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0775
+
+- name: Create and start container
+  community.docker.docker_container:
+    name: prowlarr
+    image: "{{ docker_prowlarr.image }}"
+    network_mode: container:vpn
+    pull: yes
+    recreate: true
+    volumes:
+      - "{{ docker_prowlarr.config }}:/config"
+      - "{{ docker_media_downloads_watch }}:/downloads"
+    restart_policy: unless-stopped
+    state: started
+    labels:
+      homepage.group: Download
+      homepage.name: Prowlarr
+      homepage.icon: prowlarr.png
+      homepage.href: http://{{ url_prowlarr }}
+      homepage.description: Indexer manager/proxy
+      homepage.widget.type: prowlarr
+      homepage.widget.url: http://192.168.2.200:{{ docker_port_prowlarr_http }}
+      homepage.widget.key: "{{ secret_prowlarr_api_key }}"
+    env:
+      TZ: "{{ system_timezone }}"
+      PUID: "1000"
+      PGID: "1000"
+      DOCKER_MODS: ghcr.io/gilbn/theme.park:prowlarr
+      TP_THEME: "{{ theme_park_theme }}"
+
+- name: Settings Tasks
+  ansible.builtin.include_tasks: "settings.yml"
+
+#- name: VPN Tasks
+#  ansible.builtin.include_tasks: "vpn.yml"
