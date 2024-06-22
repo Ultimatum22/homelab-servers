@@ -1,5 +1,13 @@
 ---
 - name: Update all packages on Debian
-  apt:
+  ansible.builtin.apt:
     update_cache: yes
     upgrade: dist
+
+- name: install packages
+  ansible.builtin.apt:
+    package: "{{ item }}"
+    state: present
+  with_items:
+    - mdadm
+    - gdisk

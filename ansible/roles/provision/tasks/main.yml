@@ -1,7 +1,7 @@
 ---
 - name: Create RAID0 for boot drives
   become: yes
-  command: mdadm --create /dev/md/bootraid --level=0 --raid-devices=2 /dev/sda /dev/sdb
+  command: mdadm --create /dev/md/bootraid --level=0 --raid-devices={{ provision_boot_disks | length }} {{ provision_boot_disks | join(' ') }}
   args:
     creates: /dev/md/bootraid
   register: raid0_result
@@ -14,7 +14,7 @@
 
 - name: Create RAID5 for data drives
   become: yes
-  command: mdadm --create /dev/md/dataraid --level=5 --raid-devices=4 /dev/sdc /dev/sdd /dev/sde /dev/sdf
+  command: mdadm --create /dev/md/dataraid --level=5 --raid-devices={{ provision_data_disks | length }} {{ provision_data_disks | join(' ') }}
   args:
     creates: /dev/md/dataraid
   register: raid5_result

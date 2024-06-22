@@ -1,0 +1,10 @@
+---
+provision_boot_disks:
+  - /dev/sde
+  - /dev/sdf
+
+provision_data_disks:
+  - /dev/sda
+  - /dev/sdb
+  - /dev/sdc
+  - /dev/sdd

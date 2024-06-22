@@ -1,0 +1,7 @@
+---
+- hosts: provision
+  become: true
+  roles:
+    - role: bootstrap
+    - role: provision
+    - role: docker
