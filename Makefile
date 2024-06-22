@@ -10,7 +10,7 @@ dev.docs:
 
 # Ansible
 ansible.install:
-	cd ansible && ansible-galaxy install -r requirements.yml
+	cd ansible && ansible-galaxy install -r requirements.yml -f
 
 ansible.nas:
 	cd ansible && ansible-playbook playbooks/nas.yml
