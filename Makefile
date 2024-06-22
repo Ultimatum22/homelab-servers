@@ -12,6 +12,9 @@ dev.docs:
 ansible.install:
 	cd ansible && ansible-galaxy install -r requirements.yml -f
 
+ansible.provision:
+	cd ansible && ansible-playbook playbooks/provision.yml
+
 ansible.nas:
 	cd ansible && ansible-playbook playbooks/nas.yml
 
@@ -29,7 +32,7 @@ docker.nas.destroy:
 	cd docker && docker rm -f nas
 
 docker.nas.provision:
-	cd docker && ansible-playbook --extra-vars "@./ansible-extra-vars.yml" --vault-id default@../.vault_pass playbooks/nas.yml
+	cd docker && ansible-playbook --extra-vars "@./ansible-extra-vars.yml" --vault-id default@../.vault_pass playbooks/provision.yml
 
 # Vagrant
 vagrant.cluster.up:
