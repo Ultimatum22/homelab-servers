@@ -1,0 +1,46 @@
+---
+- name: Create RAID0 for boot drives
+  become: yes
+  command: mdadm --create /dev/md/bootraid --level=0 --raid-devices=2 /dev/sda /dev/sdb
+  args:
+    creates: /dev/md/bootraid
+  register: raid0_result
+
+- name: Format RAID0 with ext4
+  become: yes
+  filesystem:
+    fstype: ext4
+    dev: /dev/md/bootraid
+
+- name: Create RAID5 for data drives
+  become: yes
+  command: mdadm --create /dev/md/dataraid --level=5 --raid-devices=4 /dev/sdc /dev/sdd /dev/sde /dev/sdf
+  args:
+    creates: /dev/md/dataraid
+  register: raid5_result
+
+- name: Format RAID5 with ext4
+  become: yes
+  filesystem:
+    fstype: ext4
+    dev: /dev/md/dataraid
+
+- name: Update mdadm.conf
+  become: yes
+  lineinfile:
+    path: /etc/mdadm/mdadm.conf
+    line: "{{ item }}"
+  with_lines: "mdadm --detail --scan"
+  notify: Reload mdadm
+
+- name: Mount RAID arrays in fstab
+  become: yes
+  mount:
+    name: "/mnt/{{ item.name }}"
+    src: "{{ item.device }}"
+    fstype: ext4
+    state: mounted
+    opts: defaults
+  with_items:
+    - { name: "bootraid", device: "/dev/md/bootraid" }
+    - { name: "dataraid", device: "/dev/md/dataraid" }

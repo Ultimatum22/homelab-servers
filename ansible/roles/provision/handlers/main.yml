@@ -1,0 +1,5 @@
+---
+- name: Reload mdadm
+  ansible.builtin.service:
+    name: mdadm
+    state: reloaded
