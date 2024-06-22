@@ -1,48 +1,4 @@
 services:
-  cluster-node1:
-    container_name: cluster-node1
-    build:
-      context: .
-      dockerfile: Dockerfile.debian
-    networks:
-      cluster_net:
-        ipv4_address: 192.168.56.11
-    volumes:
-      - ./disks/cluster-node1:/data
-
-  cluster-node2:
-    container_name: cluster-node2
-    build:
-      context: .
-      dockerfile: Dockerfile.debian
-    networks:
-      cluster_net:
-        ipv4_address: 192.168.56.12
-    volumes:
-      - ./disks/cluster-node2:/data
-
-  cluster-node3:
-    container_name: cluster-node3
-    build:
-      context: .
-      dockerfile: Dockerfile.debian
-    networks:
-      cluster_net:
-        ipv4_address: 192.168.56.13
-    volumes:
-      - ./disks/cluster-node3:/data
-
-  cluster-node4:
-    container_name: cluster-node4
-    build:
-      context: .
-      dockerfile: Dockerfile.debian
-    networks:
-      cluster_net:
-        ipv4_address: 192.168.56.14
-    volumes:
-      - ./disks/cluster-node4:/data
-
   nas:
     container_name: nas
     build:
@@ -56,6 +12,12 @@ services:
       - "2222:22"
     volumes:
       - ./ansible:/ansible
+      - disk1:/mnt/disk1
+      - disk2:/mnt/disk2
+      - disk3:/mnt/disk3
+      - disk4:/mnt/disk4
+      - disk5:/mnt/disk5
+      - disk6:/mnt/disk6
 
 networks:
   cluster_net:
@@ -63,3 +25,11 @@ networks:
     ipam:
       config:
         - subnet: 172.18.0.0/16
+
+volumes:
+  disk1:
+  disk2:
+  disk3:
+  disk4:
+  disk5:
+  disk6:

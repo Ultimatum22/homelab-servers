@@ -7,3 +7,13 @@ drbd_vip: 192.168.56.10
 drbd_iface: eth1
 
 host_poseidon_ip: 172.18.0.22
+
+provision_boot_disks:
+  - /mnt/disk1
+  - /mnt/disk2
+
+provision_data_disks:
+  - /mnt/disk3
+  - /mnt/disk4
+  - /mnt/disk5
+  - /mnt/disk6

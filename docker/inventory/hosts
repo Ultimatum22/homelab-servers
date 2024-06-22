@@ -45,3 +45,6 @@ cluster-node2
 
 [nas]
 nas1
+
+[provision]
+nas1
