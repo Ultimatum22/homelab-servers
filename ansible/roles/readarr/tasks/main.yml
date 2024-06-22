@@ -11,7 +11,6 @@
   docker_container:
     name: readarr
     image: "{{ docker_readarr.image }}"
-    image: linuxserver/readarr:0.2.3-develop
     network_mode: container:vpn
     pull: yes
     recreate: true
