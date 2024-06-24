@@ -86,12 +86,17 @@ terraform.refresh:
 
 terraform.apply-all: terraform.init terraform.plan WS=$(WS)
 
+## CONDA ##
 conda.export:
 	conda env export > environment.yml
+
+conda.import:
+	conda env create -f environment.yml
 
 conda.update:
 	conda update -n base -c conda-forge conda
 
+## ANSIBLE VAULT ##
 vault.encrypt:
 	@echo "Encrypt all Ansible vault files"
 	ansible-vault encrypt --vault-id $(VAULT_ID) $(VAULT_FILES)
