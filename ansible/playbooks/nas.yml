@@ -10,3 +10,4 @@
     - role: sonarr
     - role: bazarr
     - role: prowlarr
+    - role: directory_export

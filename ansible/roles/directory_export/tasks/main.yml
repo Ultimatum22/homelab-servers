@@ -1,0 +1,60 @@
+---
+- name: Install necessary packages
+  apt:
+    name:
+      - nfs-kernel-server
+      - samba
+      - cifs-utils
+    state: present
+    update_cache: yes
+
+- name: Create the shared directory
+  file:
+    path: "{{ export_dir }}"
+    state: directory
+    owner: nobody
+    group: nogroup
+    mode: '0777'
+
+- name: Configure NFS exports
+  lineinfile:
+    path: /etc/exports
+    line: "{{ export_dir }} *(rw,sync,no_root_squash,no_subtree_check)"
+    create: yes
+
+- name: Export the NFS shares
+  command: exportfs -ra
+
+- name: Ensure NFS server is running and enabled
+  systemd:
+    name: nfs-kernel-server
+    state: started
+    enabled: yes
+
+- name: Create Samba user
+  command: "smbpasswd -a {{ samba_user }} {{ samba_password }}"
+  args:
+    creates: "/var/lib/samba/private/passdb.tdb"
+
+- name: Add Samba configuration for shared directory
+  blockinfile:
+    path: /etc/samba/smb.conf
+    block: |
+      [shared]
+      path = {{ export_dir }}
+      browseable = yes
+      read only = no
+      guest ok = no
+      valid users = {{ samba_user }}
+
+- name: Ensure Samba services are running and enabled
+  systemd:
+    name: smbd
+    state: started
+    enabled: yes
+
+- name: Ensure Samba services are running and enabled
+  systemd:
+    name: nmbd
+    state: started
+    enabled: yes
