@@ -24,10 +24,10 @@
       homepage.group: Download
       homepage.name: Transmission
       homepage.icon: transmission.png
-      homepage.href: http://{{ url_prowlarr }}
+      homepage.href: http://{{ url_transmission }}
       homepage.description: Transmission is a very lightweight and simple to use torrent client
       homepage.widget.type: transmission
-      homepage.widget.url: http://192.168.2.200:{{ docker_port_transmission_http }}
+      homepage.widget.url: "{{ url_transmission }}"
     env:
       TZ: "{{ system_timezone }}"
       PUID: "1000"

@@ -1,7 +1,7 @@
 ---
 - name: "Wait for Prowlarr API to come up and returns a status 200"
   ansible.builtin.uri:
-    url: "http://192.168.2.200:{{ docker_port_prowlarr_http }}"
+    url: "http://{{ url_prowlarr }}"
     headers:
       X-Api-Key: "{{ secret_prowlarr_api_key }}"
   register: api_result
@@ -57,7 +57,7 @@
 
 - name: "Wait for Prowlarr API to come up and returns a status 200"
   ansible.builtin.uri:
-    url: "http://192.168.2.200:{{ docker_port_prowlarr_http }}"
+    url: "http://{{ url_prowlarr }}"
     headers:
       X-Api-Key: "{{ secret_prowlarr_api_key }}"
   register: api_result
@@ -67,7 +67,7 @@
 
 - name: "Add Download Client"
   ansible.builtin.uri:
-    url: "http://192.168.2.200:{{ docker_port_prowlarr_http }}/api/v1/downloadclient"
+    url: "http://{{ url_prowlarr }}/api/v1/downloadclient"
     method: POST
     status_code:
       - 201
@@ -79,7 +79,7 @@
 
 - name: "Add Tag"
   ansible.builtin.uri:
-    url: "http://192.168.2.200:{{ docker_port_prowlarr_http }}/api/v1/tag"
+    url: "http://{{ url_prowlarr }}/api/v1/tag"
     method: POST
     status_code:
       - 201
@@ -91,7 +91,7 @@
 
 - name: "Add IndexerProxy"
   ansible.builtin.uri:
-    url: "http://192.168.2.200:{{ docker_port_prowlarr_http }}/api/v1/indexerproxy"
+    url: "http://{{ url_prowlarr }}/api/v1/indexerproxy"
     method: POST
     status_code:
       - 201
@@ -103,7 +103,7 @@
 
 - name: "Add Indexer"
   ansible.builtin.uri:
-    url: "http://192.168.2.200:{{ docker_port_prowlarr_http }}/api/v1/indexer"
+    url: "http://{{ url_prowlarr }}/api/v1/indexer"
     method: POST
     status_code:
       - 201
@@ -113,7 +113,7 @@
     headers:
       X-Api-Key: "{{ secret_prowlarr_api_key }}"
   with_items:
-    - magnet
+    - 0magnet
     - 1337x
     - limetorrents
     - yts
@@ -124,7 +124,7 @@
 
 - name: "Add Application"
   ansible.builtin.uri:
-    url: "http://192.168.2.200:{{ docker_port_prowlarr_http }}/api/v1/applications"
+    url: "http://{{ url_prowlarr }}/api/v1/applications"
     method: POST
     status_code:
       - 201

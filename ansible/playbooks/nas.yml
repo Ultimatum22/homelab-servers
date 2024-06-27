@@ -2,13 +2,13 @@
 - hosts: nas
   become: true
   roles:
-    - role: homepage
-    - role: vpn
-    - role: transmission
+    # - role: homepage
+    # - role: vpn
+    # - role: transmission
     - role: flaresolverr
-    - role: radarr
-    - role: readarr
-    - role: sonarr
-    - role: bazarr
+    # - role: radarr
+    # - role: readarr
+    # - role: sonarr
+    # - role: bazarr
     - role: prowlarr
-    - role: directory_export
+    # - role: directory_export

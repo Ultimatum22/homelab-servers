@@ -1,195 +1,155 @@
 {
-  "enable": true,
-  "protocol": "torrent",
-  "priority": 1,
-  "removeCompletedDownloads": true,
-  "removeFailedDownloads": true,
-  "name": "rTorrent",
-  "fields": [
-    {
-      "order": 0,
-      "name": "host",
-      "label": "Host",
-      "value": "localhost",
-      "type": "textbox",
-      "advanced": false,
-      "privacy": "normal",
-      "isFloat": false
-    },
-    {
-      "order": 1,
-      "name": "port",
-      "label": "Port",
-      "value": 8592,
-      "type": "textbox",
-      "advanced": false,
-      "privacy": "normal",
-      "isFloat": false
-    },
-    {
-      "order": 2,
-      "name": "useSsl",
-      "label": "Use SSL",
-      "helpText": "Use secure connection when connection to rTorrent",
-      "value": false,
-      "type": "checkbox",
-      "advanced": false,
-      "privacy": "normal",
-      "isFloat": false
-    },
-    {
-      "order": 3,
-      "name": "urlBase",
-      "label": "Url Path",
-      "helpText": "Path to the XMLRPC endpoint, see http(s)://[host]:[port]/[urlPath]. This is usually RPC2 or [path to ruTorrent]/plugins/rpc/rpc.php when using ruTorrent.",
-      "value": "RPC2",
-      "type": "textbox",
-      "advanced": false,
-      "privacy": "normal",
-      "isFloat": false
-    },
-    {
-      "order": 4,
-      "name": "username",
-      "label": "Username",
-      "type": "textbox",
-      "advanced": false,
-      "privacy": "userName",
-      "isFloat": false
-    },
-    {
-      "order": 5,
-      "name": "password",
-      "label": "Password",
-      "type": "password",
-      "advanced": false,
-      "privacy": "password",
-      "isFloat": false
-    },
-    {
-      "order": 6,
-      "name": "movieCategory",
-      "label": "Category",
-      "helpText": "Adding a category specific to Radarr avoids conflicts with unrelated non-Radarr downloads. Using a category is optional, but strongly recommended.",
-      "value": "radarr",
-      "type": "textbox",
-      "advanced": false,
-      "privacy": "normal",
-      "isFloat": false
-    },
-    {
-      "order": 7,
-      "name": "movieImportedCategory",
-      "label": "Post-Import Category",
-      "helpText": "Category for Radarr to set after it has imported the download. Radarr will not remove torrents in that category even if seeding finished. Leave blank to keep same category.",
-      "type": "textbox",
-      "advanced": true,
-      "privacy": "normal",
-      "isFloat": false
-    },
-    {
-      "order": 8,
-      "name": "movieDirectory",
-      "label": "Directory",
-      "helpText": "Optional location to put downloads in, leave blank to use the default rTorrent location",
-      "type": "textbox",
-      "advanced": true,
-      "privacy": "normal",
-      "isFloat": false
-    },
-    {
-      "order": 9,
-      "name": "recentMoviePriority",
-      "label": "Recent Priority",
-      "helpText": "Priority to use when grabbing movies that aired within the last 21 days",
-      "value": 2,
-      "type": "select",
-      "advanced": false,
-      "selectOptions": [
-        {
-          "value": 0,
-          "name": "DoNotDownload",
-          "order": 0,
-          "dividerAfter": false
-        },
-        {
-          "value": 1,
-          "name": "Low",
-          "order": 1,
-          "dividerAfter": false
-        },
-        {
-          "value": 2,
-          "name": "Normal",
-          "order": 2,
-          "dividerAfter": false
-        },
-        {
-          "value": 3,
-          "name": "High",
-          "order": 3,
-          "dividerAfter": false
-        }
-      ],
-      "privacy": "normal",
-      "isFloat": false
-    },
-    {
-      "order": 10,
-      "name": "olderMoviePriority",
-      "label": "Older Priority",
-      "helpText": "Priority to use when grabbing movies that aired over 21 days ago",
-      "value": 2,
-      "type": "select",
-      "advanced": false,
-      "selectOptions": [
-        {
-          "value": 0,
-          "name": "DoNotDownload",
-          "order": 0,
-          "dividerAfter": false
-        },
-        {
-          "value": 1,
-          "name": "Low",
-          "order": 1,
-          "dividerAfter": false
-        },
-        {
-          "value": 2,
-          "name": "Normal",
-          "order": 2,
-          "dividerAfter": false
-        },
-        {
-          "value": 3,
-          "name": "High",
-          "order": 3,
-          "dividerAfter": false
-        }
-      ],
-      "privacy": "normal",
-      "isFloat": false
-    },
-    {
-      "order": 11,
-      "name": "addStopped",
-      "label": "Add Stopped",
-      "helpText": "Enabling will add torrents and magnets to rTorrent in a stopped state. This may break magnet files.",
-      "value": false,
-      "type": "checkbox",
-      "advanced": false,
-      "privacy": "normal",
-      "isFloat": false
-    }
-  ],
-  "implementationName": "rTorrent",
-  "implementation": "RTorrent",
-  "configContract": "RTorrentSettings",
-  "infoLink": "https://wiki.servarr.com/radarr/supported#rtorrent",
-  "message": {
-    "message": "rTorrent will not pause torrents when they meet the seed criteria. Radarr will handle automatic removal of torrents based on the current seed criteria in Settings->Indexers only when Remove Completed is enabled.  After importing it will also set radarr_imported as an rTorrent view, which can be used in rTorrent scripts to customize behavior.",
-    "type": "info"
-  },
-  "tags": []
-}
+    "enable": true,
+    "protocol": "torrent",
+    "priority": 1,
+    "removeCompletedDownloads": true,
+    "removeFailedDownloads": true,
+    "name": "Transmission",
+    "fields": [
+      {
+        "order": 0,
+        "name": "host",
+        "label": "Host",
+        "value": "localhost",
+        "type": "textbox",
+        "advanced": false,
+        "privacy": "normal",
+        "isFloat": false
+      },
+      {
+        "order": 1,
+        "name": "port",
+        "label": "Port",
+        "value": 9091,
+        "type": "textbox",
+        "advanced": false,
+        "privacy": "normal",
+        "isFloat": false
+      },
+      {
+        "order": 2,
+        "name": "useSsl",
+        "label": "Use SSL",
+        "helpText": "Use secure connection when connection to Transmission",
+        "value": false,
+        "type": "checkbox",
+        "advanced": false,
+        "privacy": "normal",
+        "isFloat": false
+      },
+      {
+        "order": 3,
+        "name": "urlBase",
+        "label": "URL Base",
+        "helpText": "Adds a prefix to the Transmission rpc url, eg http://[host]:[port]/[urlBase]/rpc, defaults to '/transmission/'",
+        "value": "/transmission/",
+        "type": "textbox",
+        "advanced": true,
+        "privacy": "normal",
+        "isFloat": false
+      },
+      {
+        "order": 4,
+        "name": "username",
+        "label": "Username",
+        "type": "textbox",
+        "advanced": false,
+        "privacy": "userName",
+        "isFloat": false
+      },
+      {
+        "order": 5,
+        "name": "password",
+        "label": "Password",
+        "type": "password",
+        "advanced": false,
+        "privacy": "password",
+        "isFloat": false
+      },
+      {
+        "order": 6,
+        "name": "movieCategory",
+        "label": "Category",
+        "helpText": "Adding a category specific to Radarr avoids conflicts with unrelated non-Radarr downloads. Using a category is optional, but strongly recommended. Creates a [category] subdirectory in the output directory.",
+        "type": "textbox",
+        "advanced": false,
+        "privacy": "normal",
+        "isFloat": false
+      },
+      {
+        "order": 7,
+        "name": "movieDirectory",
+        "label": "Directory",
+        "helpText": "Optional location to put downloads in, leave blank to use the default Transmission location",
+        "type": "textbox",
+        "advanced": true,
+        "privacy": "normal",
+        "isFloat": false
+      },
+      {
+        "order": 8,
+        "name": "recentMoviePriority",
+        "label": "Recent Priority",
+        "helpText": "Priority to use when grabbing movies that aired within the last 21 days",
+        "value": 0,
+        "type": "select",
+        "advanced": false,
+        "selectOptions": [
+          {
+            "value": 0,
+            "name": "Last",
+            "order": 0,
+            "dividerAfter": false
+          },
+          {
+            "value": 1,
+            "name": "First",
+            "order": 1,
+            "dividerAfter": false
+          }
+        ],
+        "privacy": "normal",
+        "isFloat": false
+      },
+      {
+        "order": 9,
+        "name": "olderMoviePriority",
+        "label": "Older Priority",
+        "helpText": "Priority to use when grabbing movies that aired over 21 days ago",
+        "value": 0,
+        "type": "select",
+        "advanced": false,
+        "selectOptions": [
+          {
+            "value": 0,
+            "name": "Last",
+            "order": 0,
+            "dividerAfter": false
+          },
+          {
+            "value": 1,
+            "name": "First",
+            "order": 1,
+            "dividerAfter": false
+          }
+        ],
+        "privacy": "normal",
+        "isFloat": false
+      },
+      {
+        "order": 10,
+        "name": "addPaused",
+        "label": "Add Paused",
+        "value": false,
+        "type": "checkbox",
+        "advanced": false,
+        "privacy": "normal",
+        "isFloat": false
+      }
+    ],
+    "implementationName": "Transmission",
+    "implementation": "Transmission",
+    "configContract": "TransmissionSettings",
+    "infoLink": "https://wiki.servarr.com/radarr/supported#transmission",
+    "tags": []
+  }

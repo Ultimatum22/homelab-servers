@@ -1,165 +1,155 @@
 {
-  "enable": true,
-  "protocol": "torrent",
-  "priority": 1,
-  "name": "qBittorrent",
-  "fields": [
-    {
-      "order": 0,
-      "name": "host",
-      "label": "Host",
-      "value": "localhost",
-      "type": "textbox",
-      "advanced": false
-    },
-    {
-      "order": 1,
-      "name": "port",
-      "label": "Port",
-      "value": 8082,
-      "type": "textbox",
-      "advanced": false
-    },
-    {
-      "order": 2,
-      "name": "useSsl",
-      "label": "Use SSL",
-      "helpText": "Use a secure connection. See Options -> Web UI -> 'Use HTTPS instead of HTTP' in qBittorrent.",
-      "value": false,
-      "type": "checkbox",
-      "advanced": false
-    },
-    {
-      "order": 3,
-      "name": "urlBase",
-      "label": "Url Base",
-      "helpText": "Adds a prefix to the qBittorrent url, e.g. http://[host]:[port]/[urlBase]/api",
-      "type": "textbox",
-      "advanced": true
-    },
-    {
-      "order": 4,
-      "name": "username",
-      "label": "Username",
-      "value": "admin",
-      "type": "textbox",
-      "advanced": false
-    },
-    {
-      "order": 5,
-      "name": "password",
-      "label": "Password",
-      "value": "{{ secret_qbittorrent_password }}",
-      "type": "password",
-      "advanced": false
-    },
-    {
-      "order": 6,
-      "name": "musicCategory",
-      "label": "Category",
-      "helpText": "Adding a category specific to Readarr avoids conflicts with unrelated non-Readarr downloads. Using a category is optional, but strongly recommended.",
-      "value": "readarr",
-      "type": "textbox",
-      "advanced": false
-    },
-    {
-      "order": 7,
-      "name": "musicImportedCategory",
-      "label": "Post-Import Category",
-      "helpText": "Category for Readarr to set after it has imported the download. Readarr will not remove the torrent if seeding has finished. Leave blank to keep same category.",
-      "type": "textbox",
-      "advanced": true
-    },
-    {
-      "order": 8,
-      "name": "recentTvPriority",
-      "label": "Recent Priority",
-      "helpText": "Priority to use when grabbing books released within the last 14 days",
-      "value": 0,
-      "type": "select",
-      "advanced": false,
-      "selectOptions": [
-        {
-          "value": 0,
-          "name": "Last",
-          "order": 0
-        },
-        {
-          "value": 1,
-          "name": "First",
-          "order": 1
-        }
-      ]
-    },
-    {
-      "order": 9,
-      "name": "olderTvPriority",
-      "label": "Older Priority",
-      "helpText": "Priority to use when grabbing books released over 14 days ago",
-      "value": 0,
-      "type": "select",
-      "advanced": false,
-      "selectOptions": [
-        {
-          "value": 0,
-          "name": "Last",
-          "order": 0
-        },
-        {
-          "value": 1,
-          "name": "First",
-          "order": 1
-        }
-      ]
-    },
-    {
-      "order": 10,
-      "name": "initialState",
-      "label": "Initial State",
-      "helpText": "Initial state for torrents added to qBittorrent. Note that Forced Torrents do not abide by seed restrictions",
-      "value": 0,
-      "type": "select",
-      "advanced": false,
-      "selectOptions": [
-        {
-          "value": 0,
-          "name": "Start",
-          "order": 0
-        },
-        {
-          "value": 1,
-          "name": "ForceStart",
-          "order": 1
-        },
-        {
-          "value": 2,
-          "name": "Pause",
-          "order": 2
-        }
-      ]
-    },
-    {
-      "order": 11,
-      "name": "sequentialOrder",
-      "label": "Sequential Order",
-      "helpText": "Download in sequential order (qBittorrent 4.1.0+)",
-      "value": false,
-      "type": "checkbox",
-      "advanced": false
-    },
-    {
-      "order": 12,
-      "name": "firstAndLast",
-      "label": "First and Last First",
-      "helpText": "Download first and last pieces first (qBittorrent 4.1.0+)",
-      "value": false,
-      "type": "checkbox",
-      "advanced": false
-    }
-  ],
-  "implementationName": "qBittorrent",
-  "implementation": "QBittorrent",
-  "configContract": "QBittorrentSettings",
-  "infoLink": "https://wiki.servarr.com/readarr/supported#qbittorrent",
-  "tags": []
-}
+    "enable": true,
+    "protocol": "torrent",
+    "priority": 1,
+    "removeCompletedDownloads": true,
+    "removeFailedDownloads": true,
+    "name": "Transmission",
+    "fields": [
+      {
+        "order": 0,
+        "name": "host",
+        "label": "Host",
+        "value": "localhost",
+        "type": "textbox",
+        "advanced": false,
+        "privacy": "normal",
+        "isFloat": false
+      },
+      {
+        "order": 1,
+        "name": "port",
+        "label": "Port",
+        "value": 9091,
+        "type": "textbox",
+        "advanced": false,
+        "privacy": "normal",
+        "isFloat": false
+      },
+      {
+        "order": 2,
+        "name": "useSsl",
+        "label": "Use SSL",
+        "helpText": "Use secure connection when connection to Transmission",
+        "value": false,
+        "type": "checkbox",
+        "advanced": false,
+        "privacy": "normal",
+        "isFloat": false
+      },
+      {
+        "order": 3,
+        "name": "urlBase",
+        "label": "URL Base",
+        "helpText": "Adds a prefix to the Transmission rpc url, eg http://[host]:[port]/[urlBase]/rpc, defaults to '/transmission/'",
+        "value": "/transmission/",
+        "type": "textbox",
+        "advanced": true,
+        "privacy": "normal",
+        "isFloat": false
+      },
+      {
+        "order": 4,
+        "name": "username",
+        "label": "Username",
+        "type": "textbox",
+        "advanced": false,
+        "privacy": "userName",
+        "isFloat": false
+      },
+      {
+        "order": 5,
+        "name": "password",
+        "label": "Password",
+        "type": "password",
+        "advanced": false,
+        "privacy": "password",
+        "isFloat": false
+      },
+      {
+        "order": 6,
+        "name": "movieCategory",
+        "label": "Category",
+        "helpText": "Adding a category specific to Radarr avoids conflicts with unrelated non-Radarr downloads. Using a category is optional, but strongly recommended. Creates a [category] subdirectory in the output directory.",
+        "type": "textbox",
+        "advanced": false,
+        "privacy": "normal",
+        "isFloat": false
+      },
+      {
+        "order": 7,
+        "name": "movieDirectory",
+        "label": "Directory",
+        "helpText": "Optional location to put downloads in, leave blank to use the default Transmission location",
+        "type": "textbox",
+        "advanced": true,
+        "privacy": "normal",
+        "isFloat": false
+      },
+      {
+        "order": 8,
+        "name": "recentMoviePriority",
+        "label": "Recent Priority",
+        "helpText": "Priority to use when grabbing movies that aired within the last 21 days",
+        "value": 0,
+        "type": "select",
+        "advanced": false,
+        "selectOptions": [
+          {
+            "value": 0,
+            "name": "Last",
+            "order": 0,
+            "dividerAfter": false
+          },
+          {
+            "value": 1,
+            "name": "First",
+            "order": 1,
+            "dividerAfter": false
+          }
+        ],
+        "privacy": "normal",
+        "isFloat": false
+      },
+      {
+        "order": 9,
+        "name": "olderMoviePriority",
+        "label": "Older Priority",
+        "helpText": "Priority to use when grabbing movies that aired over 21 days ago",
+        "value": 0,
+        "type": "select",
+        "advanced": false,
+        "selectOptions": [
+          {
+            "value": 0,
+            "name": "Last",
+            "order": 0,
+            "dividerAfter": false
+          },
+          {
+            "value": 1,
+            "name": "First",
+            "order": 1,
+            "dividerAfter": false
+          }
+        ],
+        "privacy": "normal",
+        "isFloat": false
+      },
+      {
+        "order": 10,
+        "name": "addPaused",
+        "label": "Add Paused",
+        "value": false,
+        "type": "checkbox",
+        "advanced": false,
+        "privacy": "normal",
+        "isFloat": false
+      }
+    ],
+    "implementationName": "Transmission",
+    "implementation": "Transmission",
+    "configContract": "TransmissionSettings",
+    "infoLink": "https://wiki.servarr.com/radarr/supported#transmission",
+    "tags": []
+  }
