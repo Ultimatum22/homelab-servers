@@ -9,13 +9,13 @@
     name: homepage
     state: stopped
 
-- name: Copy services.yaml
-  ansible.builtin.template:
-    src: "services.yaml.j2"
-    dest: "{{ docker_homepage.config }}/services.yaml"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: 0644
+# - name: Copy services.yaml
+#   ansible.builtin.template:
+#     src: "services.yaml.j2"
+#     dest: "{{ docker_homepage.config }}/services.yaml"
+#     owner: "{{ ansible_user }}"
+#     group: "{{ ansible_user }}"
+#     mode: 0644
 
 - name: Copy docker.yaml
   ansible.builtin.template:

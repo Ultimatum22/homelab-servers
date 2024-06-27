@@ -1,4 +1,12 @@
 ---
+- name: "Wait for Radarr API to come up and returns a status 200"
+  ansible.builtin.uri:
+    url: "http://{{ host_poseidon_ip }}:{{ docker_port_radarr_http }}"
+  register: api_result
+  until: api_result.status == 200
+  retries: 120
+  delay: 10
+
 - name: Wait for 'config.xml' to be created
   ansible.builtin.wait_for:
     path: "{{ docker_radarr.config }}/config.xml"
@@ -16,20 +24,30 @@
     xpath: /Config/AnalyticsEnabled
     value: "False"
 
-- name: Get infos on Radarr container
-  community.docker.docker_container_info:
+- name: Stop Docker container
+  community.docker.docker_container:
     name: radarr
-  register: container_info
+    state: stopped
+  register: stop_result
+
+- name: Wait for container to stop
+  pause:
+    seconds: 5
+  when: stop_result.changed
+
+- name: Start Docker container
+  community.docker.docker_container:
+    name: radarr
+    state: started
+    restart_policy: always
 
 - name: "Wait for Radarr API to come up and returns a status 200"
   ansible.builtin.uri:
-    url: "http://{{ host_poseidon_ip }}:{{ docker_port_radarr_http }}/api/v3/system/status"
-    headers:
-      X-Api-Key: "{{ secret_radarr_api_key }}"
+    url: "http://{{ host_poseidon_ip }}:{{ docker_port_radarr_http }}"
   register: api_result
   until: api_result.status == 200
-  retries: 30
-  delay: 1
+  retries: 120
+  delay: 10
 
 - name: "Add Root Folder"
   ansible.builtin.uri:
@@ -67,26 +85,26 @@
     headers:
       X-Api-Key: "{{ secret_radarr_api_key }}"
 
-- name: "Add MediaManagementConfig"
-  ansible.builtin.uri:
-    url: "http://{{ host_poseidon_ip }}:{{ docker_port_radarr_http }}/api/v3/config/mediamanagement/1"
-    method: PUT
-    status_code:
-      - 202
-      - 400
-    body: "{{ lookup('template', 'put_mediamanagement_body.json.j2') }}"
-    body_format: json
-    headers:
-      X-Api-Key: "{{ secret_radarr_api_key }}"
+# - name: "Add MediaManagementConfig"
+#   ansible.builtin.uri:
+#     url: "http://{{ host_poseidon_ip }}:{{ docker_port_radarr_http }}/api/v3/config/mediamanagement/1"
+#     method: PUT
+#     status_code:
+#       - 202
+#       - 400
+#     body: "{{ lookup('template', 'put_mediamanagement_body.json.j2') }}"
+#     body_format: json
+#     headers:
+#       X-Api-Key: "{{ secret_radarr_api_key }}"
 
-- name: "Add Naming"
-  ansible.builtin.uri:
-    url: "http://{{ host_poseidon_ip }}:{{ docker_port_radarr_http }}/api/v3/config/naming/1"
-    method: PUT
-    status_code:
-      - 202
-      - 400
-    body: "{{ lookup('template', 'put_naming_body.json.j2') }}"
-    body_format: json
-    headers:
-      X-Api-Key: "{{ secret_radarr_api_key }}"
+# - name: "Add Naming"
+#   ansible.builtin.uri:
+#     url: "http://{{ host_poseidon_ip }}:{{ docker_port_radarr_http }}/api/v3/config/naming/1"
+#     method: PUT
+#     status_code:
+#       - 202
+#       - 400
+#     body: "{{ lookup('template', 'put_naming_body.json.j2') }}"
+#     body_format: json
+#     headers:
+#       X-Api-Key: "{{ secret_radarr_api_key }}"

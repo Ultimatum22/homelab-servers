@@ -1,4 +1,14 @@
 ---
+- name: "Wait for Prowlarr API to come up and returns a status 200"
+  ansible.builtin.uri:
+    url: "http://192.168.2.200:{{ docker_port_prowlarr_http }}"
+    headers:
+      X-Api-Key: "{{ secret_prowlarr_api_key }}"
+  register: api_result
+  until: api_result.status == 200
+  retries: 120
+  delay: 10
+
 - name: Wait for 'config.xml' to be created
   ansible.builtin.wait_for:
     path: "{{ docker_prowlarr.config }}/config.xml"
@@ -28,20 +38,32 @@
     xpath: /Config/AnalyticsEnabled
     value: "False"
 
-- name: Get infos on Prowlarr container
-  community.docker.docker_container_info:
+- name: Stop Docker container
+  community.docker.docker_container:
     name: prowlarr
-  register: container_info
+    state: stopped
+  register: stop_result
+
+- name: Wait for container to stop
+  pause:
+    seconds: 5
+  when: stop_result.changed
+
+- name: Start Docker container
+  community.docker.docker_container:
+    name: prowlarr
+    state: started
+    restart_policy: always
 
 - name: "Wait for Prowlarr API to come up and returns a status 200"
   ansible.builtin.uri:
-    url: "http://192.168.2.200:{{ docker_port_prowlarr_http }}/api/v1/system/status"
+    url: "http://192.168.2.200:{{ docker_port_prowlarr_http }}"
     headers:
       X-Api-Key: "{{ secret_prowlarr_api_key }}"
   register: api_result
   until: api_result.status == 200
-  retries: 30
-  delay: 1
+  retries: 120
+  delay: 10
 
 - name: "Add Download Client"
   ansible.builtin.uri:
