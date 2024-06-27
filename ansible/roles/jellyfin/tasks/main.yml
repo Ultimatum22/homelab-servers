@@ -1,0 +1,50 @@
+---
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0775
+  with_items:
+    - "{{ docker_jellyfin.config }}"
+    - "{{ docker_jellyfin.config }}/plugins"
+    - "{{ docker_jellyfin.data }}"
+    - "{{ docker_media_movies }}"
+    - "{{ docker_media_tvshows }}"
+
+- name: Create network
+  community.general.docker_network:
+    name: "{{ item }}"
+  with_items:
+    - web
+
+- name: Create and start container
+  docker_container:
+    name: jellyfin
+    image: "{{ docker_jellyfin.image }}"
+    pull: yes
+    recreate: true
+    image_name_mismatch: "recreate"
+    volumes:
+      - "{{ docker_jellyfin.config }}:/config"
+      - "{{ docker_media_tvshows }}:/data/tvshows"
+      - "{{ docker_media_movies }}:/data/movies"
+    networks:
+      - name: homelab
+        aliases:
+          - jellyfin
+    ports:
+      - "{{ docker_port_jellyfin_http }}:{{ docker_port_jellyfin_http | int }}"
+    restart_policy: unless-stopped
+    state: started
+    labels:
+      homepage.group: Media
+      homepage.name: Jellyfin
+      homepage.icon: jellyfin.png
+      homepage.href: http://{{ url_jellyfin }}
+      homepage.description: Stream to any device from your own server
+    env:
+      TZ: "{{ system_timezone }}"
+      PUID: "{{ ansible_user_pid | int }}"
+      PGID: "{{ ansible_user_gid | int }}"
