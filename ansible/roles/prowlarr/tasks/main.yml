@@ -14,6 +14,7 @@
     network_mode: container:vpn
     pull: yes
     recreate: true
+    image_name_mismatch: "recreate"
     volumes:
       - "{{ docker_prowlarr.config }}:/config"
       - "{{ docker_media_downloads_watch }}:/downloads"

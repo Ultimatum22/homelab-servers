@@ -1,0 +1,30 @@
+---
+- name: Validate using VPN connection
+  community.docker.docker_container_exec:
+    container: radarr
+    command: curl ipinfo.io/json
+  register: ipinfo
+
+- name: Set output of json as fact
+  ansible.builtin.set_fact:
+    jsondata: "{{ ipinfo.stdout | from_json }}"
+
+- name: Set country
+  ansible.builtin.set_fact:
+    country: "{{ jsondata | json_query(jmesquery) }}"
+  vars:
+    jmesquery: 'country'
+
+- name: Set timezone
+  ansible.builtin.set_fact:
+    timezone: "{{ jsondata | json_query(jmesquery) }}"
+  vars:
+    jmesquery: 'timezone'
+
+- name: Check if connection is routed through France
+  ansible.builtin.assert:
+    that:
+      - country == 'FR'
+      - timezone == 'Europe/Paris'
+    fail_msg: VPN failed, please look at VPN container logging
+    success_msg: VPN successfully setup

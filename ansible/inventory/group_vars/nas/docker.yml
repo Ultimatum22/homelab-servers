@@ -70,7 +70,7 @@ docker_flaresolverr:
 
 docker_prowlarr:
   config: "{{ docker_config_root }}/prowlarr"
-  image: linuxserver/prowlarr:1.18.0
+  image: linuxserver/prowlarr:1.19.0
 
 docker_radarr:
   config: "{{ docker_config_root }}/radarr"
@@ -147,3 +147,7 @@ minecraft:
 core_keeper:
   files: "{{ docker_data_root }}/core_keeper/files"
   data: "{{ docker_data_root }}/core_keeper/data"
+
+docker_transmission:
+  config: "{{ docker_config_root }}/transmission"
+  image: linuxserver/transmission:4.0.6

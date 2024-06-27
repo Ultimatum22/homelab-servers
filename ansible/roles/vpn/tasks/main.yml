@@ -46,17 +46,13 @@
       - "{{ docker_port_radarr_http }}:7878"
       - "{{ docker_port_readarr_http }}:8787"
       - "{{ docker_port_sonarr_http }}:8989"
-      # - "{{ docker_port_qbittorrent_http }}:8282"
-      # - "{{ docker_port_qbittorrent_other }}:6881/tcp"
-      # - "{{ docker_port_qbittorrent_other }}:6881/udp"
       - "{{ docker_port_whisparr_http }}:6969"
       - "{{ docker_port_sabnzbd_http }}:8089"
       - "{{ docker_port_bazarr_http }}:6767"
-      - "{{ docker_port_utorrent_http }}:{{ docker_port_utorrent_http }}"
-      - "{{ docker_port_utorrent_xmlrpc }}:{{ docker_port_utorrent_xmlrpc }}"
-      - "{{ docker_port_utorrent_webdav }}:{{ docker_port_utorrent_webdav }}"
-      - "{{ docker_port_utorrent_rt }}:{{ docker_port_utorrent_rt }}"
-      - "{{ docker_port_utorrent_dht }}:{{ docker_port_utorrent_dht }}/udp"
+      - "{{ docker_port_transmission_http }}:9091"
+      - "{{ docker_port_transmission_torrent }}:51413"
+      - "{{ docker_port_transmission_torrent }}:51413/udp"
+
     labels:
       homepage.group: Download
       homepage.name: NordVPN

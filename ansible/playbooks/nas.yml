@@ -4,6 +4,7 @@
   roles:
     - role: homepage
     - role: vpn
+    - role: transmission
     - role: flaresolverr
     - role: radarr
     - role: readarr
