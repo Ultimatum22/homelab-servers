@@ -1,0 +1,40 @@
+---
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0775
+  with_items:
+    - "{{ docker_uptime_kuma.data }}"
+
+- name: Create network
+  community.general.docker_network:
+    name: "{{ item }}"
+  with_items:
+    - web
+
+- name: Create and start container
+  community.general.docker_container:
+    name: uptime_kuma
+    image: "{{ docker_uptime_kuma.image }}"
+    pull: yes
+    recreate: true
+    volumes:
+      - "{{ docker_uptime_kuma.data }}:/data"
+      - "/run/udev:/run/udev:ro"
+    networks:
+      - name: homelab
+        aliases:
+          - uptime_kuma
+    ports:
+      - "{{ docker_port_uptime_kuma_http }}:3001"
+    restart_policy: unless-stopped
+    state: started
+    labels:
+      homepage.group: Monitoring
+      homepage.name: Uptime kuma
+      homepage.icon: uptime-kuma.svg
+      homepage.href: http://{{ url_uptime_kuma }}
+      homepage.description: Uptime Kuma is an easy-to-use self-hosted monitoring tool.

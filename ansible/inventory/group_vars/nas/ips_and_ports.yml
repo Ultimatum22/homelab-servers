@@ -35,6 +35,7 @@ docker_port_utorrent_webdav: 8594
 docker_port_utorrent_rt: 50000
 docker_port_transmission_http: 9091
 docker_port_transmission_torrent: 51413
+docker_port_uptime_kuma_http: 3002
 
 host_poseidon_ip: 192.168.2.200
 host_ares01_ip: 192.168.2.221
@@ -84,4 +85,4 @@ url_minio_restic: "minio-restic.{{ url_local_host }}"
 url_sabnzbd: "{{ host_poseidon_ip }}:{{docker_port_sabnzbd_http }}"
 url_utorrent: "{{ host_poseidon_ip }}:{{ docker_port_utorrent_http }}"
 url_transmission: "{{ host_poseidon_ip }}:{{ docker_port_transmission_http }}"
-
+url_uptime_kuma: "{{ host_poseidon_ip }}:{{ docker_port_uptime_kuma_http }}"

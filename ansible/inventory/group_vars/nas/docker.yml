@@ -153,3 +153,7 @@ core_keeper:
 docker_transmission:
   config: "{{ docker_config_root }}/transmission"
   image: linuxserver/transmission:4.0.6
+
+docker_uptime_kuma:
+  data: "{{ docker_data_root }}/uptime_kuma/data"
+  image: louislam/uptime-kuma:1.23.13
