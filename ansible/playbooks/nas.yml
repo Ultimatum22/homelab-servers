@@ -5,10 +5,10 @@
     # - role: homepage
     # - role: vpn
     # - role: transmission
-    - role: flaresolverr
+    # - role: flaresolverr
     # - role: radarr
     # - role: readarr
     # - role: sonarr
-    # - role: bazarr
-    - role: prowlarr
+    - role: bazarr
+    # - role: prowlarr
     # - role: directory_export

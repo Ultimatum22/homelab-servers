@@ -27,7 +27,7 @@
       homepage.href: http://{{ url_transmission }}
       homepage.description: Transmission is a very lightweight and simple to use torrent client
       homepage.widget.type: transmission
-      homepage.widget.url: "{{ url_transmission }}"
+      homepage.widget.url: "http://{{ url_transmission }}"
     env:
       TZ: "{{ system_timezone }}"
       PUID: "1000"

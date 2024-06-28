@@ -97,14 +97,14 @@
 #     headers:
 #       X-Api-Key: "{{ secret_sonarr_api_key }}"
 
-# - name: "Add Naming"
-#   ansible.builtin.uri:
-#     url: "http://{{ host_poseidon_ip }}:{{ docker_port_sonarr_http }}/api/v3/config/naming/1"
-#     method: PUT
-#     status_code:
-#       - 202
-#       - 400
-#     body: "{{ lookup('template', 'put_naming_body.json.j2') }}"
-#     body_format: json
-#     headers:
-#       X-Api-Key: "{{ secret_sonarr_api_key }}"
+- name: "Add Naming"
+  ansible.builtin.uri:
+    url: "http://{{ host_poseidon_ip }}:{{ docker_port_sonarr_http }}/api/v3/config/naming/1"
+    method: PUT
+    status_code:
+      - 202
+      - 400
+    body: "{{ lookup('template', 'put_naming_body.json.j2') }}"
+    body_format: json
+    headers:
+      X-Api-Key: "{{ secret_sonarr_api_key }}"
