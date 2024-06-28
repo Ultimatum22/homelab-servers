@@ -1,0 +1,40 @@
+---
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ docker_gotify.data }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0775
+
+- name: Create and start container
+  community.docker.docker_container:
+    name: gotify
+    image: "{{ docker_gotify.image }}"
+    # network_mode: container:nordvpn
+    pull: yes
+    recreate: true
+    volumes:
+      - "{{ docker_gotify.data }}:/app/data"
+    networks:
+      - name: homelab
+        aliases:
+          - gotify
+    ports:
+      - "{{ docker_port_gotify_http }}:80"
+    restart_policy: unless-stopped
+    state: started
+    labels:
+      homepage.group: Tools
+      homepage.name: Gotify
+      homepage.icon: gotify.svg
+      homepage.href: http://{{ url_gotify }}
+    env:
+      TZ: "{{ system_timezone }}"
+      GOTIFY_DEFAULTUSER_NAME: "{{ secret_gotify_username }}"
+      GOTIFY_DEFAULTUSER_PASS: "{{ secret_gotify_password }}"
+      GOTIFY_REGISTRATION: "false"
+      GOTIFY_PASSSTRENGTH: "10"
+
+# - name: Settings Tasks
+#   ansible.builtin.include_tasks: "settings.yml"

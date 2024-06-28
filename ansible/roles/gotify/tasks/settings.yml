@@ -1,0 +1,44 @@
+---
+- name: "Wait for Gotify API to come up and returns a status 200"
+  ansible.builtin.uri:
+    url: "http://192.168.2.200:{{ docker_port_gotify_http }}/health"
+  register: api_result
+  until: api_result.status == 200
+  retries: 30
+  delay: 1
+
+- name: "Add Applications"
+  ansible.builtin.uri:
+    url: "http://192.168.2.200:{{ docker_port_gotify_http }}/application"
+    method: POST
+    status_code:
+      - 200
+    body: "{{ lookup('template', 'post_application_{{ item }}_body.json.j2') }}"
+    body_format: json
+    user: "{{ secret_gotify_username }}"
+    password: "{{ secret_gotify_password }}"
+    force_basic_auth: yes
+    return_content: yes
+  with_items:
+    - sonarr
+    - radarr
+    - readarr
+    - whisparr
+    - diun
+    - tgtg
+
+- name: "Get Applications"
+  ansible.builtin.uri:
+    url: "http://192.168.2.200:{{ docker_port_gotify_http }}/application"
+    body_format: json
+    user: "{{ secret_gotify_username }}"
+    password: "{{ secret_gotify_password }}"
+    force_basic_auth: yes
+  register: application_result
+  until: api_result.status == 200
+  retries: 30
+  delay: 1
+
+- name: DEBUG
+  ansible.builtin.debug:
+    var: application_result.json

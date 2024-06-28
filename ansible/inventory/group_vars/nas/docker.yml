@@ -122,6 +122,7 @@ docker_homepage:
 
 docker_gotify:
   data: "{{ docker_data_root }}/gotify"
+  image:  gotify/server:2.5.0
 
 docker_diun:
   data: "{{ docker_data_root }}/diun"
