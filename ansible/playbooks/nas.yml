@@ -6,9 +6,9 @@
     # - role: vpn
     # - role: transmission
     # - role: flaresolverr
-    # - role: radarr
-    # - role: readarr
-    # - role: sonarr
+    - role: radarr
+    - role: readarr
+    - role: sonarr
     # - role: bazarr
     # - role: prowlarr
     # - role: directory_export
@@ -17,4 +17,4 @@
     # - role: scrutiny
     # - role: uptime-kuma
     # - role: glances
-    - role: gotify
+    # - role: gotify
