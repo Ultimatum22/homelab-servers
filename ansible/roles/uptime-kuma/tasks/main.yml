@@ -38,3 +38,6 @@
       homepage.icon: uptime-kuma.svg
       homepage.href: http://{{ url_uptime_kuma }}
       homepage.description: Uptime Kuma is an easy-to-use self-hosted monitoring tool.
+      homepage.widget.type: uptimekuma
+      homepage.widget.url: http://{{ url_uptime_kuma }}
+      homepage.widget.slug: media

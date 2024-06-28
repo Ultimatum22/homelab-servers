@@ -49,3 +49,14 @@
       homepage.icon: glances.png
       homepage.href: http://{{ url_glances }}
       homepage.description: Glances is an open-source system cross-platform monitoring tool.
+      homepage.widget.type: glances
+      homepage.widget.url: http://{{ url_glances }}
+      homepage.widget.version: "4"
+      homepage.widget.cpu: "true"
+      homepage.widget.mem: "true"
+      homepage.widget.metric: cpu
+      homepage.widget.cputemp: "true"
+      homepage.widget.uptime: "true"
+      homepage.widget.disk: /
+      homepage.widget.diskUnits: bytes
+      homepage.widget.expanded: "true"
