@@ -1,0 +1,51 @@
+---
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0775
+  with_items:
+    - "{{ docker_glances.config }}"
+
+- name: Create network
+  community.general.docker_network:
+    name: "{{ item }}"
+  with_items:
+    - web
+
+- name: Copy glances.conf
+  ansible.builtin.copy:
+    src: glances.conf
+    dest: "{{ docker_glances.config }}/glances.conf"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'
+
+- name: Create and start container
+  community.general.docker_container:
+    name: glances
+    image: "{{ docker_glances.image }}"
+    pull: yes
+    recreate: true
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "{{ docker_glances.config }}/glances.conf:/glances/conf/glances.conf"
+    networks:
+      - name: homelab
+        aliases:
+          - glances
+    ports:
+      - "{{ docker_port_glances_http }}:61208"
+    restart_policy: unless-stopped
+    state: started
+    env:
+      TZ: "{{ system_timezone }}"
+      GLANCES_OPT: "-C /glances/conf/glances.conf -w"
+    labels:
+      homepage.group: Monitoring
+      homepage.name: Glances
+      homepage.icon: glances.png
+      homepage.href: http://{{ url_glances }}
+      homepage.description: Glances is an open-source system cross-platform monitoring tool.

@@ -135,7 +135,6 @@ docker_duplicati:
 
 docker_backup:
   restic: "{{ docker_data_root }}/restic"
-  image: 
 
 docker_vpn:
   config: "{{ docker_config_root }}/vpn"
@@ -157,3 +156,7 @@ docker_transmission:
 docker_uptime_kuma:
   data: "{{ docker_data_root }}/uptime_kuma/data"
   image: louislam/uptime-kuma:1.23.13
+
+docker_glances:
+  config: "{{ docker_config_root }}/glances"
+  image: nicolargo/glances:4.0.8
