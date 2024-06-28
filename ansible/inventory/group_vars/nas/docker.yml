@@ -155,7 +155,8 @@ docker_transmission:
   image: linuxserver/transmission:4.0.6
 
 docker_uptime_kuma:
-  data: "{{ docker_data_root }}/uptime_kuma/data"
+  config: "{{ docker_config_root }}/uptime_kuma"
+  data: "{{ docker_data_root }}/uptime_kuma"
   image: louislam/uptime-kuma:1.23.13
 
 docker_glances:

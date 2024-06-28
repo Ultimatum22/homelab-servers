@@ -7,6 +7,7 @@
     group: "{{ ansible_user }}"
     mode: 0775
   with_items:
+    - "{{ docker_uptime_kuma.config }}"
     - "{{ docker_uptime_kuma.data }}"
 
 - name: Create network
@@ -22,6 +23,7 @@
     pull: yes
     recreate: true
     volumes:
+      - "{{ docker_uptime_kuma.config }}:/app/data"
       - "{{ docker_uptime_kuma.data }}:/data"
       - "/run/udev:/run/udev:ro"
     networks:
