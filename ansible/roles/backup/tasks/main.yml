@@ -1,0 +1,63 @@
+---
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0775
+  with_items:
+    - "{{ docker_backup.restic }}"
+
+- name: Create and start Restic container
+  community.docker.docker_container:
+    name: restic-server
+    image: "{{ docker_backup.image }}"
+    pull: yes
+    recreate: true
+    volumes:
+      - "{{ docker_backup.restic }}:/data"
+    networks:
+      - name: homelab
+        aliases:
+          - restic
+    ports:
+      - "{{ docker_port_restic_http }}:8000"
+    restart_policy: unless-stopped
+    state: started
+    labels:
+      diun.enable: "true"
+      homepage.group: Tools
+      homepage.name: Restic
+      homepage.icon: restic.svg
+      homepage.href: http://192.168.2.200:{{ docker_port_restic_http }}
+    env:
+      TZ: "{{ system_timezone }}"
+
+# - name: Create and start Restic container
+#   community.docker.docker_container:
+#     name: restic
+#     image: mazzolino/restic:1.7.0
+#     hostname: poseidon
+#     pull: yes
+#     recreate: true
+#     volumes:
+#       - "{{ docker_backup.restic }}:/mnt/backup"
+#     networks:
+#       - name: homelab
+#         aliases:
+#           - restic
+#     restart_policy: unless-stopped
+#     state: started
+#     labels:
+#       diun.enable: "true"
+#     env:
+#       TZ: "{{ system_timezone }}"
+#       BACKUP_CRON: "*/30 * * * *"
+#       RESTIC_REPOSITORY: "s3:192.168.2.200:{{ docker_port_minio_restic_http }}/restic/"
+#       AWS_ACCESS_KEY_ID: "{{ secret_minio_access_key }}"
+#       AWS_SECRET_ACCESS_KEY: "{{ secret_minio_secret_key }}"
+#       RESTIC_PASSWORD: "{{ secret_restic_password }}"
+#       RESTIC_BACKUP_SOURCES: /mnt/backup
+#       RESTIC_BACKUP_ARGS: --tag mybackup
+#       RESTIC_FORGET_ARGS: --prune --keep-last 30 --keep-daily 1
