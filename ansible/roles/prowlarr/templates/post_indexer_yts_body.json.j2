@@ -1,36 +1,35 @@
 {
   "indexerUrls": [
     "https://yts.mx/",
-    "https://yts.unblockit.asia/",
+    "https://yts.lt/",
+    "https://yts.am/",
+    "https://yts.ag/",
+    "https://yts.unblockit.black/",
     "https://yts.unblockninja.com/",
-    "https://yts.mrunblock.life/",
-    "https://yts.nocensor.click/"
+    "https://yts.ninjaproxy1.com/",
+    "https://yts.proxyninja.org/",
+    "https://yts.proxyninja.net/",
+    "https://yts.torrentbay.st/",
+    "https://yts.torrentsbay.org/"
   ],
   "legacyUrls": [
-    "https://yts.ag/",
-    "https://yts.am/",
-    "https://yts.lt/",
-    "https://yts.unblockit.cam/",
-    "https://yts.nocensor.biz/",
-    "https://yts.unblockit.day/",
-    "https://yts.unblockit.llc/",
-    "https://yts.unblockit.blue/",
-    "https://yts.unblockit.name/",
-    "https://yts.nocensor.sbs/",
-    "https://yts.unblockit.ist/",
-    "https://yts.unblockit.bet/",
-    "https://yts.unblockit.cat/",
-    "https://yts.unblockit.nz/",
-    "https://yts.nocensor.world/",
-    "https://yts.unblockit.page/",
-    "https://yts.unblockit.pet/",
-    "https://yts.nocensor.lol/",
-    "https://yts.unblockit.ink/",
-    "https://yts.nocensor.art/",
-    "https://yts.unblockit.bio/",
-    "https://yts.unblockit.boo/",
-    "https://yts.mrunblock.guru/",
-    "https://yts.unblockit.click/"
+    "https://yts.unblockit.asia/",
+    "https://yts.unblockit.mov/",
+    "https://yts.unblockit.rsvp/",
+    "https://yts.unblockit.vegas/",
+    "https://yts.unblockit.esq/",
+    "https://yts.unblockit.zip/",
+    "https://yts.unblockit.foo/",
+    "https://yts.unblockit.ing/",
+    "https://yts.mrunblock.bond/",
+    "https://yts.nocensor.cloud/",
+    "https://yts.unblockit.date/",
+    "https://yts.unblockit.dad/",
+    "https://yts.unblockit.africa/",
+    "https://yts.unblockit.casa/",
+    "https://yts.unblockit.sbs/",
+    "https://yts.unblockit.ong/",
+    "https://yts.abcproxy.org/"
   ],
   "definitionName": "yts",
   "description": "YTS is a Public torrent site specialising in HD movies of small size",
@@ -105,7 +104,8 @@
     "bookSearchParams": []
   },
   "priority": 25,
-  "added": "2023-05-08T10:48:57Z",
+  "downloadClientId": 0,
+  "added": "2024-06-28T14:34:45Z",
   "sortName": "yts",
   "name": "YTS",
   "fields": [
@@ -115,66 +115,107 @@
       "value": "yts",
       "type": "textbox",
       "advanced": false,
-      "hidden": "hidden"
+      "hidden": "hidden",
+      "privacy": "normal",
+      "isFloat": false
     },
     {
       "order": 1,
       "name": "baseUrl",
       "label": "Base Url",
-      "helpText": "Select which baseurl Prowlarr will use for requests to the site",
+      "helpText": "Select which base url Prowlarr will use for requests to the site",
       "type": "select",
       "advanced": false,
-      "selectOptionsProviderAction": "getUrls"
+      "selectOptionsProviderAction": "getUrls",
+      "privacy": "normal",
+      "isFloat": false
     },
     {
       "order": 2,
       "name": "baseSettings.queryLimit",
       "label": "Query Limit",
-      "helpText": "The number of queries within a rolling 24 hour period Prowlarr will allow to the site",
+      "helpText": "The number of max queries as specified by the respective unit that Prowlarr will allow to the site",
       "type": "number",
-      "advanced": true
+      "advanced": true,
+      "privacy": "normal",
+      "isFloat": false
     },
     {
       "order": 3,
       "name": "baseSettings.grabLimit",
       "label": "Grab Limit",
-      "helpText": "The number of grabs within a rolling 24 hour period Prowlarr will allow to the site",
+      "helpText": "The number of max grabs as specified by the respective unit that Prowlarr will allow to the site",
       "type": "number",
-      "advanced": true
+      "advanced": true,
+      "privacy": "normal",
+      "isFloat": false
     },
     {
       "order": 4,
+      "name": "baseSettings.limitsUnit",
+      "label": "Limits Unit",
+      "helpText": "The unit of time for counting limits per indexer",
+      "value": 0,
+      "type": "select",
+      "advanced": true,
+      "selectOptions": [
+        {
+          "value": 0,
+          "name": "Day",
+          "order": 0,
+          "hint": "(0)"
+        },
+        {
+          "value": 1,
+          "name": "Hour",
+          "order": 1,
+          "hint": "(1)"
+        }
+      ],
+      "privacy": "normal",
+      "isFloat": false
+    },
+    {
+      "order": 5,
       "name": "torrentBaseSettings.appMinimumSeeders",
       "label": "Apps Minimum Seeders",
       "helpText": "Minimum seeders required by the Applications for the indexer to grab, empty is Sync profile's default",
       "type": "number",
-      "advanced": true
-    },
-    {
-      "order": 5,
-      "name": "torrentBaseSettings.seedRatio",
-      "label": "Seed Ratio",
-      "helpText": "The ratio a torrent should reach before stopping, empty is app's default",
-      "type": "textbox",
-      "advanced": true
+      "advanced": true,
+      "privacy": "normal",
+      "isFloat": false
     },
     {
       "order": 6,
-      "name": "torrentBaseSettings.seedTime",
-      "label": "Seed Time",
-      "unit": "minutes",
-      "helpText": "The time a torrent should be seeded before stopping, empty is app's default",
+      "name": "torrentBaseSettings.seedRatio",
+      "label": "Seed Ratio",
+      "helpText": "The ratio a torrent should reach before stopping, empty uses the download client's default. Ratio should be at least 1.0 and follow the indexers rules",
       "type": "number",
-      "advanced": true
+      "advanced": false,
+      "privacy": "normal",
+      "isFloat": true
     },
     {
       "order": 7,
+      "name": "torrentBaseSettings.seedTime",
+      "label": "Seed Time",
+      "unit": "minutes",
+      "helpText": "The time a torrent should be seeded before stopping, empty uses the download client's default",
+      "type": "number",
+      "advanced": true,
+      "privacy": "normal",
+      "isFloat": false
+    },
+    {
+      "order": 8,
       "name": "torrentBaseSettings.packSeedTime",
       "label": "Pack Seed Time",
       "unit": "minutes",
       "helpText": "The time a pack (season or discography) torrent should be seeded before stopping, empty is app's default",
       "type": "number",
-      "advanced": true
+      "advanced": true,
+      "privacy": "normal",
+      "isFloat": false
     }
   ],
   "implementationName": "Cardigann",

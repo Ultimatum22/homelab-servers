@@ -115,12 +115,27 @@
   with_items:
     - 0magnet
     - 1337x
-    - limetorrents
-    - yts
-    - btsow
+    - btmet
     - crackingpatching
+    - exttorrent-st
     - eztv
+    - internetarchive
+    - isohunt
+    - kickasstorrents-to
+    - kickasstorrents-ws
+    - knaben
+    - lepornoinfo
     - pornotorrent
+    - rapidzona
+    - sexypics
+    - therarbg
+    - torlock
+    - torrentdownload
+    - torrentdownloads
+    - torrentfunk
+    - torrentproject2
+    - torrentz2nz
+    - yts
 
 - name: "Add Application"
   ansible.builtin.uri:

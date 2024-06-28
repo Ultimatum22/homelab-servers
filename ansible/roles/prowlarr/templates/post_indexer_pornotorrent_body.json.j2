@@ -42,7 +42,8 @@
     "bookSearchParams": []
   },
   "priority": 25,
-  "added": "2023-05-30T10:26:23Z",
+  "downloadClientId": 0,
+  "added": "2024-06-28T14:35:02Z",
   "sortName": "pornotorrent",
   "name": "PornoTorrent",
   "fields": [
@@ -52,66 +53,107 @@
       "value": "pornotorrent",
       "type": "textbox",
       "advanced": false,
-      "hidden": "hidden"
+      "hidden": "hidden",
+      "privacy": "normal",
+      "isFloat": false
     },
     {
       "order": 1,
       "name": "baseUrl",
       "label": "Base Url",
-      "helpText": "Select which baseurl Prowlarr will use for requests to the site",
+      "helpText": "Select which base url Prowlarr will use for requests to the site",
       "type": "select",
       "advanced": false,
-      "selectOptionsProviderAction": "getUrls"
+      "selectOptionsProviderAction": "getUrls",
+      "privacy": "normal",
+      "isFloat": false
     },
     {
       "order": 2,
       "name": "baseSettings.queryLimit",
       "label": "Query Limit",
-      "helpText": "The number of queries within a rolling 24 hour period Prowlarr will allow to the site",
+      "helpText": "The number of max queries as specified by the respective unit that Prowlarr will allow to the site",
       "type": "number",
-      "advanced": true
+      "advanced": true,
+      "privacy": "normal",
+      "isFloat": false
     },
     {
       "order": 3,
       "name": "baseSettings.grabLimit",
       "label": "Grab Limit",
-      "helpText": "The number of grabs within a rolling 24 hour period Prowlarr will allow to the site",
+      "helpText": "The number of max grabs as specified by the respective unit that Prowlarr will allow to the site",
       "type": "number",
-      "advanced": true
+      "advanced": true,
+      "privacy": "normal",
+      "isFloat": false
     },
     {
       "order": 4,
+      "name": "baseSettings.limitsUnit",
+      "label": "Limits Unit",
+      "helpText": "The unit of time for counting limits per indexer",
+      "value": 0,
+      "type": "select",
+      "advanced": true,
+      "selectOptions": [
+        {
+          "value": 0,
+          "name": "Day",
+          "order": 0,
+          "hint": "(0)"
+        },
+        {
+          "value": 1,
+          "name": "Hour",
+          "order": 1,
+          "hint": "(1)"
+        }
+      ],
+      "privacy": "normal",
+      "isFloat": false
+    },
+    {
+      "order": 5,
       "name": "torrentBaseSettings.appMinimumSeeders",
       "label": "Apps Minimum Seeders",
       "helpText": "Minimum seeders required by the Applications for the indexer to grab, empty is Sync profile's default",
       "type": "number",
-      "advanced": true
-    },
-    {
-      "order": 5,
-      "name": "torrentBaseSettings.seedRatio",
-      "label": "Seed Ratio",
-      "helpText": "The ratio a torrent should reach before stopping, empty is app's default",
-      "type": "textbox",
-      "advanced": true
+      "advanced": true,
+      "privacy": "normal",
+      "isFloat": false
     },
     {
       "order": 6,
-      "name": "torrentBaseSettings.seedTime",
-      "label": "Seed Time",
-      "unit": "minutes",
-      "helpText": "The time a torrent should be seeded before stopping, empty is app's default",
+      "name": "torrentBaseSettings.seedRatio",
+      "label": "Seed Ratio",
+      "helpText": "The ratio a torrent should reach before stopping, empty uses the download client's default. Ratio should be at least 1.0 and follow the indexers rules",
       "type": "number",
-      "advanced": true
+      "advanced": false,
+      "privacy": "normal",
+      "isFloat": true
     },
     {
       "order": 7,
+      "name": "torrentBaseSettings.seedTime",
+      "label": "Seed Time",
+      "unit": "minutes",
+      "helpText": "The time a torrent should be seeded before stopping, empty uses the download client's default",
+      "type": "number",
+      "advanced": true,
+      "privacy": "normal",
+      "isFloat": false
+    },
+    {
+      "order": 8,
       "name": "torrentBaseSettings.packSeedTime",
       "label": "Pack Seed Time",
       "unit": "minutes",
       "helpText": "The time a pack (season or discography) torrent should be seeded before stopping, empty is app's default",
       "type": "number",
-      "advanced": true
+      "advanced": true,
+      "privacy": "normal",
+      "isFloat": false
     }
   ],
   "implementationName": "Cardigann",

@@ -1,43 +1,10 @@
 {
   "indexerUrls": [
-    "https://eztvx.to/",
-    "https://eztv.wf/",
-    "https://eztv.tf/",
-    "https://eztv.yt/",
-    "https://eztv1.xyz/",
-    "https://eztv.unblockit.black/"
+    "https://btmet.com/"
   ],
-  "legacyUrls": [
-    "https://eztv.ag/",
-    "https://eztv.it/",
-    "https://eztv.ch/",
-    "https://eztv.io/",
-    "https://eztv.unblockit.asia/",
-    "https://eztv.unblockit.mov/",
-    "https://eztv.mrunblock.life/",
-    "https://eztv.unblockit.rsvp/",
-    "https://eztv.unblockit.vegas/",
-    "https://eztv.unblockit.esq/",
-    "https://eztv.unblockit.zip/",
-    "https://eztv.re/",
-    "https://eztv.li/",
-    "https://eztv.unblockit.foo/",
-    "https://eztv.unblockit.ing/",
-    "https://eztv.mrunblock.bond/",
-    "https://eztv.nocensor.cloud/",
-    "https://eztv.unblockit.date/",
-    "https://eztv.unblockit.dad/",
-    "https://eztv.unblockit.africa/",
-    "https://eztv.unblockit.casa/",
-    "https://eztv.unblockit.sbs/",
-    "https://eztv.unblockninja.com/",
-    "https://eztv.ninjaproxy1.com/",
-    "https://eztv.proxyninja.org/",
-    "https://eztv.abcproxy.org/",
-    "https://eztv.unblockit.ong/"
-  ],
-  "definitionName": "eztv",
-  "description": "EZTV is a Public torrent site for TV shows",
+  "legacyUrls": [],
+  "definitionName": "btmet",
+  "description": "BTMET is a Public magnet indexer",
   "language": "en-US",
   "encoding": "Unicode (UTF-8)",
   "enable": true,
@@ -54,8 +21,33 @@
     "limitsDefault": 100,
     "categories": [
       {
+        "id": 3000,
+        "name": "Audio",
+        "subCategories": []
+      },
+      {
+        "id": 8000,
+        "name": "Other",
+        "subCategories": []
+      },
+      {
+        "id": 7000,
+        "name": "Books",
+        "subCategories": []
+      },
+      {
+        "id": 4000,
+        "name": "PC",
+        "subCategories": []
+      },
+      {
         "id": 5000,
         "name": "TV",
+        "subCategories": []
+      },
+      {
+        "id": 2000,
+        "name": "Movies",
         "subCategories": []
       }
     ],
@@ -69,20 +61,24 @@
       "season",
       "ep"
     ],
-    "movieSearchParams": [],
-    "musicSearchParams": [],
+    "movieSearchParams": [
+      "q"
+    ],
+    "musicSearchParams": [
+      "q"
+    ],
     "bookSearchParams": []
   },
   "priority": 25,
   "downloadClientId": 0,
-  "added": "2024-06-28T14:34:57Z",
-  "sortName": "eztv",
-  "name": "EZTV",
+  "added": "2024-06-28T14:41:26Z",
+  "sortName": "btmet",
+  "name": "BTMET",
   "fields": [
     {
       "order": 0,
       "name": "definitionFile",
-      "value": "eztv",
+      "value": "btmet",
       "type": "textbox",
       "advanced": false,
       "hidden": "hidden",
@@ -186,11 +182,50 @@
       "advanced": true,
       "privacy": "normal",
       "isFloat": false
+    },
+    {
+      "order": 0,
+      "name": "sort",
+      "label": "Sort requested from site",
+      "value": 0,
+      "type": "select",
+      "advanced": false,
+      "selectOptions": [
+        {
+          "value": 0,
+          "name": "relevance",
+          "order": 0
+        },
+        {
+          "value": 1,
+          "name": "created",
+          "order": 0
+        },
+        {
+          "value": 2,
+          "name": "size",
+          "order": 0
+        }
+      ],
+      "privacy": "normal",
+      "isFloat": false
+    },
+    {
+      "order": 1,
+      "name": "info_flaresolverr",
+      "label": "FlareSolverr Info",
+      "value": "This site may use Cloudflare DDoS Protection, therefore Prowlarr requires <a href=\"https://wiki.servarr.com/prowlarr/faq#can-i-use-flaresolverr-indexers\" target=\"_blank\" rel=\"noreferrer\">FlareSolverr</a> to access it.",
+      "type": "info",
+      "advanced": false,
+      "privacy": "normal",
+      "isFloat": false
     }
   ],
   "implementationName": "Cardigann",
   "implementation": "Cardigann",
   "configContract": "CardigannSettings",
-  "infoLink": "https://wiki.servarr.com/prowlarr/supported-indexers#eztv",
-  "tags": []
+  "infoLink": "https://wiki.servarr.com/prowlarr/supported-indexers#btmet",
+  "tags": [
+    1
+  ]
 }

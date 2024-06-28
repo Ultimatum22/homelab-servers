@@ -1,43 +1,10 @@
 {
   "indexerUrls": [
-    "https://eztvx.to/",
-    "https://eztv.wf/",
-    "https://eztv.tf/",
-    "https://eztv.yt/",
-    "https://eztv1.xyz/",
-    "https://eztv.unblockit.black/"
+    "https://archive.org/"
   ],
-  "legacyUrls": [
-    "https://eztv.ag/",
-    "https://eztv.it/",
-    "https://eztv.ch/",
-    "https://eztv.io/",
-    "https://eztv.unblockit.asia/",
-    "https://eztv.unblockit.mov/",
-    "https://eztv.mrunblock.life/",
-    "https://eztv.unblockit.rsvp/",
-    "https://eztv.unblockit.vegas/",
-    "https://eztv.unblockit.esq/",
-    "https://eztv.unblockit.zip/",
-    "https://eztv.re/",
-    "https://eztv.li/",
-    "https://eztv.unblockit.foo/",
-    "https://eztv.unblockit.ing/",
-    "https://eztv.mrunblock.bond/",
-    "https://eztv.nocensor.cloud/",
-    "https://eztv.unblockit.date/",
-    "https://eztv.unblockit.dad/",
-    "https://eztv.unblockit.africa/",
-    "https://eztv.unblockit.casa/",
-    "https://eztv.unblockit.sbs/",
-    "https://eztv.unblockninja.com/",
-    "https://eztv.ninjaproxy1.com/",
-    "https://eztv.proxyninja.org/",
-    "https://eztv.abcproxy.org/",
-    "https://eztv.unblockit.ong/"
-  ],
-  "definitionName": "eztv",
-  "description": "EZTV is a Public torrent site for TV shows",
+  "legacyUrls": [],
+  "definitionName": "internetarchive",
+  "description": "Internet Archive is a non-profit digital library offering free universal access to books, movies & music, as well as 406 billion archived web pages",
   "language": "en-US",
   "encoding": "Unicode (UTF-8)",
   "enable": true,
@@ -54,8 +21,99 @@
     "limitsDefault": 100,
     "categories": [
       {
+        "id": 3000,
+        "name": "Audio",
+        "subCategories": []
+      },
+      {
+        "id": 127296,
+        "name": "audio",
+        "subCategories": []
+      },
+      {
+        "id": 154563,
+        "name": "etree",
+        "subCategories": []
+      },
+      {
+        "id": 2000,
+        "name": "Movies",
+        "subCategories": []
+      },
+      {
+        "id": 112696,
+        "name": "movies",
+        "subCategories": []
+      },
+      {
         "id": 5000,
         "name": "TV",
+        "subCategories": []
+      },
+      {
+        "id": 112696,
+        "name": "movies",
+        "subCategories": []
+      },
+      {
+        "id": 8000,
+        "name": "Other",
+        "subCategories": [
+          {
+            "id": 8010,
+            "name": "Other/Misc",
+            "subCategories": []
+          }
+        ]
+      },
+      {
+        "id": 130222,
+        "name": "image",
+        "subCategories": []
+      },
+      {
+        "id": 7000,
+        "name": "Books",
+        "subCategories": []
+      },
+      {
+        "id": 130440,
+        "name": "texts",
+        "subCategories": []
+      },
+      {
+        "id": 4000,
+        "name": "PC",
+        "subCategories": []
+      },
+      {
+        "id": 133225,
+        "name": "software",
+        "subCategories": []
+      },
+      {
+        "id": 133994,
+        "name": "web",
+        "subCategories": []
+      },
+      {
+        "id": 114112,
+        "name": "collection",
+        "subCategories": []
+      },
+      {
+        "id": 108394,
+        "name": "account",
+        "subCategories": []
+      },
+      {
+        "id": 131905,
+        "name": "data",
+        "subCategories": []
+      },
+      {
+        "id": 138096,
+        "name": "other",
         "subCategories": []
       }
     ],
@@ -69,20 +127,26 @@
       "season",
       "ep"
     ],
-    "movieSearchParams": [],
-    "musicSearchParams": [],
-    "bookSearchParams": []
+    "movieSearchParams": [
+      "q"
+    ],
+    "musicSearchParams": [
+      "q"
+    ],
+    "bookSearchParams": [
+      "q"
+    ]
   },
   "priority": 25,
   "downloadClientId": 0,
-  "added": "2024-06-28T14:34:57Z",
-  "sortName": "eztv",
-  "name": "EZTV",
+  "added": "2024-06-28T14:41:57Z",
+  "sortName": "internet archive",
+  "name": "Internet Archive",
   "fields": [
     {
       "order": 0,
       "name": "definitionFile",
-      "value": "eztv",
+      "value": "internetarchive",
       "type": "textbox",
       "advanced": false,
       "hidden": "hidden",
@@ -186,11 +250,80 @@
       "advanced": true,
       "privacy": "normal",
       "isFloat": false
+    },
+    {
+      "order": 0,
+      "name": "titleOnly",
+      "label": "Search only in title",
+      "value": true,
+      "type": "checkbox",
+      "advanced": false,
+      "privacy": "normal",
+      "isFloat": false
+    },
+    {
+      "order": 1,
+      "name": "noMagnet",
+      "label": "Download using .torrent only. No Magnets.",
+      "value": false,
+      "type": "checkbox",
+      "advanced": false,
+      "privacy": "normal",
+      "isFloat": false
+    },
+    {
+      "order": 2,
+      "name": "sort",
+      "label": "Sort requested from site",
+      "value": 2,
+      "type": "select",
+      "advanced": false,
+      "selectOptions": [
+        {
+          "value": 0,
+          "name": "downloads",
+          "order": 0
+        },
+        {
+          "value": 1,
+          "name": "size",
+          "order": 0
+        },
+        {
+          "value": 2,
+          "name": "created",
+          "order": 0
+        }
+      ],
+      "privacy": "normal",
+      "isFloat": false
+    },
+    {
+      "order": 3,
+      "name": "type",
+      "label": "Order requested from site",
+      "value": 1,
+      "type": "select",
+      "advanced": false,
+      "selectOptions": [
+        {
+          "value": 0,
+          "name": "asc",
+          "order": 0
+        },
+        {
+          "value": 1,
+          "name": "desc",
+          "order": 0
+        }
+      ],
+      "privacy": "normal",
+      "isFloat": false
     }
   ],
   "implementationName": "Cardigann",
   "implementation": "Cardigann",
   "configContract": "CardigannSettings",
-  "infoLink": "https://wiki.servarr.com/prowlarr/supported-indexers#eztv",
+  "infoLink": "https://wiki.servarr.com/prowlarr/supported-indexers#internetarchive",
   "tags": []
 }

@@ -10,7 +10,7 @@
     - role: readarr
     - role: sonarr
     # - role: bazarr
-    # - role: prowlarr
+    - role: prowlarr
     # - role: directory_export
     # - role: jellyfin
     # - role: backup

@@ -1,43 +1,19 @@
 {
   "indexerUrls": [
-    "https://eztvx.to/",
-    "https://eztv.wf/",
-    "https://eztv.tf/",
-    "https://eztv.yt/",
-    "https://eztv1.xyz/",
-    "https://eztv.unblockit.black/"
+    "https://torrentproject2.net/",
+    "https://torrentproject2.org/",
+    "https://torrentproject.info/",
+    "https://torrentproject.biz/",
+    "https://torrentproject.xyz/",
+    "https://torrentproject.cc/",
+    "https://torrentproject.torrentbay.st/"
   ],
   "legacyUrls": [
-    "https://eztv.ag/",
-    "https://eztv.it/",
-    "https://eztv.ch/",
-    "https://eztv.io/",
-    "https://eztv.unblockit.asia/",
-    "https://eztv.unblockit.mov/",
-    "https://eztv.mrunblock.life/",
-    "https://eztv.unblockit.rsvp/",
-    "https://eztv.unblockit.vegas/",
-    "https://eztv.unblockit.esq/",
-    "https://eztv.unblockit.zip/",
-    "https://eztv.re/",
-    "https://eztv.li/",
-    "https://eztv.unblockit.foo/",
-    "https://eztv.unblockit.ing/",
-    "https://eztv.mrunblock.bond/",
-    "https://eztv.nocensor.cloud/",
-    "https://eztv.unblockit.date/",
-    "https://eztv.unblockit.dad/",
-    "https://eztv.unblockit.africa/",
-    "https://eztv.unblockit.casa/",
-    "https://eztv.unblockit.sbs/",
-    "https://eztv.unblockninja.com/",
-    "https://eztv.ninjaproxy1.com/",
-    "https://eztv.proxyninja.org/",
-    "https://eztv.abcproxy.org/",
-    "https://eztv.unblockit.ong/"
+    "https://torrentproject2.se/",
+    "https://torrentproject2.com/"
   ],
-  "definitionName": "eztv",
-  "description": "EZTV is a Public torrent site for TV shows",
+  "definitionName": "torrentproject2",
+  "description": "TorrentProject2 is a Public torrent meta-search engine",
   "language": "en-US",
   "encoding": "Unicode (UTF-8)",
   "enable": true,
@@ -54,8 +30,13 @@
     "limitsDefault": 100,
     "categories": [
       {
-        "id": 5000,
-        "name": "TV",
+        "id": 8000,
+        "name": "Other",
+        "subCategories": []
+      },
+      {
+        "id": 127246,
+        "name": "Other",
         "subCategories": []
       }
     ],
@@ -69,20 +50,26 @@
       "season",
       "ep"
     ],
-    "movieSearchParams": [],
-    "musicSearchParams": [],
-    "bookSearchParams": []
+    "movieSearchParams": [
+      "q"
+    ],
+    "musicSearchParams": [
+      "q"
+    ],
+    "bookSearchParams": [
+      "q"
+    ]
   },
   "priority": 25,
   "downloadClientId": 0,
-  "added": "2024-06-28T14:34:57Z",
-  "sortName": "eztv",
-  "name": "EZTV",
+  "added": "2024-06-28T14:49:20Z",
+  "sortName": "torrentproject2",
+  "name": "TorrentProject2",
   "fields": [
     {
       "order": 0,
       "name": "definitionFile",
-      "value": "eztv",
+      "value": "torrentproject2",
       "type": "textbox",
       "advanced": false,
       "hidden": "hidden",
@@ -186,11 +173,63 @@
       "advanced": true,
       "privacy": "normal",
       "isFloat": false
+    },
+    {
+      "order": 0,
+      "name": "filter-verified",
+      "label": "Only include verifed content in results",
+      "value": false,
+      "type": "checkbox",
+      "advanced": false,
+      "privacy": "normal",
+      "isFloat": false
+    },
+    {
+      "order": 1,
+      "name": "sort",
+      "label": "Sort requested from site",
+      "value": 0,
+      "type": "select",
+      "advanced": false,
+      "selectOptions": [
+        {
+          "value": 0,
+          "name": "created desc",
+          "order": 0
+        },
+        {
+          "value": 1,
+          "name": "created asc",
+          "order": 0
+        },
+        {
+          "value": 2,
+          "name": "seeders",
+          "order": 0
+        },
+        {
+          "value": 3,
+          "name": "size",
+          "order": 0
+        }
+      ],
+      "privacy": "normal",
+      "isFloat": false
+    },
+    {
+      "order": 2,
+      "name": "info_category_8000",
+      "label": "About TorrentProject2 Categories",
+      "value": "TorrentProject2 does not return categories in its search results. To sync to your apps, include 8000(Other) in your Apps' Sync Categories.",
+      "type": "info",
+      "advanced": false,
+      "privacy": "normal",
+      "isFloat": false
     }
   ],
   "implementationName": "Cardigann",
   "implementation": "Cardigann",
   "configContract": "CardigannSettings",
-  "infoLink": "https://wiki.servarr.com/prowlarr/supported-indexers#eztv",
+  "infoLink": "https://wiki.servarr.com/prowlarr/supported-indexers#torrentproject2",
   "tags": []
 }
