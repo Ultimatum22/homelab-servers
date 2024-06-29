@@ -7,16 +7,18 @@
     group: "{{ ansible_user }}"
     mode: 0775
   with_items:
-    - "{{ docker_backup.restic }}"
+    - "{{ docker_restic.data }}"
+    - "{{ docker_backup }}"
 
 - name: Create and start Restic container
   community.docker.docker_container:
-    name: restic-server
-    image: "{{ docker_backup.image }}"
+    name: restic
+    image: "{{ docker_restic.image }}"
     pull: yes
     recreate: true
     volumes:
-      - "{{ docker_backup.restic }}:/data"
+      - "{{ docker_restic.data }}:/data"
+      - "{{ docker_backup }}:/backup"
     networks:
       - name: homelab
         aliases:
@@ -30,7 +32,7 @@
       homepage.group: Tools
       homepage.name: Restic
       homepage.icon: restic.svg
-      homepage.href: http://192.168.2.200:{{ docker_port_restic_http }}
+      homepage.href: "{{ url_restic  }}"
     env:
       TZ: "{{ system_timezone }}"
 
@@ -42,7 +44,7 @@
 #     pull: yes
 #     recreate: true
 #     volumes:
-#       - "{{ docker_backup.restic }}:/mnt/backup"
+#       - "{{ docker_restic.restic }}:/mnt/backup"
 #     networks:
 #       - name: homelab
 #         aliases:
