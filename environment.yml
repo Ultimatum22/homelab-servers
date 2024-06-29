@@ -1,4 +1,4 @@
-name: venv
+name: homelab-servers
 channels:
   - defaults
   - conda-forge
