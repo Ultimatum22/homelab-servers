@@ -96,6 +96,9 @@ conda.import:
 conda.update:
 	conda update -n base -c conda-forge conda
 
+conda.update.env:
+	conda update --file environment.yml --prune
+
 ## ANSIBLE VAULT ##
 vault.encrypt:
 	@echo "Encrypt all Ansible vault files"
