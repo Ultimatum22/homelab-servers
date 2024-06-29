@@ -37,6 +37,7 @@ docker_port_transmission_http: 9091
 docker_port_transmission_torrent: 51413
 docker_port_uptime_kuma_http: 3002
 docker_port_glances_http: 61208
+docker_port_paperless_http: 8456
 
 host_poseidon_ip: 192.168.2.200
 host_ares01_ip: 192.168.2.221
@@ -89,3 +90,4 @@ url_transmission: "{{ host_poseidon_ip }}:{{ docker_port_transmission_http }}"
 url_uptime_kuma: "{{ host_poseidon_ip }}:{{ docker_port_uptime_kuma_http }}"
 url_glances: "{{ host_poseidon_ip }}:{{ docker_port_glances_http }}"
 url_restic: "{{ host_poseidon_ip }}:{{ docker_port_restic_http }}"
+url_paperless: "{{ host_poseidon_ip }}:{{ docker_port_paperless_http }}"

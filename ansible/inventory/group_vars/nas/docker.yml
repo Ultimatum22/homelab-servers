@@ -11,6 +11,9 @@ docker_media_movies: "{{ docker_media }}/movies"
 docker_media_music: "{{ docker_media }}/music"
 docker_media_tvshows: "{{ docker_media }}/tvshows"
 docker_media_adult: "{{ docker_media }}/adult"
+docker_papers_media: "{{ docker_media }}/papers/media"
+docker_papers_export: "{{ docker_media }}/papers/export"
+docker_papers_consume: "{{ docker_media }}/papers/consume"
 docker_media_blackhole: "{{ docker_media }}/blackhole"
 docker_media_downloads: "{{ docker_media }}/downloads"
 docker_media_downloads_complete: "{{ docker_media_downloads }}/complete"
@@ -164,3 +167,11 @@ docker_uptime_kuma:
 docker_glances:
   config: "{{ docker_config_root }}/glances"
   image: nicolargo/glances:4.0.8
+
+docker_paperless:
+  data: "{{ docker_data_root }}/paperless"
+  database: "{{ docker_data_root }}/paperless-database"
+  broker: "{{ docker_data_root }}/paperless-broker"
+  image: paperlessngx/paperless-ngx:2.10
+  image_database: postgres:12.19-alpine
+  image_broker: redis:7.2.5-alpine

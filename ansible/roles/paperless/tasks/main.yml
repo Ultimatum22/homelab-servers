@@ -1,0 +1,112 @@
+---
+- name: Create directories for services
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0775
+  with_items:
+      - "{{ docker_paperless.data }}"
+      - "{{ docker_papers_media }}"
+      - "{{ docker_papers_export }}"
+      - "{{ docker_papers_consume }}"
+
+- name: Create Docker network
+  community.general.docker_network:
+    name: paperless-net
+
+- name: Create and start Paperless database container
+  community.general.docker_container:
+    name: paperless_database
+    image: "{{ docker_paperless.image_database }}"
+    pull: yes
+    recreate: true
+    image_name_mismatch: "recreate"
+    networks:
+      - name: homelab
+        aliases:
+          - paperless
+    volumes:
+      - "{{ docker_paperless.database }}:/var/lib/postgresql/data"
+    env:
+      POSTGRES_DB: "{{ secret_paperless_database_name }}"
+      POSTGRES_USER: "{{ secret_paperless_database_user }}"
+      POSTGRES_PASSWORD: "{{ secret_paperless_database_password }}"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "{{ secret_paperless_database_name }}", "-U", "{{ secret_paperless_database_user }}"]
+      interval: 360s
+      timeout: 45s
+      retries: 10
+    restart_policy: unless-stopped
+    state: started
+
+- name: Create and start Paperless Broker container
+  community.general.docker_container:
+    name: paperless_broker
+    image: "{{ docker_paperless.image_broker }}"
+    pull: yes
+    recreate: true
+    image_name_mismatch: "recreate"
+    networks:
+      - name: homelab
+        aliases:
+          - paperless
+    volumes:
+      - "{{ docker_paperless.broker }}:/data"
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 60s
+      timeout: 45s
+      retries: 5
+    restart_policy: unless-stopped
+    state: started
+
+- name: Create and start Paperless container
+  community.general.docker_container:
+    name: paperless
+    image: "{{ docker_paperless.image }}"
+    pull: yes
+    recreate: true
+    image_name_mismatch: "recreate"
+    networks:
+      - name: homelab
+        aliases:
+          - paperless
+    ports:
+      - "{{ docker_port_paperless_http }}:8000"
+    env:
+      USERMAP_UID: "1000"
+      USERMAP_GID: "1000"
+      PAPERLESS_TIME_ZONE: "{{ system_timezone }}"
+      PAPERLESS_OCR_LANGUAGE: "eng"
+      PAPERLESS_SECRET_KEY: "{{ secret_paperless_secretkey }}"
+      PAPERLESS_DATE_ORDER: "MDY"
+      PAPERLESS_WEBSERVER_WORKERS: "2"
+      PAPERLESS_CONSUMER_POLLING: "600"
+      PAPERLESS_REDIS: "redis://paperless_broker:6379"
+      PAPERLESS_DBHOST: "paperless_database"
+      PAPERLESS_DBNAME: "{{ secret_paperless_database_name }}"
+      PAPERLESS_DBUSER: "{{ secret_paperless_database_user }}"
+      PAPERLESS_DBPASS: "{{ secret_paperless_database_password }}"
+    labels:
+      diun.enable: "true"
+      homepage.group: Office
+      homepage.name: Paperless
+      homepage.icon: paperless
+      homepage.href: "http://{{ url_paperless }}"
+      homepage.description: Scan, index and archive all your physical documents
+      homepage.widget.type: paperlessngx
+      homepage.widget.url: "http://{{ url_paperless }}"
+    volumes:
+      - "{{ docker_paperless.data }}:/usr/src/paperless/data"
+      - "{{ docker_papers_media }}:/usr/src/paperless/media"
+      - "{{ docker_papers_export }}:/usr/src/paperless/export"
+      - "{{ docker_papers_consume }}:/usr/src/paperless/consume"
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "-S", "--max-time", "2", "http://localhost:8000"]
+      interval: 360s
+      timeout: 10s
+      retries: 5
+    restart_policy: unless-stopped
+    state: started
