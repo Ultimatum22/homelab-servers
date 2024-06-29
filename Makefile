@@ -93,9 +93,6 @@ conda.export:
 conda.import:
 	conda env create -f environment.yml
 
-conda.udpate-env:
-	conda env update --file environment.yml --prune
-
 conda.update:
 	conda update -n base -c conda-forge conda
 
