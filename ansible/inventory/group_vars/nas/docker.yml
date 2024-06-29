@@ -2,6 +2,7 @@
 docker_data_root: /mnt/data/docker/data
 docker_config_root: /mnt/data/docker/config
 
+docker_backup: /mnt/data/backup
 docker_media: /mnt/data/media
 docker_media_audiobooks: "{{ docker_media }}/audiobooks"
 docker_media_ebooks: "{{ docker_media }}/ebooks"
@@ -134,8 +135,9 @@ docker_duplicati:
   config: "{{ docker_config_root }}/duplicati"
   data: "{{ docker_data_root }}/duplicati"
 
-docker_backup:
-  restic: "{{ docker_data_root }}/restic"
+docker_restic:
+  data: "{{ docker_data_root }}/restic"
+  image: restic/restic:0.16.4
 
 docker_vpn:
   config: "{{ docker_config_root }}/vpn"
