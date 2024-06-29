@@ -13,8 +13,9 @@
     # - role: prowlarr
     # - role: directory_export
     # - role: jellyfin
-    - role: backup
+    # # - role: backup
     # - role: scrutiny
     # - role: uptime-kuma
     # - role: glances
     # - role: gotify
+    - role: homeassistant

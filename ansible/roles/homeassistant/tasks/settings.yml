@@ -1,0 +1,39 @@
+---
+- name: Wait for 'services.yaml' to be created
+  ansible.builtin.wait_for:
+    path: "{{ docker_homepage.config }}/services.yaml"
+    state: present
+
+- name: Stop container
+  community.general.docker_container:
+    name: homepage
+    state: stopped
+
+- name: Copy services.yaml
+  ansible.builtin.template:
+    src: "services.yaml.j2"
+    dest: "{{ docker_homepage.config }}/services.yaml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0644
+
+- name: Copy docker.yaml
+  ansible.builtin.template:
+    src: "docker.yaml.j2"
+    dest: "{{ docker_homepage.config }}/docker.yaml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0644
+
+- name: Copy settings.yaml
+  ansible.builtin.template:
+    src: "settings.yaml.j2"
+    dest: "{{ docker_homepage.config }}/settings.yaml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0644
+
+- name: Start container
+  community.general.docker_container:
+    name: homepage
+    state: started
