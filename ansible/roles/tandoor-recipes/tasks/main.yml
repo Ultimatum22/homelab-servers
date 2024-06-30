@@ -1,0 +1,67 @@
+---
+- name: Create directories for services
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0775"
+  with_items:
+    - "{{ docker_tandoor_recipes.data }}"
+
+- name: Create and start Paperless database container
+  community.general.docker_container:
+    name: tandoor_recipes_database
+    image: "{{ docker_tandoor_recipes.image_database }}"
+    pull: true
+    recreate: true
+    image_name_mismatch: "recreate"
+    networks:
+      - name: homelab
+        aliases:
+          - tandoor_recipes
+    volumes:
+      - "{{ docker_tandoor_recipes.database }}:/var/lib/postgresql/data"
+    env:
+      POSTGRES_DB: "{{ secret_tandoor_recipes_database_name }}"
+      POSTGRES_USER: "{{ secret_tandoor_recipes_database_user }}"
+      POSTGRES_PASSWORD: "{{ secret_tandoor_recipes_database_password }}"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "{{ secret_tandoor_recipes_database_name }}", "-U", "{{ secret_tandoor_recipes_database_user }}"]
+      interval: 360s
+      timeout: 45s
+      retries: 10
+    restart_policy: unless-stopped
+    state: started
+
+- name: Create and start Tandoor Recipes container
+  community.general.docker_container:
+    name: tandoor_recipes
+    image: "{{ docker_tandoor_recipes.image }}"
+    pull: true
+    recreate: true
+    image_name_mismatch: "recreate"
+    networks:
+      - name: homelab
+        aliases:
+          - tandoor_recipes
+    ports:
+      - "{{ docker_port_tandoor_recipes_http }}:8080"
+    env:
+      TIME_ZONE: "{{ system_timezone }}"
+    labels:
+      diun.enable: "true"
+      homepage.group: Home
+      homepage.name: Tandoor Recipes
+      homepage.icon: tandoor_recipes
+      homepage.href: "http://{{ url_tandoor_recipes }}"
+      homepage.description: The recipe manager that allows you to manage your ever growing collection of digital recipes.
+    volumes:
+      - "{{ docker_tandoor_recipes.data }}:/opt/recipes/mediafiles"
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "-S", "--max-time", "2", "http://localhost:8000"]
+      interval: 360s
+      timeout: 10s
+      retries: 5
+    restart_policy: unless-stopped
+    state: started

@@ -175,3 +175,9 @@ docker_paperless:
   image: paperlessngx/paperless-ngx:2.10
   image_database: postgres:12.19-alpine
   image_broker: redis:7.2.5-alpine
+
+docker_tandoor_recipes:
+  data: "{{ docker_data_root }}/tandoor-recipes"
+  database: "{{ docker_data_root }}/tandoor-recipes-database"
+  image: vabene1111/recipes:1.5.17
+  image_database: postgres:12.19-alpine
