@@ -2,20 +2,19 @@
 - hosts: nas
   become: true
   roles:
-    # - role: homepage
-    # - role: vpn
-    # - role: transmission
-    # - role: flaresolverr
-    # - role: radarr
-    # - role: readarr
-    # - role: sonarr
-    # - role: bazarr
-    # - role: prowlarr
-    # - role: directory_export
-    # - role: jellyfin
-    # - role: backup
-    # - role: scrutiny
-    # - role: uptime-kuma
-    # - role: glances
-    # - role: gotify
+    - role: homepage
+    - role: vpn
+    - role: transmission
+    - role: flaresolverr
+    - role: radarr
+    - role: readarr
+    - role: sonarr
+    - role: bazarr
+    - role: prowlarr
+    - role: directory_export
+    - role: jellyfin
+    - role: scrutiny
+    - role: uptime-kuma
+    - role: glances
+    - role: gotify
     - role: paperless
