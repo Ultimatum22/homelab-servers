@@ -54,6 +54,7 @@
       CONSUL_HTTP_TOKEN: "{{ consul_read_secretid.stdout }}"
     # when: consul_policies.stdout == "No policies found" or consul_anon_policy.changed
     run_once: true
+    ignore_errors: true
 
   - name: Get consul_bootstrap.json
     ansible.builtin.fetch:

@@ -55,6 +55,7 @@
       NOMAD_TOKEN: "{{ nomad_read_secretid.stdout }}"
     when: nomad_policies.stdout == "No policies found" or nomad_anon_policy.changed
     run_once: true
+    ignore_errors: true
 
   - name: Enable service scheduler preemption
     ansible.builtin.command: nomad operator scheduler set-config -preempt-system-scheduler=true -preempt-service-scheduler=true

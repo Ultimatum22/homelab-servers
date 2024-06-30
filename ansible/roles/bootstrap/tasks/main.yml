@@ -1,4 +1,16 @@
 ---
+- name: Set hostname
+  ansible.builtin.include_tasks: 01-hostname.yml
+
+- name: Set timezone
+  ansible.builtin.include_tasks: 02-timezone.yml
+
+- name: Set keyboard
+  ansible.builtin.include_tasks: 03-keyboard.yml
+
+- name: Set Locale
+  ansible.builtin.include_tasks: 04-locale.yml
+
 - name: Include OS-specific package tasks
   ansible.builtin.include_tasks: "packages/{{ ansible_os_family | lower }}.yml"
   tags: packages

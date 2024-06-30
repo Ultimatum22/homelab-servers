@@ -1,0 +1,11 @@
+[sshd]
+enabled = true
+filter = sshd
+port = ssh
+maxretry = 3
+findtime = 60
+
+bantime = 1h
+bantime.increment = true
+bantime.factor = 24
+bantime.maxtime = 5w
