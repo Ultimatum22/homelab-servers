@@ -91,7 +91,7 @@
       PAPERLESS_DBPASS: "{{ secret_paperless_database_password }}"
     labels:
       diun.enable: "true"
-      homepage.group: Office
+      homepage.group: Home
       homepage.name: Paperless
       homepage.icon: paperless
       homepage.href: "http://{{ url_paperless }}"
