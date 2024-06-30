@@ -5,12 +5,12 @@
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: "0775"
+    mode: 0775
   with_items:
-    - "{{ docker_paperless.data }}"
-    - "{{ docker_papers_media }}"
-    - "{{ docker_papers_export }}"
-    - "{{ docker_papers_consume }}"
+      - "{{ docker_paperless.data }}"
+      - "{{ docker_papers_media }}"
+      - "{{ docker_papers_export }}"
+      - "{{ docker_papers_consume }}"
 
 - name: Create Docker network
   community.general.docker_network:
@@ -20,7 +20,7 @@
   community.general.docker_container:
     name: paperless_database
     image: "{{ docker_paperless.image_database }}"
-    pull: true
+    pull: yes
     recreate: true
     image_name_mismatch: "recreate"
     networks:
@@ -29,8 +29,6 @@
           - paperless
     volumes:
       - "{{ docker_paperless.database }}:/var/lib/postgresql/data"
-    ports:
-      - "{{ docker_port_paperless_database }}:5432"
     env:
       POSTGRES_DB: "{{ secret_paperless_database_name }}"
       POSTGRES_USER: "{{ secret_paperless_database_user }}"
@@ -47,7 +45,7 @@
   community.general.docker_container:
     name: paperless_broker
     image: "{{ docker_paperless.image_broker }}"
-    pull: true
+    pull: yes
     recreate: true
     image_name_mismatch: "recreate"
     networks:
@@ -56,8 +54,6 @@
           - paperless
     volumes:
       - "{{ docker_paperless.broker }}:/data"
-    ports:
-      - "{{ docker_port_paperless_redis }}:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
       interval: 60s
@@ -70,7 +66,7 @@
   community.general.docker_container:
     name: paperless
     image: "{{ docker_paperless.image }}"
-    pull: true
+    pull: yes
     recreate: true
     image_name_mismatch: "recreate"
     networks:
@@ -88,7 +84,7 @@
       PAPERLESS_DATE_ORDER: "MDY"
       PAPERLESS_WEBSERVER_WORKERS: "2"
       PAPERLESS_CONSUMER_POLLING: "600"
-      PAPERLESS_REDIS: "redis://paperless_broker:{{ docker_port_paperless_redis }}"
+      PAPERLESS_REDIS: "redis://paperless_broker:6379"
       PAPERLESS_DBHOST: "paperless_database"
       PAPERLESS_DBNAME: "{{ secret_paperless_database_name }}"
       PAPERLESS_DBUSER: "{{ secret_paperless_database_user }}"
