@@ -15,8 +15,13 @@ ansible.install:
 ansible.provision:
 	cd ansible && ansible-playbook playbooks/provision.yml
 
-ansible.nas:
-	cd ansible && ansible-playbook playbooks/nas.yml
+
+ansible.run:
+	@if [ -z "$(playbook)" ]; then \
+		echo "Error: playbook parameter is missing. Usage: make ansible.run playbook=<nas|cluster>"; \
+		exit 1; \
+	fi
+	cd ansible && ansible-playbook playbooks/$(playbook).yml
 
 # Docker
 docker.nas.up:
