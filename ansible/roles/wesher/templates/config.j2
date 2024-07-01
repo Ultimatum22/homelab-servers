@@ -4,7 +4,10 @@ WESHER_WIREGUARD_PORT={{ wesher_port + 1 }}
 WESHER_OVERLAY_NET={{ wesher_subnet }}
 WESHER_INTERFACE=wg-{{ cluster_slug }}
 WESHER_BIND_ADDR={{ wesher_bind }}
-{% if ansible_hostname not in groups['master'] %}
+
+servers = [{% for h in groups['nomad_cluster']%}"{{ hostvars[h].ansible_host }}:4646"{% if not loop.last %},{% endif %}{% endfor %}]
+
+{% if ansible_hostname not in groups['wesher_cluster'] %}
 WESHER_JOIN={{ wesher_master }}
 {% endif %}
 

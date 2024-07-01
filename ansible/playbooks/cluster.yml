@@ -4,7 +4,7 @@
   roles:
     # - role: bootstrap
     # - role: docker
-    - role: wesher
+    - role: wireguard
     # - role: consul
     # - role: nomad
     # - role: vault
