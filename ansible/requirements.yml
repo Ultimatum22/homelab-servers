@@ -12,3 +12,5 @@ collections:
 roles:
   - name: geerlingguy.docker
     version: 7.0.2
+  - name: artis3n.tailscale
+  - name: jason_riddle.tailscale

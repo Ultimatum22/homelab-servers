@@ -2,8 +2,13 @@
 - hosts: cluster
   become: true
   roles:
-    - role: bootstrap
-    - role: docker
+    # - role: bootstrap
+    - role: jason_riddle.tailscale
+      vars:
+        tailscale_up_node: true
+        tailscale_up_authkey: "{{ secret_authkey }}"
+        # tailscale_up_extra_args: "--hostname={{ lookup('env', 'HOSTNAME') }}-{{ ansible_distribution|lower }}"
+    # - role: docker
     - role: consul
     - role: nomad
     # - role: vault
