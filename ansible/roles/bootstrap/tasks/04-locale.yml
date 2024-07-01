@@ -1,0 +1,17 @@
+---
+- name: Configure option values in /etc/locale.gen file.
+  ansible.builtin.replace:
+    path: /etc/locale.gen
+    backup: yes
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.line }}"
+  with_items: "{{ locale_options }}"
+  register: locale_gen
+
+- name: Generate Locale
+  ansible.builtin.command: locale-gen {{ locale }}
+  when: locale_gen is changed
+
+- name: Set Locale
+  ansible.builtin.command: update-locale LC_ALL={{ locale }} LANG={{ locale }}
+  when: locale_gen is changed

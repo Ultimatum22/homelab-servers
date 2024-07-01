@@ -11,3 +11,4 @@
   with_items:
     - mdadm
     - gdisk
+    - python3-netaddr

@@ -1,5 +1,9 @@
 [all]
 poseidon ansible_host=192.168.2.200
+homelab-node01 ansible_host=192.168.2.221
+homelab-node02 ansible_host=192.168.2.222
+; homelab-node03 ansible_host=192.168.2.223
+homelab-node04 ansible_host=192.168.2.224
 
 [all:vars]
 ansible_connection=ssh
@@ -17,7 +21,7 @@ homelab-node02
 homelab-node04
 
 [consul_cluster]
-homelab-node01 consul_node_role=both
+homelab-node01 consul_node_role=client
 homelab-node02 consul_node_role=both
 #homelab-node03 consul_node_role=client
 homelab-node04 consul_node_role=server
