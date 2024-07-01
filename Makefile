@@ -24,19 +24,39 @@ ansible.run:
 	cd ansible && ansible-playbook playbooks/$(playbook).yml
 
 # Docker
-docker.nas.up:
-	cd docker && docker compose up -d nas
+docker.up:
+	@if [ -z "$(env)" ]; then \
+		echo "Error: env parameter is missing. Usage: make docker.up env=<nas|cluster>"; \
+		exit 1; \
+	fi
+	cd docker && docker compose up -d $(env)
 
-docker.nas.up.build:
-	cd docker && docker compose up -d nas --build
+docker.up.build:
+	@if [ -z "$(env)" ]; then \
+		echo "Error: env parameter is missing. Usage: make docker.up.build env=<nas|cluster>"; \
+		exit 1; \
+	fi
+	cd docker && docker compose up -d $(env) --build
 
-docker.nas.restart:
-	cd docker && docker rm -f nas && docker compose up -d nas
+docker.restart:
+	@if [ -z "$(env)" ]; then \
+		echo "Error: env parameter is missing. Usage: make docker.restart env=<nas|cluster>"; \
+		exit 1; \
+	fi
+	cd docker && docker rm -f $(env) && docker compose up -d $(env)
 
-docker.nas.destroy:
-	cd docker && docker rm -f nas
+docker.destroy:
+	@if [ -z "$(env)" ]; then \
+		echo "Error: env parameter is missing. Usage: make docker.destroy env=<nas|cluster>"; \
+		exit 1; \
+	fi
+	cd docker && docker rm -f $(env)
 
-docker.nas.provision:
+docker.provision:
+	@if [ -z "$(env)" ]; then \
+		echo "Error: env parameter is missing. Usage: make docker.provision env=<nas|cluster>"; \
+		exit 1; \
+	fi
 	cd docker && ansible-playbook --extra-vars "@./ansible-extra-vars.yml" --vault-id default@../.vault_pass playbooks/provision.yml
 
 # Vagrant
