@@ -98,11 +98,11 @@ conda.export:
 conda.import:
 	conda env create -f environment.yml
 
-conda.update:
+conda.update.base:
 	conda update -n base -c conda-forge conda
 
-conda.update.env:
-	conda update --file environment.yml --prune
+conda.update.file:
+	conda update env --file environment.yml
 
 ## ANSIBLE VAULT ##
 vault.encrypt:
