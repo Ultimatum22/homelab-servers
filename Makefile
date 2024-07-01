@@ -84,18 +84,31 @@ vagrant.destroy:
 
 # Terraform
 terraform.init:
-	cd terraform/$(WS) && \
+	@if [ -z "$(workspace)" ]; then \
+		echo "Error: workspace parameter is missing. Usage: make terraform.init workspace=<nomad|cluster>"; \
+		exit 1; \
+	fi
+	cd terraform/$(workspace) && \
 	terraform init
 
 terraform.plan:
-	cd terraform/$(WS) && \
+	@if [ -z "$(workspace)" ]; then \
+		echo "Error: workspace parameter is missing. Usage: make terraform.plan workspace=<nomad|cluster>"; \
+		exit 1; \
+	fi
+
+	cd terraform/$(workspace) && \
 	terraform plan \
 		-var "nomad_secret_id=$(shell jq -r .SecretID ./.secrets/.nomad_bootstrap.json)" \
-		-var "consul_secret_id=$(shell jq -r .SecretID ./.secrets/.consul_bootstrap.json)" \
-		-var "vault_token=$(shell jq -r .SecretID ./.secrets/.vault_root_token.txt)"
+		-var "consul_secret_id=$(shell jq -r .SecretID ./.secrets/.consul_bootstrap.json)"
 
 terraform.apply:
-	cd terraform/$(WS) && \
+	@if [ -z "$(workspace)" ]; then \
+		echo "Error: workspace parameter is missing. Usage: make terraform.apply workspace=<nomad|cluster>"; \
+		exit 1; \
+	fi
+
+	cd terraform/$(workspace) && \
 	terraform apply \
 		-auto-approve \
 		-var "nomad_secret_id=$(shell jq -r .SecretID ./.secrets/.nomad_bootstrap.json)" \
@@ -103,13 +116,18 @@ terraform.apply:
 		-var "vault_token=$(shell jq -r .SecretID ./.secrets/.vault_root_token.txt)"
 
 terraform.refresh:
-	cd terraform/$(WS) && \
+	@if [ -z "$(workspace)" ]; then \
+		echo "Error: workspace parameter is missing. Usage: make terraform.refresh workspace=<nomad|cluster>"; \
+		exit 1; \
+	fi
+
+	cd terraform/$(workspace) && \
 	terraform refresh \
 		-var "nomad_secret_id=$(shell jq -r .SecretID ./.secrets/.nomad_bootstrap.json)" \
 		-var "consul_secret_id=$(shell jq -r .SecretID ./.secrets/.consul_bootstrap.json)" \
 		-var "vault_token=$(shell jq -r .SecretID ./.secrets/.vault_root_token.txt)"
 
-terraform.apply-all: terraform.init terraform.plan WS=$(WS)
+terraform.apply-all: terraform.init terraform.plan workspace=$(workspace)
 
 ## CONDA ##
 conda.export:
