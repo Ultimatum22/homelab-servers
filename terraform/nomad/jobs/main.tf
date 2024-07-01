@@ -2,9 +2,9 @@
 #   source = "./blocky"
 # }
 
-module "traefik" {
-  source = "./traefik"
-}
+#module "traefik" {
+#  source = "./traefik"
+#}
 
 # module "demo" {
 #   source = "./demo"
@@ -29,3 +29,7 @@ module "traefik" {
 # module "disks" {
 #   source = "./disks"
 # }
+
+module "pihole" {
+  source = "./pihole"
+}

@@ -1,11 +1,11 @@
 variable "nomad_address" {
   type    = string
-  default = "http://192.168.56.11:4646"
+  default = "http://192.168.2.221:4646"
 }
 
 variable "vault_address" {
   type    = string
-  default = "http://192.168.56.11:8200"
+  default = "http://192.168.2.221:8200"
 }
 
 variable "base_hostname" {

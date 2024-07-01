@@ -1,6 +1,6 @@
 variable "nomad_address" {
   type    = string
-  default = "http://192.168.56.11:4646"
+  default = "http://192.168.2.221:4646"
 }
 
 variable "base_hostname" {
@@ -18,7 +18,7 @@ variable "nomad_secret_id" {
 
 variable "consul_address" {
   type    = string
-  default = "http://192.168.56.11:8500"
+  default = "http://192.168.2.221:8500"
 }
 
 variable "consul_datacenter" {
