@@ -1,0 +1,9 @@
+---
+- name: Install wireguard
+  ansible.builtin.import_tasks: wireguard.yaml
+
+- name: Get wesher
+  ansible.builtin.import_tasks: download.yaml
+
+- name: Setup wesher
+  ansible.builtin.import_tasks: setup.yaml

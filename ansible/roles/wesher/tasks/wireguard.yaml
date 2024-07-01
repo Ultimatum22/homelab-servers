@@ -1,0 +1,8 @@
+---
+- name: Install wireguard
+  apt:
+    pkg:
+    - wireguard-dkms
+    - wireguard-tools
+    state: present
+    
