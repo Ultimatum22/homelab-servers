@@ -1,0 +1,2 @@
+---
+wireguard_endpoint: "{{ ansible_host }}"
