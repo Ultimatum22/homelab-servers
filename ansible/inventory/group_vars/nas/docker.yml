@@ -87,7 +87,7 @@ docker_readarr:
 
 docker_sonarr:
   config: "{{ docker_config_root }}/sonarr"
-  image: linuxserver/sonarr:4.0.5
+  image: linuxserver/sonarr:4.0.6
 
 docker_whisparr:
   config: "{{ docker_config_root }}/whisparr"
