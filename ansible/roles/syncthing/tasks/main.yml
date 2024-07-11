@@ -1,0 +1,39 @@
+---
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0775"
+  with_items:
+    - "{{ docker_syncthing.data }}"
+    - "{{ docker_syncthing.config }}"
+
+- name: Create and start container
+  community.docker.docker_container:
+    name: syncthing
+    image: "{{ docker_syncthing.image }}"
+    pull: true
+    recreate: true
+    image_name_mismatch: "recreate"
+    volumes:
+      - "{{ docker_syncthing.config }}:/home/syncthing/.config/syncthing"
+      - "{{ docker_syncthing.data }}:/var/syncthing"
+    ports:
+      - "{{ docker_port_syncthing_http }}:8384" # Web UI
+      - 22000:22000/tcp # TCP file transfers
+      - 22000:22000/udp # QUIC file transfers
+      - 21027:21027/udp # Receive local discovery broadcasts
+    restart_policy: unless-stopped
+    state: started
+    labels:
+      homepage.group: Tools
+      homepage.name: SyncThing
+      homepage.icon: syncthing.svg
+      homepage.href: http://{{ url_syncthing }}
+      homepage.description: Syncthing lets you synchronize your files bidirectionally across multiple devices.
+    env:
+      TZ: "{{ system_timezone }}"
+      PUID: "1000"
+      PGID: "1000"
