@@ -40,6 +40,7 @@ docker_port_glances_http: 61208
 docker_port_paperless_http: 8456
 docker_port_tandoor_recipes_http: 8460
 docker_port_syncthing_http: 8384
+docker_port_dozzle_http: 8126
 
 host_poseidon_ip: 192.168.2.200
 host_ares01_ip: 192.168.2.221
@@ -95,3 +96,4 @@ url_restic: "{{ host_poseidon_ip }}:{{ docker_port_restic_http }}"
 url_paperless: "{{ host_poseidon_ip }}:{{ docker_port_paperless_http }}"
 url_tandoor_recipes: "{{ host_poseidon_ip }}:{{ docker_port_tandoor_recipes_http }}"
 url_syncthing: "{{ host_poseidon_ip }}:{{ docker_port_syncthing_http }}"
+url_dozzle: "{{ host_poseidon_ip }}:{{ docker_port_dozzle_http }}"

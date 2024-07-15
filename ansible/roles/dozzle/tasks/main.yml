@@ -1,0 +1,34 @@
+---
+- name: Create network
+  community.general.docker_network:
+    name: "{{ item }}"
+  with_items:
+    - homelab
+
+- name: Create and start container
+  community.docker.docker_container:
+    name: dozzle
+    image: "{{ docker_dozzle.image }}"
+    pull: true
+    recreate: true
+    image_name_mismatch: "recreate"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - name: homelab
+        aliases:
+          - dozzle
+    ports:
+      - "{{ docker_port_dozzle_http }}:8080"
+    restart_policy: unless-stopped
+    state: started
+    labels:
+      homepage.group: Tools
+      homepage.name: Dozzle
+      homepage.icon: dozzle.png
+      homepage.href: http://{{ url_dozzle }}
+      homepage.description: It is a log viewer designed to simplify the process of monitoring and debugging containers.
+    env:
+      TZ: "{{ system_timezone }}"
+      PUID: "{{ ansible_user_pid | int }}"
+      PGID: "{{ ansible_user_gid | int }}"
