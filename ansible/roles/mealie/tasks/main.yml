@@ -1,0 +1,68 @@
+---
+- name: Create directories for services
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0775"
+  with_items:
+    - "{{ docker_mealie.data }}"
+
+- name: Create and start Paperless database container
+  community.general.docker_container:
+    name: mealie_database
+    image: "{{ docker_mealie.image_database }}"
+    pull: true
+    recreate: true
+    image_name_mismatch: "recreate"
+    networks:
+      - name: homelab
+        aliases:
+          - mealie
+    volumes:
+      - "{{ docker_mealie.database }}:/var/lib/postgresql/data"
+    env:
+      POSTGRES_DB: "{{ secret_mealie_database_name }}"
+      POSTGRES_USER: "{{ secret_mealie_database_user }}"
+      POSTGRES_PASSWORD: "{{ secret_mealie_database_password }}"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "{{ secret_mealie_database_name }}", "-U", "{{ secret_mealie_database_user }}"]
+      interval: 360s
+      timeout: 45s
+      retries: 10
+    restart_policy: unless-stopped
+    state: started
+
+- name: Create and start Mealie container
+  community.general.docker_container:
+    name: mealie
+    image: "{{ docker_mealie.image }}"
+    pull: true
+    recreate: true
+    image_name_mismatch: "recreate"
+    networks:
+      - name: homelab
+        aliases:
+          - mealie
+    ports:
+      - "{{ docker_port_mealie_http }}:9000"
+    env:
+      TIME_ZONE: "{{ system_timezone }}"
+      ALLOW_SIGNUP: "false"
+    labels:
+      diun.enable: "true"
+      homepage.group: Home
+      homepage.name: Mealie
+      homepage.icon: mealie
+      homepage.href: "http://{{ url_mealie }}"
+      homepage.description: . Easily add recipes into your database by providing the URL and Mealie will automatically import the relevant data
+    volumes:
+      - "{{ docker_mealie.data }}:/app/data"
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "-S", "--max-time", "2", "http://localhost:8000"]
+      interval: 360s
+      timeout: 10s
+      retries: 5
+    restart_policy: unless-stopped
+    state: started

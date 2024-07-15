@@ -34,8 +34,8 @@
       tags: [gotify]
     - role: paperless
       tags: [paperless]
-    - role: tandoor-recipes
-      tags: [tandoor-recipes]
+    - role: mealie
+      tags: [mealie]
     - role: syncthing
       tags: [syncthing]
     - role: dozzle

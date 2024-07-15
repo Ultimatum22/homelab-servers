@@ -176,10 +176,10 @@ docker_paperless:
   image_database: postgres:12.19-alpine
   image_broker: redis:7.2.5-alpine
 
-docker_tandoor_recipes:
+docker_mealie:
   data: "{{ docker_data_root }}/tandoor-recipes"
   database: "{{ docker_data_root }}/tandoor-recipes-database"
-  image: vabene1111/recipes:1.5.17
+  image: hkotel/mealie:v1.10.2
   image_database: postgres:12.19-alpine
 
 docker_syncthing:
