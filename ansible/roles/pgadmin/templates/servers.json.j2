@@ -1,19 +1,19 @@
 {
     "Servers": {
         "1": {
-          "Name": "Mealie",
-          "Host": "mealie_database",
-          "Group": "",
-          "Port": 5432,
-          "MaintenanceDB": "postgres",
-          "Username": "{{ secret_mealie_database_user }}",
-          "PassFile": "/pgpass",
-          "SSLMode": "prefer"
+            "Name": "Mealie",
+            "Host": "mealie_database",
+            "Group": "Servers",
+            "Port": 5432,
+            "MaintenanceDB": "postgres",
+            "Username": "{{ secret_mealie_database_user }}",
+            "PassFile": "/pgpass",
+            "SSLMode": "prefer"
         },
         "2": {
             "Name": "Paperless",
             "Host": "paperless_database",
-            "Group": "",
+            "Group": "Servers",
             "Port": 5432,
             "MaintenanceDB": "postgres",
             "Username": "{{ secret_paperless_database_user }}",
