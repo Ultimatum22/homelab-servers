@@ -53,6 +53,6 @@
     volumes:
       - "{{ docker_pgadmin.data }}:/app/data"
       - "{{ docker_pgadmin.config }}/pgpass:/pgadmin4/pgpass"
-      - "{{ docker_pgadmin.config }}/pgpass:/pgadmin4/servers.json"
+      - "{{ docker_pgadmin.config }}/servers.json:/pgadmin4/servers.json"
     restart_policy: unless-stopped
     state: started
