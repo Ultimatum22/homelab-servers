@@ -16,7 +16,7 @@
     dest: "{{ docker_pgadmin.config }}/pgpass"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: "0644"
+    mode: "0600"
 
 - name: Copy servers.json
   ansible.builtin.template:
