@@ -46,7 +46,7 @@
       homepage.name: Mealie
       homepage.icon: mealie
       homepage.href: "http://{{ url_mealie }}"
-      homepage.description: . Easily add recipes into your database by providing the URL and Mealie will automatically import the relevant data
+      homepage.description: Easily add recipes into your database by providing the URL and Mealie will automatically import the relevant data.
     volumes:
       - "{{ docker_mealie.data }}:/app/data"
     healthcheck:
