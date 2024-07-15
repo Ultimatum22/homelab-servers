@@ -19,3 +19,4 @@
     - role: gotify
     - role: paperless
     - role: tandoor-recipes
+    - role: syncthing

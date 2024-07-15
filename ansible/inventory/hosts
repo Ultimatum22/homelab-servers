@@ -21,14 +21,14 @@ homelab-node02
 homelab-node04
 
 [consul_cluster]
-homelab-node01 consul_node_role=client
+homelab-node01 consul_node_role=both
 homelab-node02 consul_node_role=both
 #homelab-node03 consul_node_role=client
 homelab-node04 consul_node_role=server
 
 [nomad_cluster]
 homelab-node01 nomad_node_role=both
-homelab-node02 nomad_node_role=client
+homelab-node02 nomad_node_role=both
 #homelab-node03 nomad_node_role=both
 homelab-node04 nomad_node_role=server
 
