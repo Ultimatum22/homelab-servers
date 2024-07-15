@@ -60,7 +60,7 @@
     volumes:
       - "{{ docker_mealie.data }}:/app/data"
     healthcheck:
-      test: ["CMD", "curl", "-fs", "-S", "--max-time", "2", "http://localhost:8000"]
+      test: ["CMD", "curl", "-fs", "-S", "--max-time", "2", "http://localhost:9000"]
       interval: 360s
       timeout: 10s
       retries: 5
