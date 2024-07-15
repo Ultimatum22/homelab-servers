@@ -1,15 +1,5 @@
 ---
-- name: Create directories for services
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: directory
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: "0775"
-  with_items:
-    - "{{ docker_mealie.data }}"
-
-- name: Create and start Paperless database container
+- name: Create and start Mealie database container
   community.general.docker_container:
     name: mealie_database
     image: "{{ docker_mealie.image_database }}"
