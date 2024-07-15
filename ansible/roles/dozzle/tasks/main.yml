@@ -23,7 +23,7 @@
     restart_policy: unless-stopped
     state: started
     labels:
-      homepage.group: Tools
+      homepage.group: Monitoring
       homepage.name: Dozzle
       homepage.icon: dozzle.png
       homepage.href: http://{{ url_dozzle }}
