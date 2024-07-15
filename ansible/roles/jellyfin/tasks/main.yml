@@ -17,7 +17,7 @@
   community.general.docker_network:
     name: "{{ item }}"
   with_items:
-    - web
+    - homelab
 
 - name: Create and start container
   community.docker.docker_container:

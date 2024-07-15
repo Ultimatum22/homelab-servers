@@ -13,7 +13,7 @@
   community.general.docker_network:
     name: "{{ item }}"
   with_items:
-    - web
+    - homelab
 
 - name: Copy glances.conf
   ansible.builtin.copy:
