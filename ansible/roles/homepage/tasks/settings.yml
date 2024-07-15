@@ -15,7 +15,7 @@
     dest: "{{ docker_homepage.config }}/services.yaml"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: 0644
+    mode: "0644"
 
 - name: Copy docker.yaml
   ansible.builtin.template:
@@ -23,7 +23,7 @@
     dest: "{{ docker_homepage.config }}/docker.yaml"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: 0644
+    mode: "0644"
 
 - name: Copy settings.yaml
   ansible.builtin.template:
@@ -31,7 +31,23 @@
     dest: "{{ docker_homepage.config }}/settings.yaml"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: 0644
+    mode: "0644"
+
+- name: Copy widgets.yaml
+  ansible.builtin.template:
+    src: "widgets.yaml.j2"
+    dest: "{{ docker_homepage.config }}/widgets.yaml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+
+- name: Copy bookmarks.yaml
+  ansible.builtin.template:
+    src: "bookmarks.yaml.j2"
+    dest: "{{ docker_homepage.config }}/bookmarks.yaml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
 
 - name: Start container
   community.general.docker_container:
