@@ -41,6 +41,7 @@ docker_port_paperless_http: 8456
 docker_port_mealie_http: 8460
 docker_port_syncthing_http: 8384
 docker_port_dozzle_http: 8126
+docker_port_pgadmin_http: 8465
 
 host_poseidon_ip: 192.168.2.200
 host_ares01_ip: 192.168.2.221
@@ -97,3 +98,4 @@ url_paperless: "{{ host_poseidon_ip }}:{{ docker_port_paperless_http }}"
 url_mealie: "{{ host_poseidon_ip }}:{{ docker_port_mealie_http }}"
 url_syncthing: "{{ host_poseidon_ip }}:{{ docker_port_syncthing_http }}"
 url_dozzle: "{{ host_poseidon_ip }}:{{ docker_port_dozzle_http }}"
+url_pgadmin: "{{ host_poseidon_ip }}:{{ docker_port_pgadmin_http }}"

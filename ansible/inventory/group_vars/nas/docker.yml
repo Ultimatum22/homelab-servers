@@ -177,8 +177,8 @@ docker_paperless:
   image_broker: redis:7.2.5-alpine
 
 docker_mealie:
-  data: "{{ docker_data_root }}/tandoor-recipes"
-  database: "{{ docker_data_root }}/tandoor-recipes-database"
+  data: "{{ docker_data_root }}/mealie"
+  database: "{{ docker_data_root }}/mealie-database"
   image: hkotel/mealie:v1.10.2
   image_database: postgres:12.19-alpine
 
@@ -189,3 +189,8 @@ docker_syncthing:
 
 docker_dozzle:
   image: amir20/dozzle:v8.0.5
+
+docker_pgadmin:
+  config: "{{ docker_config_root }}/pgadmin"
+  data: "{{ docker_data_root }}/pgadmin"
+  image: dpage/pgadmin4:8.9

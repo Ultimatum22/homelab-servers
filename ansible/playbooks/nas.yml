@@ -40,3 +40,5 @@
       tags: [syncthing]
     - role: dozzle
       tags: [dozzle]
+    - role: pgadmin
+      tags: [pgadmin]

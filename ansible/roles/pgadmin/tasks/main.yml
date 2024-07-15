@@ -1,0 +1,58 @@
+---
+- name: Create directories for services
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0775"
+  with_items:
+    - "{{ docker_pgadmin.config }}"
+    - "{{ docker_pgadmin.data }}"
+
+- name: Copy pgpass
+  ansible.builtin.template:
+    src: "pgpass.j2"
+    dest: "{{ docker_pgadmin.config }}/pgpass"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+
+- name: Copy servers.json
+  ansible.builtin.template:
+    src: "servers.json.j2"
+    dest: "{{ docker_pgadmin.config }}/servers.json"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+
+- name: Create and start PgAdmin container
+  community.general.docker_container:
+    name: pgadmin
+    image: "{{ docker_pgadmin.image }}"
+    pull: true
+    recreate: true
+    image_name_mismatch: "recreate"
+    networks:
+      - name: homelab
+        aliases:
+          - pgadmin
+    ports:
+      - "{{ docker_port_pgadmin_http }}:80"
+    env:
+      TIME_ZONE: "{{ system_timezone }}"
+      PGADMIN_DEFAULT_EMAIL: "{{ secret_pgadmin_email }}"
+      PGADMIN_DEFAULT_PASSWORD: "{{ secret_pgadmin_password }}"
+    labels:
+      diun.enable: "true"
+      homepage.group: Tools
+      homepage.name: PgAdmin
+      homepage.icon: pgadmin
+      homepage.href: "http://{{ url_pgadmin }}"
+      homepage.description: pgAdmin is the most popular and feature rich Open Source administration and development platform for PostgreSQL.
+    volumes:
+      - "{{ docker_pgadmin.data }}:/app/data"
+      - "{{ docker_pgadmin.config }}/pgpass:/pgadmin4/pgpass"
+      - "{{ docker_pgadmin.config }}/pgpass:/pgadmin4/servers.json"
+    restart_policy: unless-stopped
+    state: started
