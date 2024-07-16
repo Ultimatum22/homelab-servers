@@ -7,4 +7,29 @@
 - datetime:
     text_size: xl
     format:
-      timeStyle: long
+      timeStyle: short
+      hourCycle: h23
+
+- stocks:
+    provider: finnhub
+    color: true # optional, defaults to true
+    cache: 1 # optional, default caches results for 1 minute
+    watchlist:
+      - GME
+      - AMC
+      - NVDA
+      - AMD
+      - TSM
+      - MSFT
+      - AAPL
+      - BRK.A
+
+- openmeteo:
+    label: Alkmaar
+    latitude: 52.6335909
+    longitude: 4.6717773
+    timezone: "{{ system_timezone }}"
+    units: metric
+    cache: 5
+    format:
+      maximumFractionDigits: 1
