@@ -23,7 +23,7 @@ job "pihole" {
     task "server" {
       driver = "docker"
       config {        
-        image = "pihole/pihole:latest"
+        image = "pihole/pihole:2024.07.0"
         ports = [
           "dns",
           "dhcp",
