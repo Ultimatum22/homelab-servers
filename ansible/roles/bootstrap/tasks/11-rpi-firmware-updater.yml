@@ -1,0 +1,7 @@
+---
+- name: Raspberry Pi firmware updater
+  expect:
+    command: rpi-update
+    responses:
+      "[Would you like to proceed? (y/N)]": Y
+  become: true
