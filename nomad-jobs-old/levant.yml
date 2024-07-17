@@ -1,0 +1,16 @@
+nomad:
+  region: global
+  datacenter: dc1
+
+common:
+  env:
+    puid: 1000
+    pgid: 1000
+
+app:
+  emby:
+    volumes:
+      root: /home/system/media/
+      config: /home/system/disks/sdb/emby
+      transcode: /home/system/disks/sdb/emby/transcode
+      backups: /home/system/services/emby

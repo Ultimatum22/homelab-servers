@@ -8,9 +8,7 @@ common:
     pgid: 1000
 
 app:
-  emby:
+  traefik:
     volumes:
-      root: /home/system/media/
-      config: /home/system/disks/sdb/emby
-      transcode: /home/system/disks/sdb/emby/transcode
-      backups: /home/system/services/emby
+      dynamic: /mnt/services/traefik/dynamic
+      certificates: /mnt/services/traefik/certificates
