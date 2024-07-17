@@ -48,6 +48,17 @@
           src: ./vault_root_token.txt
           dest: ./../../.secrets/.vault_root_token.txt
           flat: true
+
+      - name: Save bootstrap result
+        ansible.builtin.copy:
+          content: "{{ vault_keys }}"
+          dest: "./vault_keys_token.txt"
+
+      - name: Get vault_keys_token.txt
+        ansible.builtin.fetch:
+          src: ./vault_keys_token.txt
+          dest: ./../../.secrets/.vault_keys_token.txt
+          flat: true
       no_log: false
       run_once: true
       when:
