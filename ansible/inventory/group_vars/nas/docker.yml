@@ -172,7 +172,7 @@ docker_paperless:
   data: "{{ docker_data_root }}/paperless"
   database: "{{ docker_data_root }}/paperless-database"
   broker: "{{ docker_data_root }}/paperless-broker"
-  image: paperlessngx/paperless-ngx:2.10
+  image: paperlessngx/paperless-ngx:2.11.0
   image_database: postgres:12.19-alpine
   image_broker: redis:7.2.5-alpine
 

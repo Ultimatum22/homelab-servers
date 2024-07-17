@@ -5,12 +5,12 @@
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: 0775
+    mode: "0775"
   with_items:
-      - "{{ docker_paperless.data }}"
-      - "{{ docker_papers_media }}"
-      - "{{ docker_papers_export }}"
-      - "{{ docker_papers_consume }}"
+    - "{{ docker_paperless.data }}"
+    - "{{ docker_papers_media }}"
+    - "{{ docker_papers_export }}"
+    - "{{ docker_papers_consume }}"
 
 - name: Create Docker network
   community.general.docker_network:
@@ -20,7 +20,7 @@
   community.general.docker_container:
     name: paperless_database
     image: "{{ docker_paperless.image_database }}"
-    pull: yes
+    pull: true
     recreate: true
     image_name_mismatch: "recreate"
     networks:
@@ -45,7 +45,7 @@
   community.general.docker_container:
     name: paperless_broker
     image: "{{ docker_paperless.image_broker }}"
-    pull: yes
+    pull: true
     recreate: true
     image_name_mismatch: "recreate"
     networks:
@@ -66,7 +66,7 @@
   community.general.docker_container:
     name: paperless
     image: "{{ docker_paperless.image }}"
-    pull: yes
+    pull: true
     recreate: true
     image_name_mismatch: "recreate"
     networks:
@@ -98,6 +98,7 @@
       homepage.description: Scan, index and archive all your physical documents
       homepage.widget.type: paperlessngx
       homepage.widget.url: "http://{{ url_paperless }}"
+      homepage.widget.key: "{{ secret_paperless_token }}"
     volumes:
       - "{{ docker_paperless.data }}:/usr/src/paperless/data"
       - "{{ docker_papers_media }}:/usr/src/paperless/media"
