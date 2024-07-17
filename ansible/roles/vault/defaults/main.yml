@@ -19,8 +19,8 @@ consul_bind_address: "{{ ansible_host }}"
 vault_unseal_keys_dir: "./../../.secrets/vault-keys"
 vault_token_dir: "./../../.secrets/vault-tokens"
 
-vault_key_shares: 5
-vault_key_threshold: 3
+vault_key_shares: 10
+vault_key_threshold: 6
 
 arch:
   x86_64: amd64

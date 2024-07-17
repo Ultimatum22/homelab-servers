@@ -1,0 +1,40 @@
+job "pihole" {
+  region      = "[[ .nomad.region ]]"
+  datacenters = ["[[ .nomad.datacenter ]]"]
+  type        = "system"
+  priority    = 100
+
+  group "pihole" {
+    network {
+      mode = "bridge"
+      port "dhcp" {
+      static       = 67
+        to           = 67
+      }
+      port "dns" {
+        static       = 53
+        to           = 53
+      }
+      port "http" {
+        static       = 8080
+        to           = 80
+      }
+    }
+    task "server" {
+      driver = "docker"
+      config {        
+        image = "pihole/pihole:latest"
+        ports = [
+          "dns",
+          "dhcp",
+          "http",
+        ]
+        volumes  = [
+          "pihole_etc:/etc/pihole/",
+          "pihole_etc:/etc/dnsmasq.d/",
+        ]
+        cap_add = ["net_admin", "setfcap"]
+      }
+    }
+  }
+}

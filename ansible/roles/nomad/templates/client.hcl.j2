@@ -13,6 +13,16 @@ client {
     path      = "/mnt/services/traefik/certificates"
     read_only = false
   }
+
+  host_volume "pihole_etc" {
+    path      = "/mnt/services/pihole/etc"
+    read_only = false
+  }
+
+  host_volume "pihole_dnsmasqd" {
+    path      = "/mnt/services/pihole/dnsmasq.d"
+    read_only = false
+  }
 }
 
 plugin "docker" {
