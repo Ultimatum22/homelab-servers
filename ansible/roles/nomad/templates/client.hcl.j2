@@ -3,6 +3,16 @@ client {
   servers = [{% for h in groups['nomad_cluster']%}"{{ hostvars[h].ansible_host }}:4646"{% if not loop.last %},{% endif %}{% endfor %}]
   meta {
   }
+
+  host_volume "traefik_dynamic" {
+    path      = "/mnt/services/traefik/dynamic"
+    read_only = false
+  }
+
+  host_volume "traefik_certificates" {
+    path      = "/mnt/services/traefik/certificates"
+    read_only = false
+  }
 }
 
 plugin "docker" {

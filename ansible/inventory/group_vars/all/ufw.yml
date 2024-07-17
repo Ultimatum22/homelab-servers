@@ -1,3 +1,4 @@
 ---
 ufw_rules:
   - { rule: allow, port: 22, proto: tcp, comment: SSH }
+  - { rule: allow, port: 8081, proto: tcp, comment: Traefik UI }

@@ -1,4 +1,4 @@
-VAULT_FILES=ansible/inventory/group_vars/*/secrets/*.yml
+VAULT_FILES=ansible/inventory/group_vars/*/secrets/*.vault.*
 VAULT_ID=default@.vault_pass
 
 # Dev
@@ -84,6 +84,21 @@ vagrant.reload:
 
 vagrant.destroy:
 	cd vagrant && vagrant destroy -f
+
+levant.deploy:
+	@if [ -z "$(job)" ]; then \
+		echo "Error: job parameter is missing. Usage: make levant.deploy job="; \
+		exit 1; \
+	fi
+	docker run \
+	--rm \
+	-e NOMAD_ADDR="http://192.168.2.221:4646" \
+	-e NOMAD_TOKEN="c62233cc-04df-7203-d753-fd77bfdfb452" \
+	-e VAULT_TOKEN="hvs.FhYjjIwWIHElN10Mb6iSGQnE" \
+	-e ENVIRONMENT \
+	-v ${PWD}/nomad-jobs:/workdir \
+	-w /workdir \
+	hashicorp/levant:0.3.0 levant deploy -vault -var-file=/workdir/levant.yml /workdir/${job}/nomad.job
 
 # Terraform
 terraform.init:

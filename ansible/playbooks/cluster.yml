@@ -3,8 +3,14 @@
   become: true
   roles:
     - role: bootstrap
+      tags: [bootstrap]
     - role: docker
+      tags: [docker]
     - role: wireguard
+      tags: [wireguard]
     - role: consul
+      tags: [consul]
     - role: nomad
+      tags: [nomad]
     - role: vault
+      tags: [vault]
