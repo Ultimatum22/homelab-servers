@@ -22,7 +22,7 @@
     state: started
     labels:
       diun.enable: "true"
-      homepage.group: Tools
+      homepage.group: Media
       homepage.name: Bazarr
       homepage.icon: bazarr.svg
       homepage.href: http://{{ url_bazarr }}
