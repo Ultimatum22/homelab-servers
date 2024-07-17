@@ -1,0 +1,36 @@
+---
+- name: Create network
+  community.general.docker_network:
+    name: "{{ item }}"
+  with_items:
+    - homelab
+
+- name: Create and start container
+  community.docker.docker_container:
+    name: whats_up_docker
+    image: "{{ docker_whats_up_docker.image }}"
+    pull: true
+    recreate: true
+    image_name_mismatch: "recreate"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - name: homelab
+        aliases:
+          - whats_up_docker
+    ports:
+      - "{{ docker_port_whats_up_docker_http }}:3000"
+    restart_policy: unless-stopped
+    state: started
+    labels:
+      homepage.group: Monitoring
+      homepage.name: Whats up docker
+      homepage.icon: whats_up_docker.png
+      homepage.href: http://{{ url_whats_up_docker }}
+      homepage.description: Gets you notified when new versions of your Docker containers are available and lets you react the way you want.
+      homepage.widget.type: whatsupdocker
+      homepage.widget.url: http://{{ url_whats_up_docker }}
+    env:
+      TZ: "{{ system_timezone }}"
+      PUID: "{{ ansible_user_pid | int }}"
+      PGID: "{{ ansible_user_gid | int }}"

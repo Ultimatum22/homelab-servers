@@ -42,6 +42,7 @@ docker_port_mealie_http: 8460
 docker_port_syncthing_http: 8384
 docker_port_dozzle_http: 8126
 docker_port_pgadmin_http: 8465
+docker_port_whats_up_docker_http: 3111
 
 host_poseidon_ip: 192.168.2.200
 host_ares01_ip: 192.168.2.221
@@ -99,3 +100,4 @@ url_mealie: "{{ host_poseidon_ip }}:{{ docker_port_mealie_http }}"
 url_syncthing: "{{ host_poseidon_ip }}:{{ docker_port_syncthing_http }}"
 url_dozzle: "{{ host_poseidon_ip }}:{{ docker_port_dozzle_http }}"
 url_pgadmin: "{{ host_poseidon_ip }}:{{ docker_port_pgadmin_http }}"
+url_whats_up_docker: "{{ host_poseidon_ip }}:{{ docker_port_whats_up_docker_http }}"

@@ -42,3 +42,5 @@
       tags: [dozzle]
     - role: pgadmin
       tags: [pgadmin]
+    - role: whats_up_docker
+      tags: [whats_up_docker]
