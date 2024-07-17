@@ -5,7 +5,7 @@
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: 0775
+    mode: "0775"
   with_items:
     - "{{ docker_restic.data }}"
     - "{{ docker_backup }}"
@@ -14,7 +14,7 @@
   community.docker.docker_container:
     name: restic
     image: "{{ docker_restic.image }}"
-    pull: yes
+    pull: true
     recreate: true
     volumes:
       - "{{ docker_restic.data }}:/data"
@@ -41,7 +41,7 @@
 #     name: restic
 #     image: mazzolino/restic:1.7.0
 #     hostname: poseidon
-#     pull: yes
+#     pull: true
 #     recreate: true
 #     volumes:
 #       - "{{ docker_restic.restic }}:/mnt/backup"

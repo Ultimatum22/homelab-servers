@@ -5,7 +5,7 @@
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: 0775
+    mode: "0775"
   with_items:
     - "{{ docker_uptime_kuma.config }}"
     - "{{ docker_uptime_kuma.data }}"
@@ -20,7 +20,7 @@
   community.general.docker_container:
     name: uptime_kuma
     image: "{{ docker_uptime_kuma.image }}"
-    pull: yes
+    pull: true
     recreate: true
     volumes:
       - "{{ docker_uptime_kuma.config }}:/app/data"

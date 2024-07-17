@@ -5,7 +5,7 @@
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: 0775
+    mode: "0775"
   with_items:
     - "{{ docker_scrutiny.config }}"
     - "{{ docker_scrutiny.data }}"
@@ -25,7 +25,7 @@
   community.general.docker_container:
     name: scrutiny
     image: "{{ docker_scrutiny.image }}"
-    pull: yes
+    pull: true
     recreate: true
     volumes:
       - "{{ docker_scrutiny.config }}:/opt/scrutiny/config"

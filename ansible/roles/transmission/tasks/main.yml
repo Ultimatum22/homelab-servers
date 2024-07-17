@@ -5,14 +5,14 @@
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: 0775
+    mode: "0775"
 
 - name: Create and start container
   community.docker.docker_container:
     name: transmission
     image: "{{ docker_transmission.image }}"
     network_mode: container:vpn
-    pull: yes
+    pull: true
     recreate: true
     image_name_mismatch: "recreate"
     volumes:

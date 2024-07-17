@@ -12,19 +12,19 @@
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: 0775
+    mode: "0775"
   with_items:
     - "{{ docker_homepage.config }}"
 
 - name: Create network
-  docker_network:
+  community.docker.docker_network:
     name: homelab
 
 - name: Create and start dockerproxy container
   community.general.docker_container:
     name: dockerproxy
-    image: ghcr.io/tecnativa/docker-socket-proxy:latest
-    pull: yes
+    image: ghcr.io/tecnativa/docker-socket-proxy:0.2.0
+    pull: true
     image_name_mismatch: "recreate"
     recreate: true
     volumes:
@@ -45,7 +45,7 @@
   community.general.docker_container:
     name: homepage
     image: "{{ docker_homepage.image }}"
-    pull: yes
+    pull: true
     recreate: true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro  # Mounted as read-only

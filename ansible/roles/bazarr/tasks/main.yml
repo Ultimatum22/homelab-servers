@@ -5,14 +5,14 @@
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: 0775
+    mode: "0775"
 
 - name: Create and start container
   community.docker.docker_container:
     name: bazarr
     image: "{{ docker_bazarr.image }}"
     network_mode: container:vpn
-    pull: yes
+    pull: true
     recreate: true
     volumes:
       - "{{ docker_bazarr.config }}:/config"
