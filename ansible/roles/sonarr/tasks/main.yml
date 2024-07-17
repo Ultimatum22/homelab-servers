@@ -27,7 +27,7 @@
     restart_policy: unless-stopped
     state: started
     labels:
-      homepage.group: PVR
+      homepage.group: Media
       homepage.name: Sonarr
       homepage.icon: sonarr.svg
       homepage.href: http://{{ url_sonarr }}

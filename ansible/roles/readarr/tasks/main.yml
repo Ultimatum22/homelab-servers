@@ -29,7 +29,7 @@
     restart_policy: unless-stopped
     state: started
     labels:
-      homepage.group: PVR
+      homepage.group: Media
       homepage.name: Readarr
       homepage.icon: readarr.svg
       homepage.href: http://{{ url_readarr }}
