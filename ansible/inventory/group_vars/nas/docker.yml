@@ -197,3 +197,7 @@ docker_pgadmin:
 
 docker_whats_up_docker:
   image: fmartinou/whats-up-docker:6.4.1
+
+docker_vaultwarden:
+  data: "{{ docker_data_root }}/vaultwarden"
+  image: vaultwarden/server:1.31.0

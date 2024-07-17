@@ -1,0 +1,47 @@
+---
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0775"
+  with_items:
+    - "{{ docker_vaultwarden.data }}"
+
+- name: Create network
+  community.general.docker_network:
+    name: "{{ item }}"
+  with_items:
+    - homelab
+
+- name: Create and start container
+  community.docker.docker_container:
+    name: vaultwarden
+    image: "{{ docker_vaultwarden.image }}"
+    pull: true
+    recreate: true
+    image_name_mismatch: "recreate"
+    volumes:
+      - "{{ docker_vaultwarden.data }}:/data"
+    networks:
+      - name: homelab
+        aliases:
+          - vaultwarden
+    ports:
+      - "{{ docker_port_vaultwarden_http }}:80"
+    restart_policy: unless-stopped
+    state: started
+    labels:
+      homepage.group: Tools
+      homepage.name: Vaultwarden
+      homepage.icon: vaultwarden.png
+      homepage.href: http://{{ url_vaultwarden }}
+      homepage.description: Alternative implementation of the Bitwarden server API written in Rust
+    env:
+      TZ: "{{ system_timezone }}"
+      PUID: "{{ ansible_user_pid | int }}"
+      PGID: "{{ ansible_user_gid | int }}"
+      ADMIN_TOKEN: "{{ secret_vaultwarden_admin_token }}"
+      WEBSOCKET_ENABLED: "false"
+      SIGNUPS_ALLOWED: "false"

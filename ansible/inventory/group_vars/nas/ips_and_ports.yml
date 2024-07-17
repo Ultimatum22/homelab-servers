@@ -43,6 +43,7 @@ docker_port_syncthing_http: 8384
 docker_port_dozzle_http: 8126
 docker_port_pgadmin_http: 8465
 docker_port_whats_up_docker_http: 3111
+docker_port_vaultwarden_http: 8657
 
 host_poseidon_ip: 192.168.2.200
 host_ares01_ip: 192.168.2.221
@@ -83,17 +84,7 @@ url_librespeed: "librespeed.{{ url_local_host }}"
 url_firefly_iii: "finance.{{ url_local_host }}"
 url_firefly_iii_importer: "finance-importer.{{ url_local_host }}"
 url_pihole: "ads.{{ url_local_host }}"
-url_homeassistant: "ha.{{ url_local_host }}"
-url_traefik: "traefik.{{ url_local_host }}"
-url_gotify: "{{ host_poseidon_ip }}:{{docker_port_gotify_http }}"
-url_doku: "disks.{{ url_local_host }}"
-url_gatus: "health.{{ url_local_host }}"
-url_minio_restic: "minio-restic.{{ url_local_host }}"
-url_sabnzbd: "{{ host_poseidon_ip }}:{{docker_port_sabnzbd_http }}"
-url_utorrent: "{{ host_poseidon_ip }}:{{ docker_port_utorrent_http }}"
-url_transmission: "{{ host_poseidon_ip }}:{{ docker_port_transmission_http }}"
-url_uptime_kuma: "{{ host_poseidon_ip }}:{{ docker_port_uptime_kuma_http }}"
-url_glances: "{{ host_poseidon_ip }}:{{ docker_port_glances_http }}"
+url_homeassistant: "ha.{docker_vaultwardenoseidon_ip }}:{{ docker_port_glances_http }}"
 url_restic: "{{ host_poseidon_ip }}:{{ docker_port_restic_http }}"
 url_paperless: "{{ host_poseidon_ip }}:{{ docker_port_paperless_http }}"
 url_mealie: "{{ host_poseidon_ip }}:{{ docker_port_mealie_http }}"
@@ -101,3 +92,4 @@ url_syncthing: "{{ host_poseidon_ip }}:{{ docker_port_syncthing_http }}"
 url_dozzle: "{{ host_poseidon_ip }}:{{ docker_port_dozzle_http }}"
 url_pgadmin: "{{ host_poseidon_ip }}:{{ docker_port_pgadmin_http }}"
 url_whats_up_docker: "{{ host_poseidon_ip }}:{{ docker_port_whats_up_docker_http }}"
+url_vaultwarden: "{{ host_poseidon_ip }}:{{ docker_port_vaultwarden_http }}"
