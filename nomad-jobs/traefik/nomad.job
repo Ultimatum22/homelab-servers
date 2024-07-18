@@ -14,9 +14,13 @@ job "traefik" {
     }
 
     update {
-      max_parallel     = 1
+      max_parallel = 1
+      stagger      = "1m"
       min_healthy_time = "30s"
-      auto_revert      = true
+
+      # Enable automatically reverting to the last stable job on a failed
+      # deployment.
+      auto_revert = true
     }
 
     task "traefik" {
@@ -43,6 +47,12 @@ job "traefik" {
           interval = "10s"
           timeout  = "2s"
         }
+        
+        tags = [
+          "traefik.enable=true",
+          "traefik.http.routers.api.rule=Host(`traefik.codecubed.xyz`)",
+          "traefik.http.routers.api.service=api@internal",
+        ]
       }
 
       resources {
