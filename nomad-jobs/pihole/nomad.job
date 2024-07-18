@@ -5,28 +5,24 @@ job "pihole" {
   priority    = 100
 
   group "pihole" {
+
     network {
-      mode = "bridge"
-      port "dhcp" {
-      static       = 67
-        to           = 67
-      }
-      port "dns" {
-        static       = 53
-        to           = 53
-      }
-      port "http" {
-        static       = 8080
-        to           = 80
-      }
+      port "dns" { static = 53, to = 53  }
+      port "http" { static = 8080, to = 80  }
     }
+
+    update {
+      max_parallel     = 1
+      min_healthy_time = "30s"
+      auto_revert      = true
+    }
+
     task "server" {
       driver = "docker"
       config {        
         image = "pihole/pihole:2024.07.0"
         ports = [
           "dns",
-          "dhcp",
           "http",
         ]
         volumes  = [
