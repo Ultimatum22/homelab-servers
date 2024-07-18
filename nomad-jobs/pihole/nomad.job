@@ -30,6 +30,7 @@ job "pihole" {
           "pihole_dnsmasqd:/etc/dnsmasq.d/",
         ]
         cap_add = ["net_admin", "setfcap"]
+        network_mode = "bridge"  # Use bridge network mode for Docker
       }
       env = {
         "WEBPASSWORD" = "your_secure_password"
