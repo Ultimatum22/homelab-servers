@@ -1,0 +1,7 @@
+---
+- name: Update hosts
+  ansible.builtin.include_tasks: update.yml
+
+- name: Raspberry Pi firmware updater
+  ansible.builtin.include_tasks: rpi-firmware-updater.yml
+  when: ansible_architecture in ['armv6l', 'armv7l', 'aarch64']
