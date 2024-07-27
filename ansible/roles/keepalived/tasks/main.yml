@@ -9,17 +9,16 @@
       register: keepalived_version_test
       changed_when: false
 
+    - name: Extract Keepalived version
+      ansible.builtin.set_fact:
+        keepalived_installed_version: "{{ keepalived_version_test | regex_search('Keepalived v([0-9.]+)', '\\1') }}"
+
     - name: Test if correct version is installed
       ansible.builtin.assert:
         that:
-          - keepalived_version in keepalived_version_test.stdout
+          - keepalived_version in keepalived_installed_version
         success_msg: "Keepalived version {{ keepalived_version }} is installed"
         fail_msg: Keepalived was not successfully installed
-  rescue:
-    - name: Ensure old keepalived is removed
-      ansible.builtin.file:
-        path: "{{ keepalived_install_dir }}/keepalived"
-        state: absent
 
     - name: Create temporary Keepalived build directory.
       ansible.builtin.tempfile:
@@ -30,6 +29,11 @@
     - name: Store temporary build directory path
       ansible.builtin.set_fact:
         keepalived_build_dir: "{{ tempdir.path }}"
+  rescue:
+    - name: Ensure old keepalived is removed
+      ansible.builtin.file:
+        path: "{{ keepalived_install_dir }}/keepalived"
+        state: absent
 
     - name: Download and extract keepalived archive.
       ansible.builtin.unarchive:
@@ -43,7 +47,7 @@
         mode: '0755'
 
     - name: Configure Keepalived to be build.
-      ansible.builtin.command: "./configure --prefix={{ keepalived_install_dir }}/keepalived-{{ keepalived_version }}"
+      ansible.builtin.command: "./configure"
       args:
         chdir: "{{ keepalived_build_dir }}"
       changed_when: true
@@ -130,5 +134,5 @@
     enabled: true
     daemon_reload: true
 
-# - name: ACL
-#   ansible.builtin.include_tasks: ./acl.yml
+# # - name: ACL
+# #   ansible.builtin.include_tasks: ./acl.yml

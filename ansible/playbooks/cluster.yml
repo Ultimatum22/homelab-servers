@@ -1,6 +1,7 @@
 ---
 - hosts: cluster
   become: true
+  # strategy: free
   roles:
     - role: bootstrap
       tags: [bootstrap]
