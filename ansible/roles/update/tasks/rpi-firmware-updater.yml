@@ -1,4 +1,9 @@
 ---
+- name: Install python pexpect package
+  ansible.builtin.apt:
+    package: python3-pexpect
+    state: present    
+
 - name: Raspberry Pi firmware updater
   expect:
     command: rpi-update
