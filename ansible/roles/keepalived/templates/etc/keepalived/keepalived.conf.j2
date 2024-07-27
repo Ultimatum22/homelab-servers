@@ -1,0 +1,40 @@
+global_defs {
+    enable_script_security
+}
+
+vrrp_track_process haproxy {
+    process haproxy
+    quorum 1
+    delay 2
+}
+
+vrrp_instance VI_1 {
+
+    interface {{ keepalived_interface }}
+    state {{ keepalived_state }}
+    priority {{ keepalived_priority }}
+
+    virtual_router_id {{ keepalived_virtual_router_id }}
+    unicast_src_ip {{ keepalived_unicast_src_ip }}
+    unicast_peer {
+{% for keepalived_unicast_peer in keepalived_unicast_peers %}
+        {{ keepalived_unicast_peer }}
+{% endfor %}
+    }
+
+    virtual_ipaddress {
+        {{ keepalived_virtual_ipaddress_config }}
+    }
+
+    authentication {
+        auth_type PASS
+        auth_pass {{ keepalived_auth_pass }}
+    }
+
+    track_process {
+        haproxy
+    }
+
+    smtp_alert
+
+}

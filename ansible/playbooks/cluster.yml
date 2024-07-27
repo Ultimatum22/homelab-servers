@@ -8,6 +8,8 @@
       tags: [docker]
     - role: wireguard
       tags: [wireguard]
+    - role: keepalived
+      tags: [keepalived]
     - role: consul
       tags: [consul]
     - role: nomad

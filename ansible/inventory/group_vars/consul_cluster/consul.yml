@@ -13,3 +13,4 @@ consul_acl_agent_token: ''
 consul_acl_agent_master_token: ''
 
 consul_bind_address: "{{ ansible_host }}"
+

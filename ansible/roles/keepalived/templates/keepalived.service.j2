@@ -1,0 +1,20 @@
+[Unit]
+Description=LVS and VRRP High Availability Monitor
+After=network-online.target syslog.target
+Wants=network-online.target
+ConditionFileNotEmpty={{ keepalived_config_dir }}/keepalived.conf
+
+[Service]
+Type=forking
+RuntimeDirectory=keepalived
+PIDFile={{ keepalived_pid_file_path }}
+User={{ keepalived_user }}
+Group={{ keepalived_group }}
+ExecStart={{ keepalived_install_dir }}/keepalived -p {{ keepalived_pid_file_path }} $KEEPALIVED_OPTIONS
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
