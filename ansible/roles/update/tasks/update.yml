@@ -1,0 +1,12 @@
+---
+- name: Update package list and upgrade all packages on Debian-based systems
+  ansible.builtin.apt:
+    update_cache: yes
+    upgrade: dist
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Update package list and upgrade all packages on Arch-based systems
+  ansible.builtin.pacman:
+    update_cache: yes
+    upgrade: yes
+  when: ansible_facts['os_family'] == "Archlinux"
