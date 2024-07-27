@@ -1,0 +1,28 @@
+---
+keepalived_version: 2.2.8
+
+keepalived_user: keepalived
+keepalived_group: keepalived
+
+keepalived_download_url: "https://www.keepalived.org/software/keepalived-{{ keepalived_version }}.tar.gz"
+
+keepalived_install_dir: /usr/local/sbin
+keepalived_config_dir: /etc/keepalived
+keepalived_data_dir: /opt/keepalived
+
+keepalived_dependencies:
+  - 'build-essential'
+  - 'curl'
+  - 'gcc'
+  - 'libssl-dev'
+  - 'libnl-3-dev'
+  - 'libnl-genl-3-dev'
+  - 'libsnmp-dev'
+
+keepalived_interface: "{{ ansible_default_ipv4.interface }}"
+keepalived_unicast_src_ip: "{{ ansible_host }}"
+keepalived_virtual_ipaddress_config: "{{ keepalived_virtual_ip_address }} dev {{ keepalived_interface }}"
+
+keepalived_auth_pass: 'changeme'
+
+keepalived_virtual_router_id: '51'

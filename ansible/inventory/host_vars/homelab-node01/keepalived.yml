@@ -1,2 +1,4 @@
 ---
 keepalived_state: 'MASTER'
+
+keepalived_priority: 100

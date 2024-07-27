@@ -1,0 +1,138 @@
+---
+# - name: Configure UFW
+#   ansible.builtin.include_tasks: ufw.yml
+
+- name: Ensure Keepalived is installed
+  block:
+    - name: Test keepalived
+      ansible.builtin.command: keepalived --version
+      register: keepalived_version_test
+      changed_when: false
+
+    - name: Extract Keepalived version
+      ansible.builtin.set_fact:
+        keepalived_installed_version: "{{ keepalived_version_test | regex_search('Keepalived v([0-9.]+)', '\\1') }}"
+
+    - name: Test if correct version is installed
+      ansible.builtin.assert:
+        that:
+          - keepalived_version in keepalived_installed_version
+        success_msg: "Keepalived version {{ keepalived_version }} is installed"
+        fail_msg: Keepalived was not successfully installed
+
+    - name: Create temporary Keepalived build directory.
+      ansible.builtin.tempfile:
+        state: directory
+        prefix: "keepalived-{{ keepalived_version }}_"
+      register: tempdir
+
+    - name: Store temporary build directory path
+      ansible.builtin.set_fact:
+        keepalived_build_dir: "{{ tempdir.path }}"
+  rescue:
+    - name: Ensure old keepalived is removed
+      ansible.builtin.file:
+        path: "{{ keepalived_install_dir }}/keepalived"
+        state: absent
+
+    - name: Download and extract keepalived archive.
+      ansible.builtin.unarchive:
+        src: "{{ keepalived_download_url }}"
+        dest: "{{ keepalived_build_dir }}"
+        remote_src: true
+        extra_opts:
+          - "--strip-components=1"
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Configure Keepalived to be build.
+      ansible.builtin.command: "./configure"
+      args:
+        chdir: "{{ keepalived_build_dir }}"
+      changed_when: true
+
+    - name: Build Keepalived from source.
+      community.general.make:
+        chdir: "{{ keepalived_build_dir }}"
+
+    - name: Install Keepalived binaries.
+      community.general.make:
+        chdir: "{{ keepalived_build_dir }}"
+        target: install
+      notify: restart keepalived
+
+    - name: Copy Keepalived sysconfig file
+      ansible.builtin.copy:
+        src: "{{ keepalived_build_dir }}/keepalived/etc/sysconfig/keepalived"
+        dest: "{{ keepalived_config_dir }}/keepalived.sysconfig"
+        owner: root
+        group: root
+        mode: '0644'
+        remote_src: true
+  always:
+    - name: Remove temporary build directory
+      ansible.builtin.file:
+        path: "{{ keepalived_build_dir }}"
+        state: absent
+
+- name: Create Keepalived group
+  group:
+    name: "{{ keepalived_group }}"
+    system: true
+    state: present
+
+- name: Create Keepalived user
+  user:
+    name: "{{ keepalived_user }}"
+    group: "{{ keepalived_group }}"
+    shell: /bin/false
+    createhome: false
+    system: true
+    state: present
+
+- name: Create Keepalived configuration directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: "{{ keepalived_user }}"
+    group: "{{ keepalived_group }}"
+    mode: "0755"
+    state: directory
+  with_items:
+    - "{{ keepalived_config_dir }}"
+    - "{{ keepalived_data_dir }}"
+
+- name: Create keepalived.service configuration
+  template:
+    src: keepalived.service.j2
+    dest: /etc/systemd/system/keepalived.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart keepalived
+
+- name: Create Keepalived configuration file
+  template:
+    src: etc/keepalived/keepalived.conf.j2
+    dest: "{{ keepalived_config_dir }}/keepalived.conf"
+    owner: "{{ keepalived_user }}"
+    group: "{{ keepalived_group }}"
+    mode: "0644"
+  notify: restart keepalived
+
+- name: Validate keepalived config
+  ansible.builtin.command:
+    cmd: "{{ keepalived_install_dir }}/keepalived --config-test"
+  register: keepalived_config_valid
+  changed_when: false
+  failed_when: keepalived_config_valid.rc != 0
+
+- name: Ensure Keepalived service is started and enabled on boot
+  ansible.builtin.systemd_service:
+    name: keepalived
+    state: started
+    enabled: true
+    daemon_reload: true
+
+# # - name: ACL
+# #   ansible.builtin.include_tasks: ./acl.yml
