@@ -122,7 +122,7 @@
 
 - name: Validate keepalived config
   ansible.builtin.command:
-    cmd: "{{ keepalived_install_dir }}/keepalived --config-test {{ keepalived_config_dir }}"
+    cmd: "{{ keepalived_install_dir }}/keepalived --config-test"
   register: keepalived_config_valid
   changed_when: false
   failed_when: keepalived_config_valid.rc != 0
