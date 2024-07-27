@@ -4,3 +4,5 @@ ufw_rules:
   - { rule: "allow", port: 22 }
   - { rule: "allow", port: 80 }
   - { rule: "allow", port: 443 }
+
+swap_size_mb: 1MiB

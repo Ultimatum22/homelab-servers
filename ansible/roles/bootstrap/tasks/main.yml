@@ -23,9 +23,9 @@
   ansible.builtin.include_tasks: 10-rpi.yml
   when: ansible_architecture in ['armv6l', 'armv7l', 'aarch64']
 
-- name: Increase SWAP
-  ansible.builtin.include_tasks: 10-swap.yml
-  when: ansible_architecture in ['armv6l', 'armv7l', 'aarch64']
+# - name: Increase SWAP
+#   ansible.builtin.include_tasks: 10-swap.yml
+#   when: ansible_architecture in ['armv6l', 'armv7l', 'aarch64']
 
 # - name: Raspberry Pi firmware updater
 #   ansible.builtin.include_tasks: 11-rpi-firmware-updater.yml
