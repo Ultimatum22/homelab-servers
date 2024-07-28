@@ -9,7 +9,7 @@
 
 - name: Install CNI
   ansible.builtin.unarchive:
-    src: "{{ cni_zip_url }}"
+    src: "{{ cni_download_url }}"
     dest: "{{ cni_install_dir }}"
     owner: root
     group: root

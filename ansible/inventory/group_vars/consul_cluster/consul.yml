@@ -1,5 +1,5 @@
 ---
-datacenter_name: dc1
+datacenter_name: homelab
 consul_domain: consul
 
 consul_gossip_key: PcHsUpryiSwYSWfH/7zVtI1OrTOIeXGSAE4wj/XOUNw=

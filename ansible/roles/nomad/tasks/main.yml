@@ -33,7 +33,7 @@
 - name: Create Nomad group
   group:
     name: "{{ nomad_group }}"
-    system: yes
+    system: true
     state: present
 
 - name: Create Nomad user
@@ -41,8 +41,8 @@
     name: "{{ nomad_user }}"
     group: "{{ nomad_group }}"
     shell: /bin/false
-    createhome: no
-    system: yes
+    createhome: false
+    system: true
     state: present
 
 - name: Create Nomad configuration directory
@@ -96,8 +96,11 @@
   ansible.builtin.systemd_service:
     name: nomad
     state: started
-    enabled: yes
+    enabled: true
     daemon_reload: true
+
+- name: Install cni plugin
+  ansible.builtin.include_tasks: ./cni.yml
 
 # - name: ACL
 #   ansible.builtin.include_tasks: ./acl.yml

@@ -1,6 +1,6 @@
 nomad:
   region: global
-  datacenter: dc1
+  datacenter: homelab
 
 common:
   env:
