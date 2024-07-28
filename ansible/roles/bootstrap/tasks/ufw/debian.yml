@@ -8,7 +8,7 @@
   command: ufw --force enable
 
 - name: Configure UFW rules on Debian
-  ufw:
+  ansible.builtin.ufw:
     rule: "{{ item.rule }}"
     port: "{{ item.port }}"
     proto: tcp

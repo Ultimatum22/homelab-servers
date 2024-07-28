@@ -6,7 +6,7 @@
     update_cache: yes
 
 - name: Configure keepalived
-  template:
+  ansible.builtin.template:
     src: keepalived.conf.j2
     dest: /etc/keepalived/keepalived.conf
   notify: restart keepalived

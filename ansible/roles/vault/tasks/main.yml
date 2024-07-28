@@ -58,7 +58,7 @@
     - "{{ vault_config_dir }}/services.d/"
 
 - name: Create vault.service configuration
-  template:
+  ansible.builtin.template:
     src: vault.service.j2
     dest: /etc/systemd/system/vault.service
     owner: root
@@ -67,7 +67,7 @@
   notify: restart vault
 
 - name: Create Vault configuration file
-  template:
+  ansible.builtin.template:
     src: vault.hcl.j2
     dest: "{{ vault_config_dir }}/vault.hcl"
     owner: "{{ vault_user }}"

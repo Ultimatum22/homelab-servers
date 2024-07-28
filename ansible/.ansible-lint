@@ -18,6 +18,8 @@ warn_list:
   - yaml
   - no-relative-paths
   - risky-file-permissions
+  # - yaml[document-start]
+  # - yaml[document-end]
 
 kinds:
   - vars: "**/vars.yml"

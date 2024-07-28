@@ -33,7 +33,7 @@
 - name: Create Consul group
   group:
     name: "{{ consul_group }}"
-    system: yes
+    system: true
     state: present
 
 - name: Create Consul user
@@ -41,8 +41,8 @@
     name: "{{ consul_user }}"
     group: "{{ consul_group }}"
     shell: /bin/false
-    createhome: no
-    system: yes
+    createhome: false
+    system: true
     state: present
 
 - name: Create Consul configuration directory
@@ -57,7 +57,7 @@
     - "{{ consul_data_dir }}"
 
 - name: Create consul.service configuration
-  template:
+  ansible.builtin.template:
     src: consul.service.j2
     dest: /etc/systemd/system/consul.service
     owner: root
@@ -66,7 +66,7 @@
   notify: restart consul
 
 - name: Create Consul configuration file
-  template:
+  ansible.builtin.template:
     src: etc/consul.d/consul.hcl.j2
     dest: "{{ consul_config_dir }}/consul.hcl"
     owner: "{{ consul_user }}"
@@ -75,7 +75,7 @@
   notify: restart consul
 
 - name: Create Consul server configuration file
-  template:
+  ansible.builtin.template:
     src: etc/consul.d/server.hcl.j2
     dest: "{{ consul_config_dir }}/server.hcl"
     owner: "{{ consul_user }}"
@@ -85,7 +85,7 @@
   when: _is_server
 
 - name: Create Consul client configuration file
-  template:
+  ansible.builtin.template:
     src: etc/consul.d/client.hcl.j2
     dest: "{{ consul_config_dir }}/client.hcl"
     owner: "{{ consul_user }}"
