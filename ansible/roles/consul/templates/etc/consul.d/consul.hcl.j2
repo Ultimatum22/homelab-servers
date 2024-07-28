@@ -32,7 +32,10 @@ performance = {
 ports = {
   dns = {{ consul_ports['dns'] }}
   http = {{ consul_ports['http'] }}
+  https = {{ consul_ports['https'] }}
   server = {{ consul_ports['server'] }}
+  grpc = {{ consul_ports['grpc'] }}
+  grpc_tls = {{ consul_ports['grpc_tls'] }}
 }
 
 raft_protocol = 3

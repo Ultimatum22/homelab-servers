@@ -12,4 +12,5 @@
       - { rule: allow, port: 8500, proto: tcp, comment: Consul UI }
       - { rule: allow, port: 8501, proto: tcp, comment: Consul HTTPS }
       - { rule: allow, port: 8502, proto: tcp, comment: Consul gRPC }
+      - { rule: allow, port: 8503, proto: tcp, comment: Consul gRPC TLS }
       - { rule: allow, port: 8600, proto: tcp, comment: Consul DNS }
