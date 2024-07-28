@@ -25,7 +25,7 @@ consul_ports:
   serf_lan: "8301"
   serf_wan: "8302"
   server: "8300"
-  grpc: "-1"
+  grpc: "8503"
   grpc_tls: "-1"
 
 consul_bootstrap_expect_value: "{{ _consul_servers_servercount | int }}"
