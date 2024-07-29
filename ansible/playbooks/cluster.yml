@@ -5,10 +5,12 @@
   roles:
     - role: bootstrap
       tags: [bootstrap]
+    - role: ufw
+      tags: [ufw]
     - role: docker
       tags: [docker]
-    - role: wireguard
-      tags: [wireguard]
+    # - role: wireguard
+    #   tags: [wireguard]
     - role: keepalived
       tags: [keepalived]
     - role: consul

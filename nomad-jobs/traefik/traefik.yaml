@@ -1,0 +1,66 @@
+# static configuration 
+
+providers:
+  file:
+    directory: "/local/conf"
+    watch: false
+  consulcatalog:
+    prefix: "traefik"
+    watch: true # use watch instead of polling
+    connectaware: true
+    exposedByDefault: false
+    servicename: "traefik-home-api" # connects Traefik to the Consul service
+    endpoint:
+      address: "http://consul.service.consul:8500"
+
+certificatesResolvers:
+  home:
+    acme:
+      caServer: "https://localhost:9443/acme/home/directory" # bound via Consul Connect
+      email: "{{- with nomadVar "nomad/jobs/traefik" }}{{- .ca_email }}{{- end }}"
+      storage: "{{ env "NOMAD_ALLOC_DIR" }}/data/home.json"
+      tlsChallenge: {}
+
+entryPoints:
+  # internal
+  web:
+    address: :80
+    http:
+      redirections: # global redirct to https
+        entrypoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: :443
+    http:
+      tls: 
+        options: strict_tls@file
+        certResolver: home
+  # Traefik API
+  traefik:
+    address: :8080
+
+serversTransport:
+  insecureSkipVerify: true # trust internal TLS connection without cert validation
+  rootCAs: 
+    - {{ env "NOMAD_ALLOC_DIR" }}/data/intermediate_ca.crt
+  
+api:
+  dashboard: true
+  
+ping:
+  entryPoint: "traefik"
+
+log:
+  level: INFO
+#  level: DEBUG
+
+metrics:
+  prometheus:
+    addEntryPointsLabels: true
+    addRoutersLabels: true
+    addServicesLabels: true
+
+global:
+  sendanonymoususage: true # Periodically send anonymous usage statistics.
+

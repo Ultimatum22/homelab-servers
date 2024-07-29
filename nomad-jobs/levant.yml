@@ -6,12 +6,4 @@ common:
   env:
     puid: 1000
     pgid: 1000
-
-app:
-  pihole:
-    traefik:
-      domain: pihole.home
-  traefik:
-    volumes:
-      dynamic: /mnt/services/traefik/dynamic
-      certificates: /mnt/services/traefik/certificates
+    TZ: "Europe/Amsterdam"

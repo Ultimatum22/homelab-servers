@@ -3,7 +3,7 @@
   apt:
     name: keepalived
     state: present
-    update_cache: yes
+    update_cache: true
 
 - name: Configure keepalived
   ansible.builtin.template:

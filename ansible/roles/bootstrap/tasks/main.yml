@@ -15,10 +15,6 @@
   ansible.builtin.include_tasks: "packages/{{ ansible_os_family | lower }}.yml"
   tags: packages
 
-- name: Include OS-specific UFW tasks
-  ansible.builtin.include_tasks: "ufw/{{ ansible_os_family | lower }}.yml"
-  tags: ufw
-
 - name: RPI specific task
   ansible.builtin.include_tasks: 10-rpi.yml
   when: ansible_architecture in ['armv6l', 'armv7l', 'aarch64']

@@ -98,7 +98,7 @@ levant.deploy:
 	-e ENVIRONMENT \
 	-v ${PWD}/nomad-jobs:/workdir \
 	-w /workdir \
-	hashicorp/levant:0.3.0 levant deploy -vault -var-file=/workdir/levant.yml /workdir/${job}/nomad.job
+	hashicorp/levant:0.3.3 levant deploy -vault -var-file=/workdir/levant.yml /workdir/${job}/nomad.hcl
 
 # Terraform
 terraform.init:
