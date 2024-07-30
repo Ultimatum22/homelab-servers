@@ -46,3 +46,5 @@
       tags: [whats_up_docker]
     - role: vaultwarden
       tags: [vaultwarden]
+    - role: reboot
+      tags: [reboot]

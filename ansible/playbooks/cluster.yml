@@ -19,3 +19,5 @@
       tags: [nomad]
     - role: vault
       tags: [vault]
+    - role: reboot
+      tags: [reboot]

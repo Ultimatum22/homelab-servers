@@ -1,0 +1,5 @@
+---
+reboot_timeout: 300
+pre_reboot_delay: 0
+connection_timeout: 300
+reboot_required: true

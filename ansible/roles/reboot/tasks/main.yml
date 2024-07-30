@@ -1,0 +1,14 @@
+---
+- name: Reboot the machine
+  ansible.builtin.reboot:
+    reboot_timeout: "{{ reboot_timeout }}"
+    pre_reboot_delay: "{{ pre_reboot_delay }}"
+  become: yes
+  when: reboot_required
+  register: reboot_result
+
+- name: Wait for the system to come back
+  ansible.builtin.wait_for_connection:
+    timeout: "{{ connection_timeout }}"
+  become: yes
+  when: reboot_result.changed
