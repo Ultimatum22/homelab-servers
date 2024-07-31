@@ -1,0 +1,40 @@
+---
+- name: Initialize Docker Swarm
+  shell: docker swarm init --advertise-addr {{ ansible_host }}
+  register: swarm_init_output
+  changed_when: "'Swarm initialized' in swarm_init_output.stdout"
+  when: inventory_hostname == groups['cluster'][0]
+
+- name: Debug Swarm Initialization Output
+  debug:
+    var: swarm_init_output
+  when: inventory_hostname == groups['cluster'][0]
+
+- name: Get Join Token for Managers
+  shell: docker swarm join-token manager -q
+  register: manager_join_token
+  when: "'Swarm initialized' in swarm_init_output and inventory_hostname == groups['cluster'][0]"
+
+- name: Debug Manager Join Token
+  debug:
+    var: manager_join_token
+  when: "'Swarm initialized' in swarm_init_output and inventory_hostname == groups['cluster'][0]"
+
+- name: Set facts for manager join token
+  set_fact:
+    manager_join_token: "{{ manager_join_token }}"
+  when: "'Swarm initialized' in swarm_init_output and inventory_hostname == groups['cluster'][0]"
+
+- name: Debug Set Fact Manager Join Token
+  debug:
+    var: manager_join_token
+  when: "'Swarm initialized' in swarm_init_output and inventory_hostname == groups['cluster'][0]"
+
+- name: Join the Docker Swarm as manager
+  shell: docker swarm join --token {{ hostvars[groups['cluster'][0]].manager_join_token }} {{ hostvars[groups['cluster'][0]].ansible_host }}:2377
+  when: inventory_hostname != groups['cluster'][0] and hostvars[groups['cluster'][0]].manager_join_token is defined
+
+- name: Debug Join Command
+  debug:
+    msg: "Joining swarm as manager with token {{ hostvars[groups['cluster'][0]].manager_join_token }} from {{ hostvars[groups['cluster'][0]].ansible_host }}"
+  when: inventory_hostname != groups['cluster'][0] and hostvars[groups['cluster'][0]].manager_join_token is defined

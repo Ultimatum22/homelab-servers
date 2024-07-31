@@ -122,7 +122,7 @@ docker_esphome:
 
 docker_homepage:
   config: "{{ docker_config_root }}/homepage"
-  image: ghcr.io/gethomepage/homepage:v0.9.3
+  image: ghcr.io/gethomepage/homepage:v0.9.5
 
 docker_gotify:
   data: "{{ docker_data_root }}/gotify"
@@ -172,7 +172,7 @@ docker_paperless:
   data: "{{ docker_data_root }}/paperless"
   database: "{{ docker_data_root }}/paperless-database"
   broker: "{{ docker_data_root }}/paperless-broker"
-  image: paperlessngx/paperless-ngx:2.11.0
+  image: paperlessngx/paperless-ngx:2.11.2
   image_database: postgres:12.19-alpine
   image_broker: redis:7.2.5-alpine
 
@@ -185,7 +185,7 @@ docker_mealie:
 docker_syncthing:
   config: "{{ docker_config_root }}/syncthing"
   data: "{{ docker_data_root }}/syncthing"
-  image: syncthing/syncthing:1.27
+  image: syncthing/syncthing:1.27.9
 
 docker_dozzle:
   image: amir20/dozzle:v8.0.5
