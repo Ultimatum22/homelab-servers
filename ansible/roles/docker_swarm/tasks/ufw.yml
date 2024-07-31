@@ -1,0 +1,10 @@
+---
+- name: Open ports
+  include_role:
+    name: ufw
+  vars:
+    ufw_rules:
+      - { rule: allow, port: 2377, proto: tcp, comment: Docker swarm communication with and between manager nodes }
+      - { rule: allow, port: 4789, proto: udp, comment: Docker swarm overlay network traeffic }
+      - { rule: allow, port: 7946, proto: tcp, comment: Docker swarm overlay network node discovery }
+      - { rule: allow, port: 7946, proto: udp, comment: Docker swarm overlay network node discovery }

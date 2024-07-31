@@ -26,6 +26,14 @@ homelab-node02
 #homelab-node03
 homelab-node04
 
+[cluster_manager]
+homelab-node01
+homelab-node02
+#homelab-node03
+homelab-node04
+
+[cluster_worker]
+
 [consul_cluster]
 homelab-node01 consul_node_role=both
 homelab-node02 consul_node_role=both

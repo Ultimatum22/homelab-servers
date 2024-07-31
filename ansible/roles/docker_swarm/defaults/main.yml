@@ -1,0 +1,28 @@
+---
+##
+# Docker Swarm
+##
+
+# Docker swarm network can be define in order to be sure that
+# swarm cluster doesn't overlap with you infrastructure
+# docker_swarm_network: 10.10.8.0/24
+
+# You can set any interface, that is listened by docker engine.
+# e.g. docker_swarm_interface: "eth1"
+docker_swarm_interface: "{{ ansible_default_ipv4['interface'] }}"
+docker_swarm_addr: "{{ hostvars[inventory_hostname]['ansible_' + docker_swarm_interface]['ipv4']['address'] }}"
+docker_swarm_port: 2377
+
+##
+# Role Switches
+##
+
+# Switches disabling the docker-engine, docker group and swarm-mode setup.
+skip_repo: false        # if true, skips the setup of the docker repository
+skip_containerd: false  # if true, skips the setup of containerd
+skip_engine: false      # if true, skips the docker engine installation
+skip_cli: false         # if true, skips the docker cli installation
+skip_swarm: false       # if true, skips the swarm setup
+skip_group: false       # if true, does not add the docker_admin_users to the docker_group_name
+skip_docker_py: false   # if true, skips the installation of docker-py
+skip_docker_compose: false  # if true, skips the installation of docker-compose
