@@ -1,4 +1,8 @@
 ---
+- name: Show IPs excluding the current host
+  debug:
+    var: _keepalived_unicats_peers
+
 - name: Install keepalived
   apt:
     name: keepalived

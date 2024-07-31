@@ -1,23 +1,20 @@
-vrrp_script chk_haproxy {
-    script "pidof haproxy"
-    interval 2
-    weight 2
-}
-
 vrrp_instance VI_1 {
     state {{ keepalived_state }}
     interface {{ keepalived_interface }}
-    virtual_router_id 51
+    virtual_router_id 111
     priority {{ keepalived_priority }}
+
+    unicast_src_ip {{ keepalived_address }}
+
+    unicats_peer {{ _keepalived_unicats_peers }}
+    
     advert_int 1
+
     authentication {
         auth_type PASS
         auth_pass {{ keepalived_auth_pass }}
     }
     virtual_ipaddress {
         {{ keepalived_virtual_ip_address }}
-    }
-    track_script {
-        chk_haproxy
     }
 }

@@ -1,0 +1,8 @@
+---
+_keepalived_unicats_peers: >-
+  {{
+    groups['cluster'] | 
+    map('extract', hostvars, ['ansible_host']) | 
+    reject('equalto', ansible_host) | 
+    list
+  }}

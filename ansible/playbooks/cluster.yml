@@ -11,12 +11,10 @@
       tags: [docker]
     - role: docker_swarm
       tags: [docker_swarm]
-    - role: docker_swarmpit
-      tags: [docker_swarmpit]
     # - role: wireguard
     #   tags: [wireguard]
-    # - role: keepalived
-    #   tags: [keepalived]
+    - role: keepalived
+      tags: [keepalived]
     # - role: consul
     #   tags: [consul]
     # - role: nomad
