@@ -11,13 +11,13 @@
       tags: [docker]
     # - role: wireguard
     #   tags: [wireguard]
-    - role: keepalived
-      tags: [keepalived]
-    - role: consul
-      tags: [consul]
-    - role: nomad
-      tags: [nomad]
-    - role: vault
-      tags: [vault]
+    # - role: keepalived
+    #   tags: [keepalived]
+    # - role: consul
+    #   tags: [consul]
+    # - role: nomad
+    #   tags: [nomad]
+    # - role: vault
+    #   tags: [vault]
     - role: reboot
       tags: [reboot]
