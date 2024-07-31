@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # List of hosts (space-separated)
-# hosts=("homelab-node01" "homelab-node02" "homelab-node04")
-hosts=("192.168.2.221" "192.168.2.222" "192.168.2.224")
+hosts=("homelab-node01" "homelab-node02" "homelab-node04")
+#hosts=("192.168.2.221" "192.168.2.222" "192.168.2.224")
 user="system"
 
 # Temporary password for SSH connections
@@ -25,7 +25,7 @@ done
 
 # Add new key to each host
 for host in "${hosts[@]}"; do
-  sshpass -p "$password" ssh-copy-id -i "$public_key_path" "$user@$host"
+  sshpass -p "$password" ssh-copy-id -i "$public_key_path" "$host"
 done
 
 echo "Keys have been updated for the specified hosts."

@@ -1,0 +1,9 @@
+---
+- hosts: cluster
+  become: true
+  # strategy: free
+  roles:
+    - role: docker_swarm_app
+      vars:
+        stack: swarmpit
+      tags: [swarmpit]
