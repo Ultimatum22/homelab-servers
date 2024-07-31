@@ -9,6 +9,8 @@
       tags: [ufw]
     - role: docker
       tags: [docker]
+    - role: docker_swarm
+      tags: [docker_swarm]
     # - role: wireguard
     #   tags: [wireguard]
     # - role: keepalived
