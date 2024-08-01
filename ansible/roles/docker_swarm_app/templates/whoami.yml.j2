@@ -10,7 +10,7 @@ services:
         - "traefik.enable=true"
         - "traefik.docker.network=traefik"  
 
-        - "traefik.http.routers.external.rule=Host(`external.{{ root_domain }}.com`)"
+        - "traefik.http.routers.external.rule=Host(`external.{{ root_domain }}`)"
         - "traefik.http.routers.external.entrypoints=websecure"
         - "traefik.http.routers.external.tls=true"
         
