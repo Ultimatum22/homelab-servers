@@ -5,7 +5,7 @@ services:
     image: traefik:v2.10
     command:
       - "--log"
-      - "--log.level=INFO"
+      - "--log.level=DEBUG"
       - "--log.format=json"
       - "--api.insecure=true"
       - "--providers.docker"
@@ -96,38 +96,6 @@ services:
       - traefik
     environment:
       - TUNNEL_TOKEN={{ secret_cloudflare_tunnel_token }}
-
-  error-pages:
-    image: tarampampam/error-pages:2.26.0
-    environment:
-      TEMPLATE_NAME: l7-dark
-    networks:
-      - traefik
-    deploy:
-      mode: replicated
-      replicas: 2
-      update_config:
-        delay: 20s
-        order: start-first
-        monitor: 10s
-      labels:
-        - traefik.enable=true
-        - traefik.docker.network=traefik
-
-        # use as "fallback" for any non-registered services (with priority below normal)
-        - traefik.http.routers.error-pages.rule=HostRegexp(`{host:.+}`)
-        - traefik.http.routers.error-pages.priority=10
-
-        # should say that all of your services work on https
-        - traefik.http.routers.error-pages.tls='true'
-        - traefik.http.routers.error-pages.entrypoints=websecure
-        - traefik.http.routers.error-pages.middlewares=error-pages
-        - traefik.http.services.error-pages.loadbalancer.server.port=8080
-
-        # "errors" middleware settings
-        - traefik.http.middlewares.error-pages.errors.status=400-599
-        - traefik.http.middlewares.error-pages.errors.service=error-pages
-        - traefik.http.middlewares.error-pages.errors.query=/{status}.html
 
   # cloudflare-companion:
   #   image: tiredofit/traefik-cloudflare-companion:6.7.0
