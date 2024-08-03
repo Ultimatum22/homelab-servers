@@ -8,8 +8,6 @@ services:
       - SWARMPIT_INFLUXDB=http://influxdb:8086
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    ports:
-      - 888:8080
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080"]
       interval: 60s
@@ -35,7 +33,7 @@ services:
         - "traefik.http.routers.swarmpit-rtr.rule=Host(`swarmpit.{{ root_domain }}`)"
         # HTTP Services
         - "traefik.http.routers.swarmpit-rtr.service=swarmpit-svc"
-        - "traefik.http.services.swarmpit-svc.loadbalancer.server.port=888"
+        - "traefik.http.services.swarmpit-svc.loadbalancer.server.port=8080"
 
         # - "traefik.constraint=proxy-public"
   db:
