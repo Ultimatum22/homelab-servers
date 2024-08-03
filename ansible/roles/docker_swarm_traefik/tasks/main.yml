@@ -1,0 +1,32 @@
+---
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0775"
+  with_items:
+    - "/home/system/stacks"
+
+- name: Create network
+  community.general.docker_network:
+    name: "{{ item }}"
+    driver: "overlay"
+  with_items:
+    - traefik
+
+- name: Deploy product stack file
+  ansible.builtin.template:
+    src: "traefik-stack.yml.j2"
+    dest: "/home/system/stacks/traefik-stack.yml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'
+
+- name: Deploy stack from a compose file
+  community.general.docker_stack:
+    state: present
+    name: traefik-stack
+    compose:
+      - "/home/system/stacks/traefik-stack.yml"

@@ -1,0 +1,10 @@
+---
+haproxy_hosts: >-
+  {%- set config_lines = [] -%}
+  {%- for host in groups['cluster'] -%}
+  {%- set server_name = 'host{:02d}'.format(loop.index) -%}
+  {%- set ip = hostvars[host]['ansible_host'] -%}
+  {%- set line = "server {} {}:80 check port 80".format(server_name, ip) -%}
+  {%- do config_lines.append(line) -%}
+  {%- endfor -%}
+  {{- config_lines }}

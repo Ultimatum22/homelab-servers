@@ -8,7 +8,7 @@ services:
     deploy:
       labels:
         - "traefik.enable=true"
-        - "traefik.docker.network=traefik"  
+        {# - "traefik.docker.network=traefik"   #}
 
         - "traefik.http.routers.external.rule=Host(`external.{{ root_domain }}`)"
         - "traefik.http.routers.external.entrypoints=websecure"
@@ -16,7 +16,7 @@ services:
         
         - "traefik.http.services.external.loadbalancer.server.port=80"
 
-        - "traefik.constraint=proxy-public"
+        {# - "traefik.constraint=proxy-public" #}
 
 networks:
   traefik:

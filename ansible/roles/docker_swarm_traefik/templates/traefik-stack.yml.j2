@@ -23,8 +23,7 @@ services:
       - "--entrypoints.websecure.http.tls=true"
       - "--entrypoints.websecure.http.tls.certresolver=letsencrypt"
       - "--entrypoints.webinternal.address=:82"
-      - "--certificatesresolvers.letsencrypt.acme.email={{ secret_cloudflare_email }}"
-      - "--certificatesresolvers.letsencrypt.acme.storage=/data/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme/letsencrypt.json"
       - "--certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare"
       - "--certificatesresolvers.letsencrypt.acme.dnschallenge.delaybeforecheck=300"
       - "--certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=8.8.8.8:53"
@@ -76,64 +75,27 @@ services:
       - internal
     volumes:
       # So that Traefik can listen to the Docker events
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock
       - acme:/etc/traefik/acme
       - traefik:/config
       - cloudflare:/cloudflare
-      - letsencrypt_data:/data
 
-  tunnel:
-    image: erisamoe/cloudflared:2024.7.1
-    restart: unless-stopped
-    command: tunnel run
-    deploy:
-      mode: replicated
-      replicas: 3
-      update_config:
-        delay: 30s
-        order: start-first
-        monitor: 20s
-    networks:
-      - traefik
-    environment:
-      - TUNNEL_TOKEN={{ secret_cloudflare_tunnel_token }}
-
-  # cloudflare-companion:
-  #   image: tiredofit/traefik-cloudflare-companion:6.7.0
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
+  # tunnel:
+  #   container_name: cloudflared-tunnel
+  #   image: cloudflare/cloudflared
+  #   restart: unless-stopped
+  #   command: tunnel run
   #   deploy:
-  #     placement:
-  #       constraints:
-  #         - node.role == manager
+  #     mode: replicated
+  #     replicas: 3
+  #     update_config:
+  #       delay: 30s
+  #       order: start-first
+  #       monitor: 20s
+  #   networks:
+  #     - traefik
   #   environment:
-  #     - TIMEZONE={{ system_timezone }}
-
-  #     - LOG_TYPE=CONSOLE
-  #     - LOG_LEVEL=INFO
-
-  #     - TRAEFIK_VERSION=2
-  #     - RC_TYPE=CNAME
-
-  #     - TARGET_DOMAIN={{ root_domain }}
-  #     - REFRESH_ENTRIES=TRUE
-
-  #     - DOCKER_SWARM_MODE=TRUE
-
-  #     - ENABLE_TRAEFIK_POLL=TRUE
-  #     - TRAEFIK_POLL_URL=https://traefik.{{ root_domain }}/api
-  #     - TRAEFIK_FILTER_LABEL=traefik.constraint
-  #     - TRAEFIK_FILTER=proxy-public
-
-  #     - DOMAIN1={{ root_domain }}
-  #     - DOMAIN1_ZONE_ID={{ secret_cloudflare_zone_id }}
-  #     - DOMAIN1_PROXIED=TRUE
-      
-  #     - CF_EMAIL={{ secret_cloudflare_email }}
-  #     - CF_TOKEN={{ secret_cloudflare_cf }}
-    # restart: always
-    # networks:
-    #   - internal
+  #     - TUNNEL_TOKEN=${TUNNEL_TOKEN}
       
 networks:
   traefik:
@@ -144,9 +106,3 @@ volumes:
   acme:
   traefik:
   cloudflare:
-  letsencrypt_data:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/letsencrypt_data
