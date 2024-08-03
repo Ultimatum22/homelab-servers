@@ -79,6 +79,23 @@ services:
       - acme:/etc/traefik/acme
       - traefik:/config
       - cloudflare:/cloudflare
+  
+  # Cloudflare DDNS - Dynamic DNS Updater
+  cf-ddns:
+    container_name: cf-ddns
+    image: oznu/cloudflare-ddns:latest
+    restart: always
+    environment:
+      - API_KEY={{ secret_cloudflare_zone_token }}
+      - ZONE={{ root_domain }}
+      - PROXIED=true
+      - RRTYPE=A
+      - DELETE_ON_STOP=false
+      - DNS_SERVER=1.1.1.1
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
 
   # tunnel:
   #   container_name: cloudflared-tunnel
