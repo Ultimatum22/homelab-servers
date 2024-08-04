@@ -57,6 +57,7 @@ services:
         - traefik.http.routers.api.service=api@internal
         - traefik.http.routers.api.entrypoints=websecure
         - traefik.http.routers.api.tls=true
+        - traefik.http.routers.api.middlewares=authelia
 
         - traefik.http.services.api.loadbalancer.server.port=8080
     ports:
@@ -82,7 +83,7 @@ services:
       - cloudflare:/cloudflare
       - letsencrypt_data:/data
 
-  tunnel:
+  {# tunnel:
     image: erisamoe/cloudflared:2024.7.1
     restart: unless-stopped
     command: tunnel run
@@ -96,44 +97,40 @@ services:
     networks:
       - traefik
     environment:
-      - TUNNEL_TOKEN={{ secret_cloudflare_tunnel_token }}
+      - TUNNEL_TOKEN={{ secret_cloudflare_tunnel_token }} #}
 
-  # cloudflare-companion:
-  #   image: tiredofit/traefik-cloudflare-companion:6.7.0
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   deploy:
-  #     placement:
-  #       constraints:
-  #         - node.role == manager
-  #   environment:
-  #     - TIMEZONE={{ system_timezone }}
+  cloudflare-companion:
+    image: tiredofit/traefik-cloudflare-companion:6.7.0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    environment:
+      - TIMEZONE={{ system_timezone }}
 
-  #     - LOG_TYPE=CONSOLE
-  #     - LOG_LEVEL=INFO
+      - LOG_TYPE=CONSOLE
+      - LOG_LEVEL=INFO
 
-  #     - TRAEFIK_VERSION=2
-  #     - RC_TYPE=CNAME
+      - TRAEFIK_VERSION=3
+      - RC_TYPE=CNAME
 
-  #     - TARGET_DOMAIN={{ root_domain }}
-  #     - REFRESH_ENTRIES=TRUE
+      - TARGET_DOMAIN={{ root_domain }}
+      - REFRESH_ENTRIES=TRUE
 
-  #     - DOCKER_SWARM_MODE=TRUE
+      - DOCKER_SWARM_MODE=TRUE
 
-  #     - ENABLE_TRAEFIK_POLL=TRUE
-  #     - TRAEFIK_POLL_URL=https://traefik.{{ root_domain }}/api
-  #     - TRAEFIK_FILTER_LABEL=traefik.constraint
-  #     - TRAEFIK_FILTER=proxy-public
+      - ENABLE_TRAEFIK_POLL=TRUE
+      - TRAEFIK_POLL_URL=https://traefik.{{ root_domain }}/api
+      - TRAEFIK_FILTER_LABEL=traefik.constraint
+      - TRAEFIK_FILTER=proxy-public
 
-  #     - DOMAIN1={{ root_domain }}
-  #     - DOMAIN1_ZONE_ID={{ secret_cloudflare_zone_id }}
-  #     - DOMAIN1_PROXIED=TRUE
-      
-  #     - CF_EMAIL={{ secret_cloudflare_email }}
-  #     - CF_TOKEN={{ secret_cloudflare_cf }}
-    # restart: always
-    # networks:
-    #   - internal
+      - DOMAIN1={{ root_domain }}
+      - DOMAIN1_ZONE_ID="{{ secret_cloudflare_zone_token }}"
+    restart: always
+    networks:
+      - internal
       
 networks:
   traefik:

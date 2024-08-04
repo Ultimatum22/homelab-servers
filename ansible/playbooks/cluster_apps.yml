@@ -7,7 +7,9 @@
       vars:
         stack: swarmpit
       tags: [swarmpit]
-    - role: traefik
+    - role: docker_swarm_app
+      vars:
+        stack: traefik
       tags: [traefik]
     - role: authelia
       tags: [authelia]
