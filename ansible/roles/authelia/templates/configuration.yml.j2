@@ -425,20 +425,6 @@ session:
       #      - Match the suffix of the host portion when prefixed with '.'.
       authelia_url: "https://auth.{{ root_domain }}"
 
-      # Optional. The fully qualified URI used as the redirection location if the portal is accessed directly. Not
-      # configuring this option disables the automatic redirection behaviour.
-      #
-      # Note: this parameter is optional. If not provided, user won't be redirected upon successful authentication
-      # unless they were redirected to Authelia by the proxy.
-      #
-      # Rules:
-      #   - MUST use the secure scheme 'https://'
-      #   - MUST not match the 'authelia_url' option.
-      #   - The above 'domain' option MUST either:
-      #      - Match the host portion of this URI.
-      #      - Match the suffix of the host portion when prefixed with '.'.
-      default_redirection_url: "https://www.{{ root_domain }}"
-
       # Sets the Cookie SameSite value. Possible options are none, lax, or strict.
       # Please read https://www.authelia.com/c/session#same_site
       same_site: 'lax'

@@ -36,7 +36,7 @@
       traefik.enable: "true"
       traefik.docker.network: traefik
       traefik.http.routers.authelia.entrypoints: websecure
-      traefik.http.routers.authelia.rule: "Host(`authelia.{{ root_domain }}`)"
+      traefik.http.routers.authelia.rule: "Host(`auth.{{ root_domain }}`)"
       traefik.http.services.authelia.loadbalancer.server.port: "9091"
 
       # diun.enable: "true"
