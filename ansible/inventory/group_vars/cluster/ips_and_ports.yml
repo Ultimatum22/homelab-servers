@@ -1,0 +1,99 @@
+---
+docker_port_qbittorrent_http: 8282
+docker_port_qbittorrent_other: 6881
+docker_port_jacket_http: 9117
+docker_port_flood_http: 3001
+docker_port_jellyfin_http: 8096
+docker_port_jellyfin_beta_http: 8097
+docker_port_jellyseer_http: 5055
+docker_port_scrutiny_http: 8081
+docker_port_prowlarr_http: 9696
+docker_port_radarr_http: 7878
+docker_port_readarr_http: 8787
+docker_port_sonarr_http: 8989
+docker_port_whisparr_http: 6969
+docker_port_bazarr_http: 6767
+docker_port_flaresolverr_http: 8191
+docker_port_stash_http: 9999
+docker_port_speedtesttracker_http: 8010
+docker_port_librespeed_http: 8011
+docker_port_sabnzbd_http: 8089
+docker_port_firefly_iii_http: 8886
+docker_port_firefly_iii_importer_http: 8887
+docker_port_firefly_iii_database_http: 3306
+docker_port_esphome_http: 6052
+docker_port_pihole_http: 80
+docker_port_homepage_http: 3000
+docker_port_gotify_http: 8111
+docker_port_doku_http: 9090
+docker_port_duplicati_http: 8200
+docker_port_restic_http: 8000
+docker_port_utorrent_http: 8590
+docker_port_utorrent_dht: 6881
+docker_port_utorrent_xmlrpc: 8592
+docker_port_utorrent_webdav: 8594
+docker_port_utorrent_rt: 50000
+docker_port_transmission_http: 9091
+docker_port_transmission_torrent: 51413
+docker_port_uptime_kuma_http: 3002
+docker_port_glances_http: 61208
+docker_port_paperless_http: 8456
+docker_port_mealie_http: 8460
+docker_port_syncthing_http: 8384
+docker_port_dozzle_http: 8126
+docker_port_pgadmin_http: 8465
+docker_port_whats_up_docker_http: 3111
+docker_port_vaultwarden_http: 8657
+
+host_poseidon_ip: 192.168.2.200
+host_ares01_ip: 192.168.2.221
+host_ares02_ip: 192.168.2.222
+host_ares03_ip: 192.168.2.223
+host_traefik_ip: 192.168.2.88
+host_pihole_ip: 192.168.2.83
+
+url_host: "twisted-wires.nl"
+url_local_host: "local.{{ url_host }}"
+
+# url_homepage: "home.{{ url_local_host }}"
+url_homepage: "{{ host_poseidon_ip }}:{{docker_port_homepage_http }}"
+url_esphome: "esphome.{{ url_local_host }}"
+# url_jellyfin: "player.{{ url_local_host }}"
+url_jellyfin: "{{ host_poseidon_ip }}:{{ docker_port_jellyfin_http }}"
+# url_qbittorrent: "torrents.{{ url_local_host }}"
+url_transmission: "{{ host_poseidon_ip }}:{{ docker_port_transmission_http }}"
+# url_readarr: "search-books.{{ url_local_host }}"
+url_readarr: "{{ host_poseidon_ip }}:{{docker_port_readarr_http }}"
+# url_radarr: "search-movies.{{ url_local_host }}"
+url_radarr: "{{ host_poseidon_ip }}:{{docker_port_radarr_http }}"
+# url_sonarr: "search-series.{{ url_local_host }}"
+url_sonarr: "{{ host_poseidon_ip }}:{{docker_port_sonarr_http }}"
+# url_whisparr: "search-adult.{{ url_local_host }}"
+url_whisparr: "{{ host_poseidon_ip }}:{{docker_port_whisparr_http }}"
+url_stash: "adult.{{ url_local_host }}"
+url_jellyseer: "jellyseer.{{ url_local_host }}"
+# url_prowlarr: "prowlarr.{{ url_local_host }}"
+url_prowlarr: "{{ host_poseidon_ip }}:{{docker_port_prowlarr_http }}"
+# url_bazarr: "bazarr.{{ url_local_host }}"
+url_bazarr: "{{ host_poseidon_ip }}:{{docker_port_bazarr_http }}"
+url_scrutiny: "{{ host_poseidon_ip }}:{{ docker_port_scrutiny_http }}"
+url_speedtesttracker: "speedtest.{{ url_local_host }}"
+url_flareresolver: "flareresolver.{{ url_local_host }}"
+url_flood: "flood.{{ url_local_host }}"
+url_librespeed: "librespeed.{{ url_local_host }}"
+url_firefly_iii: "finance.{{ url_local_host }}"
+url_firefly_iii_importer: "finance-importer.{{ url_local_host }}"
+url_pihole: "ads.{{ url_local_host }}"
+url_homeassistant: "ha.{docker_vaultwardenoseidon_ip }}:{{ docker_port_glances_http }}"
+url_restic: "{{ host_poseidon_ip }}:{{ docker_port_restic_http }}"
+url_paperless: "{{ host_poseidon_ip }}:{{ docker_port_paperless_http }}"
+url_mealie: "{{ host_poseidon_ip }}:{{ docker_port_mealie_http }}"
+url_syncthing: "{{ host_poseidon_ip }}:{{ docker_port_syncthing_http }}"
+url_dozzle: "{{ host_poseidon_ip }}:{{ docker_port_dozzle_http }}"
+url_pgadmin: "{{ host_poseidon_ip }}:{{ docker_port_pgadmin_http }}"
+url_whats_up_docker: "{{ host_poseidon_ip }}:{{ docker_port_whats_up_docker_http }}"
+url_vaultwarden: "{{ host_poseidon_ip }}:{{ docker_port_vaultwarden_http }}"
+url_gotify: "{{ host_poseidon_ip }}:{{ docker_port_gotify_http }}"
+url_uptime_kuma: "{{ host_poseidon_ip }}:{{ docker_port_uptime_kuma_http }}"
+url_glances: "{{ host_poseidon_ip }}:{{ docker_port_glances_http }}"
+url_authelia: "authelia.{{ root_domain }}"

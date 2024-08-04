@@ -1,0 +1,52 @@
+---
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ docker_authelia.config }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0775"
+
+- name: Copy configuration files
+  ansible.builtin.template:
+    src: "{{ item }}.yml.j2"
+    dest: "{{ docker_authelia.config }}/{{ item }}.yml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+  loop:
+    - configuration
+    - users_database
+
+- name: Copy users_database.yaml
+  ansible.builtin.template:
+    src: "users_database.yml.j2"
+    dest: "{{ docker_authelia.config }}/users_database.yml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+
+- name: Create and start Authelia container
+  community.docker.docker_swarm_service:
+    name: authelia
+    image: "{{ docker_authelia.image }}"
+    networks:
+      - traefik
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: traefik
+      traefik.http.routers.authelia.entrypoints: websecure
+      traefik.http.routers.authelia.rule: "Host(`authelia.{{ root_domain }}`)"
+      traefik.http.services.authelia.loadbalancer.server.port: "9091"
+
+      # diun.enable: "true"
+      # homepage.group: Home
+      # homepage.name: Authelia
+      # homepage.icon: authelia
+      # homepage.href: "http://{{ url_authelia }}"
+      # homepage.description: Easily add recipes into your database by providing the URL and Authelia will automatically import the relevant data.
+    mounts:
+      - source: "{{ docker_authelia.config }}"
+        target: /config
+        type: bind
+    state: present

@@ -1,0 +1,7 @@
+---
+docker_data_root: /mnt/data/docker/data
+docker_config_root: /mnt/data/docker/config
+
+docker_authelia:
+  config: "{{ docker_config_root }}/authelia"
+  image: authelia/authelia:4.38.9
