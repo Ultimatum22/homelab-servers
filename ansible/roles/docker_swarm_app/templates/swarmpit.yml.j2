@@ -31,6 +31,7 @@ services:
         # HTTP Routers
         - "traefik.http.routers.swarmpit-rtr.entrypoints=websecure"
         - "traefik.http.routers.swarmpit-rtr.rule=Host(`swarmpit.{{ root_domain }}`)"
+        - "traefik.http.routers.swarmpit-rtr.middlewares=authelia"
         # HTTP Services
         - "traefik.http.routers.swarmpit-rtr.service=swarmpit-svc"
         - "traefik.http.services.swarmpit-svc.loadbalancer.server.port=8080"
