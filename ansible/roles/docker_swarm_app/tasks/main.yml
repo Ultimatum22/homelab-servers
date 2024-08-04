@@ -10,7 +10,7 @@
     - "/home/system/stacks"
 
 - name: Create network
-  community.general.docker_network:
+  community.docker.docker_network:
     name: "{{ item }}"
     driver: "overlay"
   with_items:
@@ -25,7 +25,7 @@
     mode: '0644'
 
 - name: Deploy stack from a compose file
-  community.general.docker_stack:
+  community.docker.docker_stack:
     state: present
     name: "{{ stack }}"
     compose:

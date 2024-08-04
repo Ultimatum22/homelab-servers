@@ -235,9 +235,9 @@ http:
     consul:
       loadBalancer:
         servers:
-          - url: "http://homelab-node01.home:8500"
-          - url: "http://homelab-node02.home:8500"
-          - url: "http://homelab-node04.home:8500"
+          - url: "http://homelab-swarm01.home:8500"
+          - url: "http://homelab-swarm02.home:8500"
+          - url: "http://homelab-swarm04.home:8500"
         EOH
       }
 
@@ -256,11 +256,11 @@ http:
       weighted:
         healthCheck: {}
         services:
-        - name: homelab-node01
+        - name: homelab-swarm01
           weight: 10
-        - name: homelab-node02
+        - name: homelab-swarm02
           weight: 1
-        - name: homelab-node04
+        - name: homelab-swarm04
           weight: 1
 
     homelab_node01:
@@ -270,7 +270,7 @@ http:
           interval: 5s
           timeout: 2s
         servers:
-          - url: "http://homelab-node01.home:4646"
+          - url: "http://homelab-swarm01.home:4646"
 
     homelab_node02:
       loadBalancer:
@@ -279,7 +279,7 @@ http:
           interval: 5s
           timeout: 2s
         servers:
-          - url: "http://homelab-node02.home:4646"
+          - url: "http://homelab-swarm02.home:4646"
 
     homelab_node04:
       loadBalancer:
@@ -288,7 +288,7 @@ http:
           interval: 5s
           timeout: 2s
         servers:
-          - url: "http://homelab-node04.home:4646"
+          - url: "http://homelab-swarm04.home:4646"
         EOH
       }
 

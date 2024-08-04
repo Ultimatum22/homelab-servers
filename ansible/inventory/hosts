@@ -1,9 +1,8 @@
 [all]
 poseidon ansible_host=192.168.2.200
-homelab-node01 ansible_host=192.168.2.221
-homelab-node02 ansible_host=192.168.2.222
-; homelab-node03 ansible_host=192.168.2.223
-homelab-node04 ansible_host=192.168.2.224
+homelab-swarm01 ansible_host=192.168.2.221
+homelab-swarm02 ansible_host=192.168.2.222
+homelab-swarm03 ansible_host=192.168.2.223
 
 [all:vars]
 ansible_connection=ssh
@@ -15,45 +14,38 @@ ansible_ssh_private_key_file=~/.ssh/homelab-infra
 poseidon
 
 [provision]
-homelab-node01
-homelab-node02
-#homelab-node03
-homelab-node04
+homelab-swarm01
+homelab-swarm02
+homelab-swarm03
 
 [cluster]
-homelab-node01
-homelab-node02
-#homelab-node03
-homelab-node04
+homelab-swarm01
+homelab-swarm02
+homelab-swarm03
 
 [cluster_manager]
-homelab-node01
-homelab-node02
-#homelab-node03
-homelab-node04
+homelab-swarm01
+homelab-swarm02
+homelab-swarm03
 
 [cluster_worker]
 
 [consul_cluster]
-homelab-node01 consul_node_role=both
-homelab-node02 consul_node_role=both
-#homelab-node03 consul_node_role=client
-homelab-node04 consul_node_role=both
+homelab-swarm01 consul_node_role=both
+homelab-swarm02 consul_node_role=both
+homelab-swarm03 consul_node_role=both
 
 [nomad_cluster]
-homelab-node01 nomad_node_role=both
-homelab-node02 nomad_node_role=both
-#homelab-node03 nomad_node_role=both
-homelab-node04 nomad_node_role=both
+homelab-swarm01 nomad_node_role=both
+homelab-swarm02 nomad_node_role=both
+homelab-swarm03 nomad_node_role=both
 
 [vault_cluster]
-homelab-node01
-homelab-node02
-#homelab-node03
-homelab-node04
+homelab-swarm01
+homelab-swarm02
+homelab-swarm03
 
 [wesher_cluster]
-homelab-node01
-homelab-node02
-#homelab-node03
-homelab-node04
+homelab-swarm01
+homelab-swarm02
+homelab-swarm03
