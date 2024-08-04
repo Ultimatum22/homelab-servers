@@ -2,18 +2,23 @@ version: '3.7'
 
 services:
   reverse-proxy:
-    image: traefik:v2.10
+    image: traefik:v3.1.1
     command:
       - "--log"
       - "--log.level=DEBUG"
       - "--log.format=json"
       - "--api.insecure=true"
+
+      - "--accesslog=true"
+      - "--accesslog.format=json"
+
       - "--providers.docker"
-      - "--providers.docker.swarmMode=true"
+      - "--providers.swarm.endpoint=unix:///var/run/docker.sock"
+      - "--providers.swarm.exposedByDefault=false"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.file.directory=/config"
       - "--providers.file.watch=true"
-      {# - "--serversTransport.insecureSkipVerify=true" # Allow self-signed certificates for target hosts - https://doc.traefik.io/traefik/routing/overview/#insecureskipverify #}
+
       - "--metrics"
       - "--metrics.prometheus.buckets=0.1,0.3,1.2,5.0"
       - "--entrypoints.web.address=:80"

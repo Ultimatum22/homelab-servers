@@ -13,10 +13,10 @@
       tags: [docker_swarm]
     # - role: wireguard
     #   tags: [wireguard]
-    # - role: keepalived
-    #   tags: [keepalived]
-    - role: haproxy
-      tags: [haproxy]
+    - role: keepalived
+      tags: [keepalived]
+    # - role: haproxy
+    #   tags: [haproxy]
     # - role: consul
     #   tags: [consul]
     # - role: nomad
