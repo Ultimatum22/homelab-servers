@@ -2,6 +2,11 @@
 docker_data_root: /mnt/data/docker/data
 docker_config_root: /mnt/data/docker/config
 
+docker_traefik:
+  config: "{{ docker_config_root }}/traefik"
+  data: "{{ docker_data_root }}/traefik"
+  image: traefik:v3.1.1
+
 docker_authelia:
   config: "{{ docker_config_root }}/authelia"
   image: authelia/authelia:4.38.9
