@@ -17,7 +17,7 @@
 
       # HTTP Routers
       traefik.http.routers.ha-rtr.entrypoints: websecure
-      traefik.http.routers.ha-rtr.rule: Host(`ha."{{ root_domain }}"`)
+      traefik.http.routers.ha-rtr.rule: Host(`ha.{{ root_domain }}`)
       traefik.http.routers.ha-rtr.middlewares: authelia
       # HTTP Services
       traefik.http.routers.ha-rtr.service: ha-svc
