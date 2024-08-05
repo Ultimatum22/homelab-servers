@@ -1,5 +1,5 @@
 ---
-- hosts: cluster[0]
+- hosts: cluster
   become: true
   # strategy: free
   roles:
@@ -13,3 +13,5 @@
       tags: [authelia]
     - role: cloudflare-ddns
       tags: [cloudflare-ddns,cc]
+    - role: home-assistant
+      tags: [home-assistant,ha,homeassistant]

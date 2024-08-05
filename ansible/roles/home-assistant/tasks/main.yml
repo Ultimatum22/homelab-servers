@@ -1,0 +1,44 @@
+---
+- name: Create traefik volumes
+  community.docker.docker_volume:
+    name: "{{ item }}"
+  with_items:
+    - config
+
+- name: Create and start Home Assistant container
+  community.docker.docker_swarm_service:
+    name: home_assistant
+    image: "{{ docker_home_assistant.image }}"
+    networks:
+      - traefik
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: traefik
+
+      # HTTP Routers
+      traefik.http.routers.ha-rtr.entrypoints: websecure
+      traefik.http.routers.ha-rtr.rule: Host(`ha."{{ root_domain }}"`)
+      traefik.http.routers.ha-rtr.middlewares: authelia
+      # HTTP Services
+      traefik.http.routers.ha-rtr.service: ha-svc
+      traefik.http.services.ha-svc.loadbalancer.server.port: "8123"
+
+      # diun.enable: "true"
+      # homepage.group: Home
+      # homepage.name: Home Assistant
+      # homepage.icon: home_assistant
+      # homepage.href: "http://{{ url_home_assistant }}"
+      # homepage.description: Easily add recipes into your database by providing the URL and Home Assistant will automatically import the relevant data.
+    mounts:
+      - source: /etc/localtime
+        target: /etc/localtime
+        type: bind
+        readonly: true
+      - source: config
+        target: /config
+        type: volume
+    state: present
+    mode: replicated
+    placement:
+      constraints:
+        - node.role == manager

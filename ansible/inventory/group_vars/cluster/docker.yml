@@ -13,3 +13,6 @@ docker_authelia:
   
 docker_cloudflare_ddns:
   image: oznu/cloudflare-ddns:latest
+
+docker_home_assistant:
+  image: homeassistant/home-assistant:2024.7.4
