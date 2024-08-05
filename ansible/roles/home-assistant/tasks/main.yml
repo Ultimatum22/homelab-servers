@@ -1,9 +1,38 @@
 ---
+- name: Create network
+  community.general.docker_network:
+    name: "{{ item }}"
+    driver: overlay
+    scope: swarm
+  with_items:
+    - traefik
+    - internal
+  when: inventory_hostname == groups['cluster'][0]
+
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0775"
+  with_items:
+    - "{{ docker_home_assistant.config }}"
+    - "{{ docker_home_assistant.data }}"
+
+- name: Copy configuration.yaml
+  ansible.builtin.template:
+    src: "configuration.yaml.j2"
+    dest: "{{ docker_home_assistant.config }}/configuration.yaml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+
 - name: Create traefik volumes
   community.docker.docker_volume:
     name: "{{ item }}"
   with_items:
-    - config
+    - home_assistant_config
 
 - name: Create and start Home Assistant container
   community.docker.docker_swarm_service:
@@ -11,6 +40,8 @@
     image: "{{ docker_home_assistant.image }}"
     networks:
       - traefik
+    env:
+      TZ: "{{ system_timezone }}"
     labels:
       traefik.enable: "true"
       traefik.docker.network: traefik
@@ -18,7 +49,7 @@
       # HTTP Routers
       traefik.http.routers.ha-rtr.entrypoints: websecure
       traefik.http.routers.ha-rtr.rule: Host(`ha.{{ root_domain }}`)
-      traefik.http.routers.ha-rtr.middlewares: authelia
+      # traefik.http.routers.ha-rtr.middlewares: authelia
       # HTTP Services
       traefik.http.routers.ha-rtr.service: ha-svc
       traefik.http.services.ha-svc.loadbalancer.server.port: "8123"
@@ -30,15 +61,15 @@
       # homepage.href: "http://{{ url_home_assistant }}"
       # homepage.description: Easily add recipes into your database by providing the URL and Home Assistant will automatically import the relevant data.
     mounts:
-      - source: /etc/localtime
-        target: /etc/localtime
+      # - source: home_assistant_config
+      #   target: /config
+      #   type: volume
+      - source: "{{ docker_home_assistant.config }}/configuration.yaml"
+        target: /config/configuration.yml
         type: bind
-        readonly: true
-      - source: config
-        target: /config
-        type: volume
     state: present
     mode: replicated
     placement:
       constraints:
         - node.role == manager
+  when: inventory_hostname == groups['cluster'][0]
