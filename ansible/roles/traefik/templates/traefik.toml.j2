@@ -15,7 +15,7 @@
     endpoint = "unix:///var/run/docker.sock"
     exposedByDefault = false
   [providers.file]
-    directory = "/config"
+    directory = "/rules"
     watch = true
 
 [metrics]
@@ -38,7 +38,7 @@
 [certificatesResolvers]
   [certificatesResolvers.letsencrypt.acme]
     caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
-    storage = "/etc/traefik/acme/letsencrypt.json"
+    storage = "/etc/traefik/acme/letsencrypt.jso"
     [certificatesResolvers.letsencrypt.acme.dnsChallenge]
       provider = "cloudflare"
       delayBeforeCheck = 300

@@ -7,6 +7,7 @@
   with_items:
     - traefik
     - internal
+  when: inventory_hostname == groups['cluster'][0]
 
 - name: Create directories
   ansible.builtin.file:
@@ -18,6 +19,7 @@
   with_items:
     - "{{ docker_traefik.config }}"
     - "{{ docker_traefik.data }}"
+    - "{{ docker_traefik.data }}/config"
 
 - name: Copy traefik.toml
   ansible.builtin.template:
@@ -27,27 +29,25 @@
     group: "{{ ansible_user }}"
     mode: "0644"
 
-- name: Create acme.json
-  ansible.builtin.file:
-    path: "{{ docker_traefik.data }}/acme.json"
+- name: Copy rules
+  ansible.builtin.template:
+    src: "config/{{ item }}.yml.j2"
+    dest: "{{ docker_traefik.data }}/config/{{ item }}.yml"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    state: touch
-    mode: "0600"
-
-- name: Create traefik.log
-  ansible.builtin.file:
-    path: "{{ docker_traefik.data }}/traefik.log"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    state: touch
     mode: "0644"
+  with_items:
+    - tls-opts
+    - middlewares-rate-limit
+    - middlewares-secure-headers
 
 - name: Create traefik volumes
   community.docker.docker_volume:
     name: "{{ item }}"
   with_items:
     - config
+    - certificates
+  when: inventory_hostname == groups['cluster'][0]
 
 - name: Create and start Traefik container
   community.docker.docker_swarm_service:
@@ -91,20 +91,21 @@
       - source: /var/run/docker.sock
         target: /var/run/docker.sock
         type: bind
-      - source: "{{ docker_traefik.data }}/acme.json"
-        target: /acme.json
-        type: bind
-      - source: "{{ docker_traefik.data }}/traefik.log"
-        target: /traefik.log
-        type: bind
+      - source: acme
+        target: /etc/traefik/acme
+        type: volume
+      - source: traefik
+        target: /config
+        type: volume
+      - source: cloudflare
+        target: /cloudflare
+        type: volume
       - source: "{{ docker_traefik.config }}/traefik.toml"
         target: /traefik.toml
         type: bind
-      - source: config
-        target: /etc/config
-        type: volume
     state: present
-    mode: global
+    mode: replicated
     placement:
       constraints:
         - node.role == manager
+  when: inventory_hostname == groups['cluster'][0]
