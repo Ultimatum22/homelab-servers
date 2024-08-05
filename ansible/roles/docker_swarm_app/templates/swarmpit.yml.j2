@@ -36,7 +36,7 @@ services:
         - "traefik.http.routers.swarmpit-rtr.service=swarmpit-svc"
         - "traefik.http.services.swarmpit-svc.loadbalancer.server.port=8080"
 
-        # - "traefik.constraint=proxy-public"
+        - "traefik.constraint=proxy-public"
   db:
     image: treehouses/couchdb:2.3.1
     volumes:

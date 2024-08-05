@@ -1,4 +1,13 @@
 ---
+- name: Create network
+  community.general.docker_network:
+    name: "{{ item }}"
+    driver: overlay
+    scope: swarm
+  with_items:
+    - traefik
+    - internal
+
 - name: Create directories
   ansible.builtin.file:
     path: "{{ item }}"

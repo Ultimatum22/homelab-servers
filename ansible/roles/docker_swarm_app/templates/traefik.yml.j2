@@ -111,23 +111,29 @@ services:
       - TIMEZONE={{ system_timezone }}
 
       - LOG_TYPE=CONSOLE
-      - LOG_LEVEL=INFO
+      - LOG_LEVEL=DEBUG
 
       - TRAEFIK_VERSION=3
       - RC_TYPE=CNAME
 
+      - CF_EMAIL="{{ secret_cloudflare_email }}
+      - CF_TOKEN="{{ secret_cloudflare_global_api }}
+
       - TARGET_DOMAIN={{ root_domain }}
+      - DOMAIN1={{ root_domain }}
+      - DOMAIN1_ZONE_ID="{{ secret_cloudflare_zone_token }}"
+
       - REFRESH_ENTRIES=TRUE
 
       - DOCKER_SWARM_MODE=TRUE
 
-      - ENABLE_TRAEFIK_POLL=TRUE
-      - TRAEFIK_POLL_URL=https://traefik.{{ root_domain }}/api
-      - TRAEFIK_FILTER_LABEL=traefik.constraint
-      - TRAEFIK_FILTER=proxy-public
+      - ENABLE_ZABBIX=FALSE
 
-      - DOMAIN1={{ root_domain }}
-      - DOMAIN1_ZONE_ID="{{ secret_cloudflare_zone_token }}"
+      # - ENABLE_TRAEFIK_POLL=TRUE
+      # - TRAEFIK_POLL_URL=https://traefik.{{ root_domain }}/api
+      # - TRAEFIK_FILTER_LABEL=traefik.constraint
+      # - TRAEFIK_FILTER=proxy-public
+
     restart: always
     networks:
       - internal

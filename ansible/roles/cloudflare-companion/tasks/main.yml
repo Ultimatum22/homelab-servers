@@ -1,0 +1,45 @@
+---
+- name: Create network
+  community.general.docker_network:
+    name: "{{ item }}"
+    driver: overlay
+    scope: swarm
+  with_items:
+    - internal
+
+- name: Create and start Cloudflare Companion container
+  community.docker.docker_swarm_service:
+    name: cloudflare_companion
+    image: "{{ docker_cloudflare_companion.image }}"
+    env:
+      - TIMEZONE="{{ system_timezone }}"
+
+      - LOG_TYPE=CONSOLE
+      - LOG_LEVEL=INFO
+
+      - TRAEFIK_VERSION=2
+      - RC_TYPE=CNAME
+
+      - TARGET_DOMAIN="{{ root_domain }}"
+      - REFRESH_ENTRIES=TRUE
+
+      - DOCKER_SWARM_MODE=TRUE
+
+      # - ENABLE_TRAEFIK_POLL=TRUE
+      # - TRAEFIK_POLL_URL=https://traefik.{{ root_domain }}/api
+      - TRAEFIK_FILTER_LABEL=traefik.constraint
+      - TRAEFIK_FILTER=proxy-public
+
+      - DOMAIN1="{{ root_domain }}"
+      - DOMAIN1_ZONE_ID="{{ secret_cloudflare_zone_token }}"
+      - DOMAIN1_PROXIED=TRUE
+    networks:
+      - internal
+    state: present
+    placement:
+      constraints:
+        - node.role == manager
+    mounts:
+      - source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
