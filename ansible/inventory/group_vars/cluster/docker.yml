@@ -15,4 +15,10 @@ docker_cloudflare_ddns:
   image: oznu/cloudflare-ddns:latest
 
 docker_home_assistant:
+  config: "{{ docker_config_root }}/home_assistant"
+  data: "{{ docker_data_root }}/home_assistant"
   image: homeassistant/home-assistant:2024.7.4
+
+docker_homepage:
+  config: "{{ docker_config_root }}/homepage"
+  image: ghcr.io/gethomepage/homepage:v0.9.5

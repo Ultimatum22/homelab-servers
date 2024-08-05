@@ -20,44 +20,85 @@
   community.docker.docker_network:
     name: homelab
 
-- name: Create and start dockerproxy container
-  community.general.docker_container:
-    name: dockerproxy
-    image: ghcr.io/tecnativa/docker-socket-proxy:0.2.0
-    pull: true
-    image_name_mismatch: "recreate"
-    recreate: true
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro  # Mounted as read-only
-    networks:
-      - name: homelab
-        aliases:
-          - dockerproxy
-    ports:
-      - 2375:2375
-    restart_policy: unless-stopped
-    state: started
-    env:
-      CONTAINERS: "1"  # Allow access to viewing containers
-      POST: "0"  # Disallow any POST operations (effectively read-only)
+# - name: Create and start dockerproxy container
+#   community.general.docker_container:
+#     name: dockerproxy
+#     image: ghcr.io/tecnativa/docker-socket-proxy:0.2.0
+#     pull: true
+#     image_name_mismatch: "recreate"
+#     recreate: true
+#     volumes:
+#       - /var/run/docker.sock:/var/run/docker.sock:ro  # Mounted as read-only
+#     networks:
+#       - name: homelab
+#         aliases:
+#           - dockerproxy
+#     ports:
+#       - 2375:2375
+#     restart_policy: unless-stopped
+#     state: started
+#     env:
+#       CONTAINERS: "1"  # Allow access to viewing containers
+#       POST: "0"  # Disallow any POST operations (effectively read-only)
 
-- name: Create and start homepage container
-  community.general.docker_container:
+- name: Create and start Homepage container
+  community.docker.docker_swarm_service:
     name: homepage
     image: "{{ docker_homepage.image }}"
-    pull: true
-    recreate: true
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro  # Mounted as read-only
-      - "{{ docker_homepage.config }}:/app/config"
     networks:
-      - name: homelab
-        aliases:
-          - homepage
-    ports:
-      - "{{ docker_port_homepage_http }}:{{ docker_port_homepage_http | int }}"
-    restart_policy: unless-stopped
-    state: started
+      - traefik
+    env:
+      TZ: "{{ system_timezone }}"
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: traefik
 
-- name: Homepage Settings Tasks
-  ansible.builtin.include_tasks: "settings.yml"
+      # HTTP Routers
+      traefik.http.routers.homepage-rtr.entrypoints: websecure
+      traefik.http.routers.homepage-rtr.rule: Host(`homepage.{{ root_domain }}`)
+      # traefik.http.routers.homepage-rtr.middlewares: authelia
+      # HTTP Services
+      traefik.http.routers.homepage-rtr.service: homepage-svc
+      traefik.http.services.homepage-svc.loadbalancer.server.port: "3000"
+    mounts:
+      - source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
+        readonly: true
+    state: present
+    mode: replicated
+    placement:
+      constraints:
+        - node.role == manager
+  when: inventory_hostname == groups['cluster'][0]
+
+# - name: Create and start homepage container
+#   community.general.docker_container:
+#     name: homepage
+#     image: "{{ docker_homepage.image }}"
+#     pull: true
+#     recreate: true
+#     volumes:
+#       - /var/run/docker.sock:/var/run/docker.sock:ro  # Mounted as read-only
+#       - "{{ docker_homepage.config }}:/app/config"
+#     networks:
+#       - name: homelab
+#         aliases:
+#           - homepage
+#     restart_policy: unless-stopped
+#     state: started
+#     labels:
+#       traefik.enable: "true"
+#       traefik.docker.network: traefik
+
+#       # HTTP Routers
+#       traefik.http.routers.homepage-rtr.entrypoints: websecure
+#       traefik.http.routers.homepage-rtr.rule: Host(`homepage.{{ root_domain }}`)
+#       # traefik.http.routers.ha-rtr.middlewares: authelia
+#       # HTTP Services
+#       traefik.http.routers.homepage-rtr.service: homepage-svc
+#       traefik.http.services.homepage-svc.loadbalancer.server.port: "3000"
+
+
+# - name: Homepage Settings Tasks
+#   ansible.builtin.include_tasks: "settings.yml"

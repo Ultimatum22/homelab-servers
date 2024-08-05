@@ -15,3 +15,5 @@
       tags: [cloudflare-ddns,cc]
     - role: home-assistant
       tags: [home-assistant,ha,homeassistant]
+    - role: homepage
+      tags: [homepage]
