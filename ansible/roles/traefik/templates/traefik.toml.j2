@@ -37,7 +37,7 @@
 
 [certificatesResolvers]
   [certificatesResolvers.letsencrypt.acme]
-    caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
+    caServer = "https://acme-v02.api.letsencrypt.org/directory"
     storage = "/etc/traefik/acme/letsencrypt.jso"
     [certificatesResolvers.letsencrypt.acme.dnsChallenge]
       provider = "cloudflare"
