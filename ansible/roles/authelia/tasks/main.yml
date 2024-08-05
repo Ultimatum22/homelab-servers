@@ -18,14 +18,6 @@
     - configuration
     - users_database
 
-- name: Copy users_database.yaml
-  ansible.builtin.template:
-    src: "users_database.yml.j2"
-    dest: "{{ docker_authelia.config }}/users_database.yml"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: "0644"
-
 - name: Create and start Authelia container
   community.docker.docker_swarm_service:
     name: authelia
@@ -44,17 +36,17 @@
       traefik.http.routers.authelia.middlewares: https_redirect
       traefik.http.middlewares.https_redirect.redirectscheme.scheme: https
 
-      traefik.http.middlewares.authelia.forwardauth.address: "http://authelia:9091/api/verify?rd=https://auth.{{ root_domain  }}"
+      traefik.http.middlewares.authelia.forwardauth.address: "http://authelia:9091/api/verify?rd=https://auth.{{ root_domain }}"
       traefik.http.middlewares.authelia.forwardauth.trustForwardHeader: "true"
       traefik.http.middlewares.authelia.forwardauth.authResponseHeaders: Remote-User, Remote-Groups
       traefik.http.routers.authelia.service: authelia
 
-      # diun.enable: "true"
-      # homepage.group: Home
-      # homepage.name: Authelia
-      # homepage.icon: authelia
-      # homepage.href: "http://{{ url_authelia }}"
-      # homepage.description: Easily add recipes into your database by providing the URL and Authelia will automatically import the relevant data.
+      diun.enable: "true"
+      homepage.group: Home
+      homepage.name: Authelia
+      homepage.icon: authelia
+      homepage.href: "http://{{ url_authelia }}"
+      homepage.descripti"on: Easily add recipes into your database by providing the URL and Authelia will automatically import the relevant data.
     mounts:
       - source: "{{ docker_authelia.config }}"
         target: /config
