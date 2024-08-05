@@ -10,3 +10,6 @@ docker_traefik:
 docker_authelia:
   config: "{{ docker_config_root }}/authelia"
   image: authelia/authelia:4.38.9
+  
+docker_cloudflare_ddns:
+  image: oznu/cloudflare-ddns:latest

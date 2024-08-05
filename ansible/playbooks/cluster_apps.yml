@@ -11,5 +11,5 @@
       tags: [traefik]
     - role: authelia
       tags: [authelia]
-    - role: cloudflare-companion
-      tags: [cloudflare-companion,cc]
+    - role: cloudflare-ddns
+      tags: [cloudflare-ddns,cc]

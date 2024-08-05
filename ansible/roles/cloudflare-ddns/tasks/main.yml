@@ -1,0 +1,30 @@
+---
+- name: Create network
+  community.general.docker_network:
+    name: "{{ item }}"
+    driver: overlay
+    scope: swarm
+  with_items:
+    - internal
+
+- name: Create and start Cloudflare ddns container
+  community.docker.docker_swarm_service:
+    name: cloudflare-ddns
+    image: "{{ docker_cloudflare_ddns.image }}"
+    env:
+      - API_KEY={{ secret_cloudflare_zone_token }}
+      - ZONE={{ root_domain }}
+      - PROXIED=true
+      - RRTYPE=A
+      - DELETE_ON_STOP=false
+      - DNS_SERVER=1.1.1.1
+    networks:
+      - internal
+    state: present
+    placement:
+      constraints:
+        - node.role == manager
+    mounts:
+      - source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
