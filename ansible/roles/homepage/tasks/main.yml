@@ -20,6 +20,12 @@
   community.docker.docker_network:
     name: homelab
 
+- name: Create homepage volumes
+  community.docker.docker_volume:
+    name: "{{ item }}"
+  with_items:
+    - homepage_config
+
 # - name: Create and start dockerproxy container
 #   community.general.docker_container:
 #     name: dockerproxy
@@ -65,6 +71,9 @@
         target: /var/run/docker.sock
         type: bind
         readonly: true
+      - source: homepage_config
+        target: /app/config
+        type: volume
     state: present
     mode: replicated
     placement:

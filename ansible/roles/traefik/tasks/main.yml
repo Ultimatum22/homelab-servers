@@ -73,20 +73,18 @@
         published_port: 8080
     labels:
       traefik.enable: "true"
-
       traefik.http.routers.api.rule: "Host(`traefik.{{ root_domain }}`)"
       traefik.http.routers.api.service: api@internal
       traefik.http.routers.api.entrypoints: websecure
       traefik.http.routers.api.tls: "true"
-
       traefik.http.services.api.loadbalancer.server.port: "8080"
 
-      # diun.enable: "true"
-      # homepage.group: Home
-      # homepage.name: Traefik
-      # homepage.icon: traefik
-      # homepage.href: "http://{{ url_traefik }}"
-      # homepage.description: Easily add recipes into your database by providing the URL and Traefik will automatically import the relevant data.
+      homepage.group: Home
+      homepage.name: Traefik
+      homepage.icon: traefik
+      homepage.href: "https://traefik.{{ root_domain }}"
+      homepage.description: The Cloud Native Application Proxy
+
     mounts:
       - source: /var/run/docker.sock
         target: /var/run/docker.sock

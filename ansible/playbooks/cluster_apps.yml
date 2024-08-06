@@ -3,12 +3,10 @@
   become: true
   # strategy: free
   roles:
-    - role: docker_swarm_app
-      vars:
-        stack: swarmpit
-      tags: [swarmpit]
     - role: traefik
       tags: [traefik]
+    # - role: swarmpit
+    #   tags: [swarmpit]
     - role: authelia
       tags: [authelia]
     - role: cloudflare-ddns
