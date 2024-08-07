@@ -5,7 +5,7 @@ docker_config_root: /mnt/data/docker/config
 docker_traefik:
   config: "{{ docker_config_root }}/traefik"
   data: "{{ docker_data_root }}/traefik"
-  image: traefik:v3.1.1
+  image: traefik:v3.1.2
 
 docker_authelia:
   config: "{{ docker_config_root }}/authelia"

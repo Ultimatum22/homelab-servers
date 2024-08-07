@@ -57,15 +57,13 @@
       TZ: "{{ system_timezone }}"
     labels:
       traefik.enable: "true"
-      traefik.docker.network: traefik
-
-      # HTTP Routers
-      traefik.http.routers.homepage-rtr.entrypoints: websecure
-      traefik.http.routers.homepage-rtr.rule: Host(`homepage.{{ root_domain }}`)
-      # traefik.http.routers.homepage-rtr.middlewares: authelia
-      # HTTP Services
-      traefik.http.routers.homepage-rtr.service: homepage-svc
-      traefik.http.services.homepage-svc.loadbalancer.server.port: "3000"
+      traefik.http.routers.homepage.rule: "Host(`homepage.{{ root_domain }}`)"
+      traefik.http.routers.homepage.entrypoints: https
+      traefik.http.routers.homepage.tls: "true"
+      traefik.http.routers.homepage.tls.certresolver: letsencrypt
+      traefik.http.routers.homepage.service: homepage@swarm
+      traefik.http.routers.homepage.middlewares: authelia@swarm
+      traefik.http.services.homepage.loadbalancer.server.port: "3000"
     mounts:
       - source: /var/run/docker.sock
         target: /var/run/docker.sock

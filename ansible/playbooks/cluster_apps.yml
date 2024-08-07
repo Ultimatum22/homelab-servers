@@ -9,8 +9,8 @@
     #   tags: [swarmpit]
     - role: authelia
       tags: [authelia]
-    - role: cloudflare-ddns
-      tags: [cloudflare-ddns,cc]
+    # - role: cloudflare-ddns
+    #   tags: [cloudflare-ddns,cc]
     - role: home-assistant
       tags: [home-assistant,ha,homeassistant]
     - role: homepage

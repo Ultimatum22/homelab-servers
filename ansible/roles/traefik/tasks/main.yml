@@ -21,13 +21,6 @@
     - "{{ docker_traefik.data }}"
     - "{{ docker_traefik.data }}/config"
 
-- name: Copy traefik.toml
-  ansible.builtin.template:
-    src: "traefik.toml.j2"
-    dest: "{{ docker_traefik.config }}/traefik.toml"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: "0644"
 
 - name: Copy rules
   ansible.builtin.template:
@@ -45,14 +38,27 @@
   community.docker.docker_volume:
     name: "{{ item }}"
   with_items:
-    - config
-    - certificates
-  when: inventory_hostname == groups['cluster'][0]
+    - treafik-certificates
 
-- name: Create and start Traefik container
+- name: Deploy and start Traefik service
   community.docker.docker_swarm_service:
     name: traefik
     image: "{{ docker_traefik.image }}"
+    args:
+      - --providers.docker
+      - --providers.docker.exposedbydefault=true
+      - --providers.swarm.endpoint=unix:///var/run/docker.sock
+      - --entrypoints.http.address=:80
+      - --entrypoints.https.address=:443
+      - --certificatesresolvers.letsencrypt.acme.caServer=https://acme-v02.api.letsencrypt.org/directory
+      - --certificatesresolvers.letsencrypt.acme.storage=/certificates/acme.json
+      - --certificatesresolvers.letsencrypt.acme.dnsChallenge.provider=cloudflare
+      - --certificatesresolvers.letsencrypt.acme.dnsChallenge.delayBeforeCheck=300
+      - --certificatesresolvers.letsencrypt.acme.dnsChallenge.resolvers=8.8.8.8:53
+      - --accesslog
+      - --log.level=DEBUG
+      - --log
+      - --api
     env:
       - CLOUDFLARE_DNS_API_TOKEN={{ secret_cloudflare_zone_token }}
       - CLOUDFLARE_HTTP_TIMEOUT=60
@@ -61,43 +67,47 @@
       - CLOUDFLARE_TTL=300
     networks:
       - traefik
-    ports:
-        - target: 80
-        published: 80
-      - target: 443
-        published: 443
-      - target: 8080
-        published: 8080
+      - internal
+    publish:
+      - target_port: 80
+        published_port: 80
+      - target_port: 443
+        published_port: 443
     labels:
       traefik.enable: "true"
-      traefik.http.routers.api.rule: "Host(`traefik.{{ root_domain }}`)"
-      traefik.http.routers.api.service: api@internal
-      traefik.http.routers.api.entrypoints: websecure
-      traefik.http.routers.api.tls: "true"
-      traefik.http.services.api.loadbalancer.server.port: "8080"
-
-      homepage.group: Home
-      homepage.name: Traefik
-      homepage.icon: traefik
-      homepage.href: "https://traefik.{{ root_domain }}"
-      homepage.description: The Cloud Native Application Proxy
-
+      traefik.docker.network: traefik
+      traefik.http.middlewares.https-redirect.redirectscheme.scheme: https
+      traefik.http.middlewares.https-redirect.redirectscheme.permanent: "true"
+      traefik.http.routers.traefik-public-http.rule: Host(`traefik.{{ root_domain }}`)
+      traefik.http.routers.traefik-public-http.entrypoints: http
+      traefik.http.routers.traefik-public-http.middlewares: https-redirect
+      traefik.http.routers.traefik-public-https.rule: Host(`traefik.{{ root_domain }}`)
+      traefik.http.routers.traefik-public-https.entrypoints: https
+      traefik.http.routers.traefik-public-https.tls: "true"
+      traefik.http.routers.traefik-public-https.service: api@internal
+      traefik.http.routers.traefik-public-https.tls.certresolver: letsencrypt
+      # traefik.http.routers.traefik-public-https.middlewares: auth@file
+      traefik.http.services.traefik-public.loadbalancer.server.port: "8080"
     mounts:
       - source: /var/run/docker.sock
         target: /var/run/docker.sock
         type: bind
-      - source: acme
-        target: /etc/traefik/acme
+        readonly: true
+      - source: treafik-certificates
+        target: /certificates
         type: volume
-      - source: traefik
-        target: /config
-        type: volume
-      - source: cloudflare
-        target: /cloudflare
-        type: volume
-      - source: "{{ docker_traefik.config }}/traefik.toml"
-        target: /traefik.toml
-        type: bind
+    restart_config:
+      condition: any
+      delay: 5s
+      max_attempts: 3
+      window: 120s
+    update_config:
+      delay: 10s
+      order: start-first
+      parallelism: 1
+    rollback_config:
+      parallelism: 0
+      order: stop-first
     state: present
     mode: replicated
     placement:

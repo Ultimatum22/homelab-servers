@@ -27,21 +27,16 @@
     labels:
       traefik.enable: "true"
       traefik.docker.network: traefik
-
-      traefik.http.routers.authelia.entrypoints: websecure
-      traefik.http.routers.authelia.rule: "Host(`auth.{{ root_domain }}`)"
-
-      traefik.http.services.authelia.loadbalancer.server.port: "9091"
-
-      traefik.http.routers.authelia.middlewares: https_redirect
-      traefik.http.middlewares.https_redirect.redirectscheme.scheme: https
-
-      traefik.http.middlewares.authelia.forwardauth.address: "http://authelia:9091/api/verify?rd=https://auth.{{ root_domain }}"
+      traefik.http.routers.auth.rule: "Host(`auth.{{ root_domain }}`)"
+      traefik.http.routers.auth.entrypoints: https
+      traefik.http.routers.auth.tls: "true"
+      traefik.http.routers.auth.tls.certresolver: letsencrypt
+      traefik.http.routers.auth.service: auth@swarm
+      traefik.http.services.auth.loadbalancer.server.port: "9091"
+      traefik.http.middlewares.authelia.forwardauth.address: http://authelia:9091/api/authz/forward-auth
       traefik.http.middlewares.authelia.forwardauth.trustForwardHeader: "true"
-      traefik.http.middlewares.authelia.forwardauth.authResponseHeaders: Remote-User, Remote-Groups
-      traefik.http.routers.authelia.service: authelia
+      traefik.http.middlewares.authelia.forwardauth.authResponseHeaders: Remote-User,Remote-Groups,Remote-Name,Remote-Email
 
-      diun.enable: "true"
       homepage.group: Home
       homepage.name: Authelia
       homepage.icon: authelia
@@ -51,4 +46,20 @@
       - source: "{{ docker_authelia.config }}"
         target: /config
         type: bind
+    restart_config:
+      condition: any
+      delay: 5s
+      max_attempts: 3
+      window: 120s
+    update_config:
+      delay: 10s
+      order: start-first
+      parallelism: 1
+    rollback_config:
+      parallelism: 0
+      order: stop-first
     state: present
+    mode: replicated
+    placement:
+      constraints:
+        - node.role == manager
