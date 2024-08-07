@@ -44,7 +44,7 @@
       TZ: "{{ system_timezone }}"
     labels:
       traefik.enable: "true"
-      traefik.http.routers.ha.rule: "Host(`homepage.{{ root_domain }}`)"
+      traefik.http.routers.ha.rule: "Host(`ha.{{ root_domain }}`)"
       traefik.http.routers.ha.entrypoints: ha
       traefik.http.routers.ha.tls: "true"
       traefik.http.routers.ha.tls.certresolver: letsencrypt
