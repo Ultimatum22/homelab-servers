@@ -86,7 +86,7 @@
       traefik.http.routers.traefik-public-https.tls: "true"
       traefik.http.routers.traefik-public-https.service: api@internal
       traefik.http.routers.traefik-public-https.tls.certresolver: letsencrypt
-      # traefik.http.routers.traefik-public-https.middlewares: auth@file
+      traefik.http.routers.traefik-public-https.middlewares: authelia@swarm
       traefik.http.services.traefik-public.loadbalancer.server.port: "8080"
     mounts:
       - source: /var/run/docker.sock
