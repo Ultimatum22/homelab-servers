@@ -28,7 +28,7 @@
     group: "{{ ansible_user }}"
     mode: "0644"
 
-- name: Create traefik volumes
+- name: Create Home Assistant volumes
   community.docker.docker_volume:
     name: "{{ item }}"
   with_items:
@@ -44,15 +44,13 @@
       TZ: "{{ system_timezone }}"
     labels:
       traefik.enable: "true"
-      traefik.docker.network: traefik
-
-      # HTTP Routers
-      traefik.http.routers.ha-rtr.entrypoints: websecure
-      traefik.http.routers.ha-rtr.rule: Host(`ha.{{ root_domain }}`)
-      # traefik.http.routers.ha-rtr.middlewares: authelia
-      # HTTP Services
-      traefik.http.routers.ha-rtr.service: ha-svc
-      traefik.http.services.ha-svc.loadbalancer.server.port: "8123"
+      traefik.http.routers.ha.rule: "Host(`homepage.{{ root_domain }}`)"
+      traefik.http.routers.ha.entrypoints: ha
+      traefik.http.routers.ha.tls: "true"
+      traefik.http.routers.ha.tls.certresolver: letsencrypt
+      traefik.http.routers.ha.service: ha@swarm
+      traefik.http.routers.ha.middlewares: authelia@swarm
+      traefik.http.services.ha.loadbalancer.server.port: "8123"
 
       # diun.enable: "true"
       # homepage.group: Home
