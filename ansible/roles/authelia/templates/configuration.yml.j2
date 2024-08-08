@@ -107,7 +107,7 @@ telemetry:
 # Parameters used for TOTP generation.
 totp:
   # Disable TOTP.
-  disable: true
+  disable: false
 
   # The issuer name displayed in the Authenticator application of your choice.
   issuer: "{{ root_domain }}"
@@ -810,7 +810,13 @@ notifier:
         # -----BEGIN RSA PRIVATE KEY-----
         # ...
         # -----END RSA PRIVATE KEY-----
-
+webauthn:
+  disable: false
+  display_name: 'Authelia'
+  attestation_conveyance_preference: 'indirect'
+  user_verification: 'preferred'
+  timeout: '60s'
+  
 ##
 ## Identity Providers
 ##
