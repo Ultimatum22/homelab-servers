@@ -15,3 +15,5 @@
       tags: [home-assistant,ha,homeassistant]
     - role: homepage
       tags: [homepage]
+    - role: pihole
+      tags: [pihole]
