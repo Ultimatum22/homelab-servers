@@ -22,3 +22,6 @@ docker_home_assistant:
 docker_homepage:
   config: "{{ docker_config_root }}/homepage"
   image: ghcr.io/gethomepage/homepage:v0.9.5
+
+docker_bind:
+  config: "{{ docker_config_root }}/bind"

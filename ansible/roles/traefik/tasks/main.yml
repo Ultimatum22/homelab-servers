@@ -19,20 +19,7 @@
   with_items:
     - "{{ docker_traefik.config }}"
     - "{{ docker_traefik.data }}"
-    - "{{ docker_traefik.data }}/config"
-
-
-- name: Copy rules
-  ansible.builtin.template:
-    src: "config/{{ item }}.yml.j2"
-    dest: "{{ docker_traefik.data }}/config/{{ item }}.yml"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: "0644"
-  with_items:
-    - tls-opts
-    - middlewares-rate-limit
-    - middlewares-secure-headers
+    - "{{ docker_traefik.data }}/rules"
 
 - name: Create traefik volumes
   community.docker.docker_volume:
@@ -48,6 +35,8 @@
       - --providers.docker
       - --providers.docker.exposedbydefault=true
       - --providers.swarm.endpoint=unix:///var/run/docker.sock
+      - --providers.file.directory=/rules
+      - --providers.file.watch=true
       - --entrypoints.http.address=:80
       - --entrypoints.https.address=:443
       - --certificatesresolvers.letsencrypt.acme.caServer=https://acme-v02.api.letsencrypt.org/directory
@@ -93,6 +82,9 @@
         target: /var/run/docker.sock
         type: bind
         readonly: true
+      - source: "{{ docker_traefik.data }}/rules"
+        target: /rules
+        type: bind
       - source: treafik-certificates
         target: /certificates
         type: volume
@@ -114,3 +106,13 @@
       constraints:
         - node.role == manager
   when: inventory_hostname == groups['cluster'][0]
+
+- name: Copy rules
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ docker_traefik.data }}/rules/{{ item | basename | regex_replace('.yml.j2$', '.yml') }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+  with_fileglob:
+    - ../templates/rules/*.yml.j2
