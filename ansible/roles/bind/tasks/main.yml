@@ -1,0 +1,68 @@
+---
+- name: Create network
+  community.general.docker_network:
+    name: "{{ item }}"
+    driver: overlay
+    scope: swarm
+  with_items:
+    - traefik
+    - internal
+  when: inventory_hostname == groups['cluster'][0]
+
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0775"
+  with_items:
+    - "{{ docker_bind.config }}"
+
+- name: Deploy and start Bind service
+  community.docker.docker_swarm_service:
+    name: bind
+    image: eafxx/bind
+    publish:
+      - target_port: 53
+        published_port: 53
+        protocol: tcp
+      - target_port: 53
+        published_port: 53
+        protocol: udp
+    env:
+      TZ: "{{ system_timezone }}"
+    mounts:
+      - source: "{{ docker_bind.config }}"
+        target: /data/bind/etc
+        type: bind
+    networks:
+      - traefik
+    restart_config:
+      condition: any
+      delay: 5s
+      max_attempts: 3
+      window: 120s
+    update_config:
+      delay: 10s
+      order: start-first
+      parallelism: 1
+    rollback_config:
+      parallelism: 0
+      order: stop-first
+    state: present
+    mode: global
+    placement:
+      constraints:
+        - node.role == manager
+  when: inventory_hostname == groups['cluster'][0]
+
+- name: Copy conf files
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ docker_bind.config }}/{{ item | basename | regex_replace('.j2$', '') }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+  with_fileglob:
+    - ../templates/*.j2

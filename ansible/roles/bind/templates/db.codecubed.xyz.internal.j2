@@ -1,0 +1,18 @@
+; db.codecubed.xyz.internal
+
+$ORIGIN codecubed.xyz.
+$TTL 60m
+
+@    IN      SOA ns.codecubed.xyz. root.codecubed.xyz (
+     2023061301 ; serial
+     4h ; refresh
+     15m ; retry
+     8h ; expire
+     4m ; negative caching ttl
+)
+    IN      NS  ns.codecubed.xyz.
+
+
+ns.codecubed.xyz                IN  A   192.168.2.220
+homepage.codecubed.xyz          IN  A   192.168.2.220
+*.codecubed.xyz.                IN  A   192.168.2.220
