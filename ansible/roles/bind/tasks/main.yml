@@ -18,11 +18,33 @@
     mode: "0775"
   with_items:
     - "{{ docker_bind.config }}"
+    - "{{ docker_bind.config }}/etc"
+    - "{{ docker_bind.config }}/zones"
+
+- name: Copy etc files
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ docker_bind.config }}/etc/{{ item | basename | regex_replace('.j2$', '') }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0755"
+  with_fileglob:
+    - ../templates/etc/*.j2
+
+- name: Copy zones files
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ docker_bind.config }}/zones/{{ item | basename | regex_replace('.j2$', '') }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0755"
+  with_fileglob:
+    - ../templates/zones/*.j2
 
 - name: Deploy and start Bind service
   community.docker.docker_swarm_service:
     name: bind
-    image: eafxx/bind
+    image: mjkaye/bind9-alpine:latest-arm
     publish:
       - target_port: 53
         published_port: 53
@@ -30,11 +52,18 @@
       - target_port: 53
         published_port: 53
         protocol: udp
+      - target_port: 10000
+        published_port: 10000
+        protocol: tcp
     env:
       TZ: "{{ system_timezone }}"
+      PASS: newpass
     mounts:
-      - source: "{{ docker_bind.config }}"
-        target: /data/bind/etc
+      - source: "{{ docker_bind.config }}/etc"
+        target: /etc/bind
+        type: bind
+      - source: "{{ docker_bind.config }}/zones"
+        target: /var/lib/bind
         type: bind
     networks:
       - traefik
@@ -56,13 +85,3 @@
       constraints:
         - node.role == manager
   when: inventory_hostname == groups['cluster'][0]
-
-- name: Copy conf files
-  ansible.builtin.template:
-    src: "{{ item }}"
-    dest: "{{ docker_bind.config }}/{{ item | basename | regex_replace('.j2$', '') }}"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: "0644"
-  with_fileglob:
-    - ../templates/*.j2
