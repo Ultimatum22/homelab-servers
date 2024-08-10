@@ -1,9 +1,4 @@
 ---
-- name: Update all packages on Debian
-  ansible.builtin.apt:
-    update_cache: yes
-    upgrade: dist
-
 - name: install packages
   ansible.builtin.apt:
     package: "{{ item }}"
