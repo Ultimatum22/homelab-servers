@@ -5,3 +5,4 @@
     state: present
   with_items:
     - python3-netaddr
+    - build-essential
