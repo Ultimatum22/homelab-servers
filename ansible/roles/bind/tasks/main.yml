@@ -28,60 +28,64 @@
         success_msg: "bind version {{ bind_version }} is installed"
         fail_msg: bind was not successfully installed
   rescue:
-    - name: Ensure old bind is removed
-      ansible.builtin.file:
-        path: "{{ bind_install_dir }}/bind"
-        state: absent
-
-    - name: Create a temporary directory for the build
-      ansible.builtin.tempfile:
-        state: directory
-        suffix: bind_build
-      register: temp_build_dir
-
-    - name: Download the BIND9 source code
-      ansible.builtin.get_url:
-        url: "{{ bind_url }}"
-        dest: "{{ temp_build_dir.path }}/bind-{{ bind_version }}.tar.xz"
-        mode: "0755"
-
-    - name: Extract the BIND9 tar.xz file
-      ansible.builtin.unarchive:
-        src: "{{ temp_build_dir.path }}/bind-{{ bind_version }}.tar.xz"
-        dest: "{{ temp_build_dir.path }}"
-        remote_src: true
-        extra_opts: ["--strip-components=1"]
-
-    - name: Run configure
-      ansible.builtin.command: ./configure {{ configure_options }}
-      args:
-        chdir: "{{ temp_build_dir.path }}"
-
-    - name: Compile BIND9
-      community.general.make:
-        chdir: "{{ temp_build_dir.path }}"
-
-    - name: Install BIND9
-      community.general.make:
-        target: install
-        chdir: "{{ temp_build_dir.path }}"
-
-    - name: Clean up the temporary build directory
-      ansible.builtin.file:
-        path: "{{ temp_build_dir.path }}"
-        state: absent
-
-    - name: Create bind group
-      group:
-        name: "{{ bind_group }}"
-        system: true
+    - name: Install bind
+      ansible.builtin.apt:
+        name: bind9
         state: present
+    # - name: Ensure old bind is removed
+    #   ansible.builtin.file:
+    #     path: "{{ bind_install_dir }}/bind"
+    #     state: absent
 
-    - name: Create bind user
-      user:
-        name: "{{ bind_user }}"
-        group: "{{ bind_group }}"
-        shell: /bin/false
-        createhome: false
-        system: true
-        state: present
+    # - name: Create a temporary directory for the build
+    #   ansible.builtin.tempfile:
+    #     state: directory
+    #     suffix: bind_build
+    #   register: temp_build_dir
+
+    # - name: Download the BIND9 source code
+    #   ansible.builtin.get_url:
+    #     url: "{{ bind_url }}"
+    #     dest: "{{ temp_build_dir.path }}/bind-{{ bind_version }}.tar.xz"
+    #     mode: "0755"
+
+    # - name: Extract the BIND9 tar.xz file
+    #   ansible.builtin.unarchive:
+    #     src: "{{ temp_build_dir.path }}/bind-{{ bind_version }}.tar.xz"
+    #     dest: "{{ temp_build_dir.path }}"
+    #     remote_src: true
+    #     extra_opts: ["--strip-components=1"]
+
+    # - name: Run configure
+    #   ansible.builtin.command: ./configure {{ configure_options }}
+    #   args:
+    #     chdir: "{{ temp_build_dir.path }}"
+
+    # - name: Compile BIND9
+    #   community.general.make:
+    #     chdir: "{{ temp_build_dir.path }}"
+
+    # - name: Install BIND9
+    #   community.general.make:
+    #     target: install
+    #     chdir: "{{ temp_build_dir.path }}"
+
+    # - name: Clean up the temporary build directory
+    #   ansible.builtin.file:
+    #     path: "{{ temp_build_dir.path }}"
+    #     state: absent
+
+- name: Create bind group
+  group:
+    name: "{{ bind_group }}"
+    system: true
+    state: present
+
+- name: Create bind user
+  user:
+    name: "{{ bind_user }}"
+    group: "{{ bind_group }}"
+    shell: /bin/false
+    createhome: false
+    system: true
+    state: present
