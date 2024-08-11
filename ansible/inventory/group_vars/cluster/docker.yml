@@ -25,3 +25,7 @@ docker_homepage:
 
 docker_bind:
   config: "{{ docker_config_root }}/bind"
+
+docker_pihole:
+  config: "{{ docker_config_root }}/pihole"
+  data: "{{ docker_data_root }}/pihole"

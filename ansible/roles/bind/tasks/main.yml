@@ -1,6 +1,6 @@
 ---
-# - name: Configure UFW
-#   ansible.builtin.include_tasks: ufw.yml
+- name: Configure UFW
+  ansible.builtin.include_tasks: ufw.yml
 
 - name: Install required dependencies
   ansible.builtin.apt:
@@ -17,7 +17,7 @@
 - name: Ensure bind is installed
   block:
     - name: Test bind
-      ansible.builtin.command: named -v 
+      ansible.builtin.command: named -v
       register: bind_version_test
       changed_when: false
 
