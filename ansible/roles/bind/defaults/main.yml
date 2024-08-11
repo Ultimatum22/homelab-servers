@@ -1,14 +1,11 @@
 ---
-bind_version: 9.20.0
+bind_version: 9.18.28
 
 bind_url: "https://downloads.isc.org/isc/bind9/{{ bind_version }}/bind-{{ bind_version }}.tar.xz"
 
-bind_install_dir: "/usr/local"
+bind_install_dir: "/usr/local/bind"
 
 # Example of optimized configuration options
 configure_options: >
-  --prefix={{ bind_install_dir }}/bind
-  --sysconfdir=/etc/bind
-  --localstatedir=/var
   --with-libxml2
   --with-openssl

@@ -17,7 +17,7 @@
 - name: Ensure bind is installed
   block:
     - name: Test bind
-      ansible.builtin.command: bind --version
+      ansible.builtin.command: named -v 
       register: bind_version_test
       changed_when: false
 
@@ -52,7 +52,7 @@
         remote_src: true
         extra_opts: ["--strip-components=1"]
 
-    - name: Run configure with optimized options
+    - name: Run configure
       ansible.builtin.command: ./configure {{ configure_options }}
       args:
         chdir: "{{ temp_build_dir.path }}"
