@@ -71,12 +71,6 @@
         path: "{{ temp_build_dir.path }}"
         state: absent
 
-    - name: Create a symbolic link to the BIND9 binaries
-      ansible.builtin.file:
-        src: "{{ bind_prefix }}/sbin/named"
-        dest: "/usr/sbin/named"
-        state: link
-
     - name: Create bind group
       group:
         name: "{{ bind_group }}"
