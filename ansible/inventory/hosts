@@ -49,3 +49,8 @@ homelab-swarm03
 homelab-swarm01
 homelab-swarm02
 homelab-swarm03
+
+[dns_cluster]
+homelab-swarm01 dns_node_role=master
+homelab-swarm02 dns_node_role=slave
+homelab-swarm03 dns_node_role=slave
