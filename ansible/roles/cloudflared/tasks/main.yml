@@ -26,6 +26,15 @@
     name: cloudflared
     state: present
 
+- name: Create cloudflared.service configuration
+  ansible.builtin.copy:
+    src: etc/systemd/system/cloudflared-proxy-dns.service
+    dest: /etc/systemd/system/cloudflared-proxy-dns.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart cloudflared
+
 - name: Create config.yml configuration
   ansible.builtin.template:
     src: etc/config.yml.j2
@@ -34,3 +43,10 @@
     group: root
     mode: "0644"
   notify: restart cloudflared
+
+- name: Ensure cloudflared service is started and enabled on boot
+  ansible.builtin.systemd_service:
+    name: cloudflared-proxy-dns
+    state: started
+    enabled: true
+    daemon_reload: true

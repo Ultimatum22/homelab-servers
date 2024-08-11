@@ -1,5 +1,5 @@
 ---
 - name: restart cloudflared
-  service:
-    name: cloudflared
+  ansible.builtin.service:
+    name: cloudflared-proxy-dns
     state: restarted
