@@ -1,0 +1,36 @@
+---
+- name: Configure UFW
+  ansible.builtin.include_tasks: ufw.yml
+
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ cf_config_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0775"
+
+- name: Add Cloudflare repository GPG key
+  ansible.builtin.apt_key:
+    url: "{{ cf_repository_key_url }}"
+    keyring: "{{ cf_repository_key_install_path }}"
+    state: present
+
+- name: Add Cloudflare repository to apt sources list
+  ansible.builtin.apt_repository:
+    repo: "{{ cf_repository }}"
+    state: present
+
+- name: Install Cloudflared
+  ansible.builtin.apt:
+    name: cloudflared
+    state: present
+
+- name: Create config.yml configuration
+  ansible.builtin.template:
+    src: etc/config.yml.j2
+    dest: /etc/cloudflared/config.yml
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart cloudflared

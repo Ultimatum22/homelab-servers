@@ -15,8 +15,10 @@
     #   tags: [wireguard]
     - role: keepalived
       tags: [keepalived]
-    - role: bind
-      tags: [bind]
+    - role: cloudflared
+      tags: [cloudflared]
+    # - role: bind
+    #   tags: [bind]
     # - role: haproxy
     #   tags: [haproxy]
     # - role: consul
