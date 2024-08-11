@@ -1,87 +1,116 @@
 ---
-- name: Create network
-  community.general.docker_network:
-    name: "{{ item }}"
-    driver: overlay
-    scope: swarm
-  with_items:
-    - traefik
-    - internal
-  when: inventory_hostname == groups['cluster'][0]
+# - name: Configure UFW
+#   ansible.builtin.include_tasks: ufw.yml
 
-- name: Create directories
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: directory
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: "0775"
-  with_items:
-    - "{{ docker_bind.config }}"
-    - "{{ docker_bind.config }}/etc"
-    - "{{ docker_bind.config }}/zones"
+# - name: Install required dependencies
+#   ansible.builtin.apt:
+#     name:
+#       - build-essential
+#       - libssl-dev
+#       - libxml2-dev
+#       - libjson-c-dev
+#       - libuv1-dev
+#       - libcap-dev
+#       - libkrb5-dev
+#       - libncurses5-dev
+#       - libtool
+#       - liblmdb-dev
+#       - libprotobuf-c-dev
+#       - libreadline-dev
+#       - libsqlite3-dev
+#       - libgeoip-dev
+#       - libnghttp2-dev
+#       - libpq-dev
+#       - wget
+#       - xz-utils
+#       - zlib1g-dev
+#     state: present
 
-- name: Copy etc files
-  ansible.builtin.template:
-    src: "{{ item }}"
-    dest: "{{ docker_bind.config }}/etc/{{ item | basename | regex_replace('.j2$', '') }}"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: "0755"
-  with_fileglob:
-    - ../templates/etc/*.j2
+- name: Ensure bind is installed
+  block:
+    - name: Test bind
+      ansible.builtin.command: bind --version
+      register: bind_version_test
+      changed_when: false
 
-- name: Copy zones files
-  ansible.builtin.template:
-    src: "{{ item }}"
-    dest: "{{ docker_bind.config }}/zones/{{ item | basename | regex_replace('.j2$', '') }}"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: "0755"
-  with_fileglob:
-    - ../templates/zones/*.j2
+    - name: Test if correct version is installed
+      ansible.builtin.assert:
+        that:
+          - bind_version in bind_version_test.stdout
+        success_msg: "bind version {{ bind_version }} is installed"
+        fail_msg: bind was not successfully installed
+  rescue:
+    - name: Ensure old bind is removed
+      ansible.builtin.file:
+        path: "{{ bind_install_dir }}/bind"
+        state: absent
 
-- name: Deploy and start Bind service
-  community.docker.docker_swarm_service:
-    name: bind
-    image: mjkaye/bind9-alpine:latest-arm
-    publish:
-      - target_port: 53
-        published_port: 53
-        protocol: tcp
-      - target_port: 53
-        published_port: 53
-        protocol: udp
-      - target_port: 10000
-        published_port: 10000
-        protocol: tcp
-    env:
-      TZ: "{{ system_timezone }}"
-      PASS: newpass
-    mounts:
-      - source: "{{ docker_bind.config }}/etc"
-        target: /etc/bind
-        type: bind
-      - source: "{{ docker_bind.config }}/zones"
-        target: /var/lib/bind
-        type: bind
-    networks:
-      - traefik
-    restart_config:
-      condition: any
-      delay: 5s
-      max_attempts: 3
-      window: 120s
-    update_config:
-      delay: 10s
-      order: start-first
-      parallelism: 1
-    rollback_config:
-      parallelism: 0
-      order: stop-first
-    state: present
-    mode: global
-    placement:
-      constraints:
-        - node.role == manager
-  when: inventory_hostname == groups['cluster'][0]
+    - name: Create a temporary directory for the build
+      tempfile:
+        state: directory
+        suffix: bind_build
+      register: temp_build_dir
+
+    - name: Download the BIND9 source code
+      get_url:
+        url: "{{ bind_url }}"
+        dest: "{{ temp_build_dir.path }}/bind-{{ bind_version }}.tar.xz"
+
+    - name: Extract the BIND9 tar.xz file
+      unarchive:
+        src: "{{ temp_build_dir.path }}/bind-{{ bind_version }}.tar.xz"
+        dest: "{{ temp_build_dir.path }}"
+        remote_src: yes
+        extra_opts: [ "--strip-components=1" ]
+
+    - name: Run configure with optimized options
+      command: ./configure {{ configure_options }}
+      args:
+        chdir: "{{ temp_build_dir.path }}"
+
+    - name: Compile BIND9
+      make:
+        chdir: "{{ temp_build_dir.path }}"
+
+    - name: Install BIND9
+      make:
+        target: install
+        chdir: "{{ temp_build_dir.path }}"
+      become: yes
+
+    - name: Clean up the temporary build directory
+      file:
+        path: "{{ temp_build_dir.path }}"
+        state: absent
+
+    - name: Create a symbolic link to the BIND9 binaries
+      file:
+        src: "{{ bind_prefix }}/sbin/named"
+        dest: "/usr/sbin/named"
+        state: link
+      become: yes
+
+
+    # - name: Install bind
+    #   ansible.builtin.unarchive:
+    #     src: "{{ bind_download_url }}"
+    #     dest: "{{ bind_install_dir }}"
+    #     owner: root
+    #     group: root
+    #     remote_src: true
+    #     mode: "0777"
+
+# - name: Create bind group
+#   group:
+#     name: "{{ bind_group }}"
+#     system: true
+#     state: present
+
+# - name: Create bind user
+#   user:
+#     name: "{{ bind_user }}"
+#     group: "{{ bind_group }}"
+#     shell: /bin/false
+#     createhome: false
+#     system: true
+#     state: present
