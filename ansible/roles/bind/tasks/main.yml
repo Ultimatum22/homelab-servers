@@ -1,15 +1,16 @@
 ---
-# - name: Create directories
-#   ansible.builtin.file:
-#     path: "{{ item }}"
-#     state: directory
-#     owner: "{{ ansible_user }}"
-#     group: "{{ ansible_user }}"
-#     mode: "0775"
-#   with_items:
-#     - /etc/bind
-#     - /var/lib/bind/zones
-#     - /var/cahce/bind
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0775"
+  with_items:
+    - /etc/bind
+    - /var/lib/bind/zones
+    - /var/cache/bind
+    - /var/named/data
 
 # - name: Configure UFW
 #   ansible.builtin.include_tasks: ufw.yml
