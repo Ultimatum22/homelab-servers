@@ -11,14 +11,14 @@
 zone "berry.home" {
     type {% if _is_master %}master{% else %}slave{% endif %};
     file "/var/lib/bind/zones/berry.home.zone";
-    {% if _is_slave %}masters { {{ _dns_masters }}};{% endif %};
+    {% if _is_slave %}masters { {{ _dns_masters }}};{% endif %}
 };
 
 // Reverse-Lookup
 zone "2.168.192.in-addr.arpa" {
     type {% if _is_master %}master{% else %}slave{% endif %};
     file "/var/lib/bind/zones/db.2.168.192.inv";
-    {% if _is_slave %}masters { {{ _dns_masters }}};{% endif %};
+    {% if _is_slave %}masters { {{ _dns_masters }}};{% endif %}
 };
 
 // ----------------------- Zones -----------------------
