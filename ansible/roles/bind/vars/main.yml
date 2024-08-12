@@ -1,0 +1,19 @@
+---
+_dns_slaves: "\
+  {% set __dns_slaves = [] %}\
+  {% for host in groups['dns_cluster'] %}\
+    {% set dns_node_role = hostvars[host]['dns_node_role'] | default('slave', false) %}\
+    {% if dns_node_role == 'slave' %}\
+      {% set ip = hostvars[host]['ansible_default_ipv4']['address'] %}\
+      {% if __dns_slaves.append(ip) %}{% endif %}\
+    {% endif %}\
+  {% endfor %}\
+  {{ __dns_slaves | join('; ') ~ ';' }}"
+
+_is_master: "\
+  {% set _dns_node_role = hostvars[inventory_hostname]['dns_node_role'] | default('master', false) %}\
+  {{ ( _dns_node_role == 'master') | bool }}"
+
+_is_client: "\
+  {% set _dns_node_role = hostvars[inventory_hostname]['dns_node_role'] | default('slave', false) %}\
+  {{ ( _dns_node_role == 'slave') | bool }}"
