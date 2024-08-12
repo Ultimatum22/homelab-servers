@@ -26,11 +26,11 @@
  * Deny transfers by default except for the listed hosts.
  * If we have other name servers, place them here.
  */
- acl "acl_trusted_transfer" {
-      none;
+ acl "acl_internal_transfer" {
+       192.168.2.0/24;
  };
 
- acl "acl_trusted_clients" {
+ acl "acl_internal_clients" {
        127.0.0.0/8; 
        192.168.2.0/24;
  };
@@ -101,7 +101,7 @@ options {
          * This prevent becoming a public free DNS server.
          */
         allow-query {
-                acl_trusted_clients;
+                acl_internal_clients;
         };
 
         /*
@@ -110,7 +110,7 @@ options {
          * Only trusted addresses are allowed to use query cache.
          */
         allow-query-cache {
-                acl_trusted_clients;
+                acl_internal_clients;
         };
 
         /* 
@@ -119,7 +119,7 @@ options {
          * Only trusted addresses are allowed to use recursion. 
          */
          allow-recursion {
-                acl_trusted_clients;
+                acl_internal_clients;
          };
 
         /* 
