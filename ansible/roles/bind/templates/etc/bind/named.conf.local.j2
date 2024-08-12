@@ -9,15 +9,16 @@
 
 // Forward-Lookup
 zone "berry.home" {
-    type master;
+    type {% if _is_master %}master{% else %}slave{% endif %};
     file "/var/lib/bind/zones/berry.home.zone";
-    allow-transfer { acl_trusted_transfer; };    //see named.conf.options for configuration
+    {% if _is_slave %}masters { {{ _dns_masters }}};{% endif %};
 };
 
 // Reverse-Lookup
 zone "2.168.192.in-addr.arpa" {
-    type master;
+    type {% if _is_master %}master{% else %}slave{% endif %};
     file "/var/lib/bind/zones/db.2.168.192.inv";
+    {% if _is_slave %}masters { {{ _dns_masters }}};{% endif %};
 };
 
 // ----------------------- Zones -----------------------

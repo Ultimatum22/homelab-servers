@@ -1,4 +1,15 @@
 ---
+_dns_masters: "\
+  {% set __dns_masters = [] %}\
+  {% for host in groups['dns_cluster'] %}\
+    {% set dns_node_role = hostvars[host]['dns_node_role'] | default('master', false) %}\
+    {% if dns_node_role == 'master' %}\
+      {% set ip = hostvars[host]['ansible_default_ipv4']['address'] %}\
+      {% if __dns_masters.append(ip) %}{% endif %}\
+    {% endif %}\
+  {% endfor %}\
+  {{ __dns_masters | join('; ') ~ ';' }}"
+
 _dns_slaves: "\
   {% set __dns_slaves = [] %}\
   {% for host in groups['dns_cluster'] %}\

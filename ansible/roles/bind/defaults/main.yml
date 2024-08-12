@@ -10,5 +10,5 @@ configure_options: >
   --with-libxml2
   --with-openssl
 
-bind_user: bind
+bind_user: root
 bind_group: bind

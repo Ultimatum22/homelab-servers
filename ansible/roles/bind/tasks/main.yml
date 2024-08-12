@@ -1,118 +1,101 @@
 ---
+- name: Configure UFW
+  ansible.builtin.include_tasks: ufw.yml
+
+- name: Install required dependencies
+  ansible.builtin.apt:
+    name:
+      - libjemalloc-dev
+      - libcap-dev
+      - libxml2-dev
+      - libssl-dev
+      - libnghttp2-dev
+      - libuv1-dev
+      - liburcu-dev
+    state: present
+
+- name: Ensure bind is installed
+  block:
+    - name: Test bind
+      ansible.builtin.command: named -v
+      register: bind_version_test
+      changed_when: false
+
+    - name: Test if correct version is installed
+      ansible.builtin.assert:
+        that:
+          - bind_version in bind_version_test.stdout
+        success_msg: "bind version {{ bind_version }} is installed"
+        fail_msg: bind was not successfully installed
+  rescue:
+    - name: Install bind
+      ansible.builtin.apt:
+        name: bind9
+        state: present
+    # - name: Ensure old bind is removed
+    #   ansible.builtin.file:
+    #     path: "{{ bind_install_dir }}/bind"
+    #     state: absent
+
+    # - name: Create a temporary directory for the build
+    #   ansible.builtin.tempfile:
+    #     state: directory
+    #     suffix: bind_build
+    #   register: temp_build_dir
+
+    # - name: Download the BIND9 source code
+    #   ansible.builtin.get_url:
+    #     url: "{{ bind_url }}"
+    #     dest: "{{ temp_build_dir.path }}/bind-{{ bind_version }}.tar.xz"
+    #     mode: "0755"
+
+    # - name: Extract the BIND9 tar.xz file
+    #   ansible.builtin.unarchive:
+    #     src: "{{ temp_build_dir.path }}/bind-{{ bind_version }}.tar.xz"
+    #     dest: "{{ temp_build_dir.path }}"
+    #     remote_src: true
+    #     extra_opts: ["--strip-components=1"]
+
+    # - name: Run configure
+    #   ansible.builtin.command: ./configure {{ configure_options }}
+    #   args:
+    #     chdir: "{{ temp_build_dir.path }}"
+
+    # - name: Compile BIND9
+    #   community.general.make:
+    #     chdir: "{{ temp_build_dir.path }}"
+
+    # - name: Install BIND9
+    #   community.general.make:
+    #     target: install
+    #     chdir: "{{ temp_build_dir.path }}"
+
+    # - name: Clean up the temporary build directory
+    #   ansible.builtin.file:
+    #     path: "{{ temp_build_dir.path }}"
+    #     state: absent
+
 - name: Create directories
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ bind_user }}"
+    group: "{{ bind_group }}"
     mode: "0775"
   with_items:
     - /etc/bind
     - /var/lib/bind/zones
     - /var/cache/bind
+    - /var/named
     - /var/named/data
-
-# - name: Configure UFW
-#   ansible.builtin.include_tasks: ufw.yml
-
-# - name: Install required dependencies
-#   ansible.builtin.apt:
-#     name:
-#       - libjemalloc-dev
-#       - libcap-dev
-#       - libxml2-dev
-#       - libssl-dev
-#       - libnghttp2-dev
-#       - libuv1-dev
-#       - liburcu-dev
-#     state: present
-
-# - name: Ensure bind is installed
-#   block:
-#     - name: Test bind
-#       ansible.builtin.command: named -v
-#       register: bind_version_test
-#       changed_when: false
-
-#     - name: Test if correct version is installed
-#       ansible.builtin.assert:
-#         that:
-#           - bind_version in bind_version_test.stdout
-#         success_msg: "bind version {{ bind_version }} is installed"
-#         fail_msg: bind was not successfully installed
-#   rescue:
-#     - name: Install bind
-#       ansible.builtin.apt:
-#         name: bind9
-#         state: present
-#     # - name: Ensure old bind is removed
-#     #   ansible.builtin.file:
-#     #     path: "{{ bind_install_dir }}/bind"
-#     #     state: absent
-
-#     # - name: Create a temporary directory for the build
-#     #   ansible.builtin.tempfile:
-#     #     state: directory
-#     #     suffix: bind_build
-#     #   register: temp_build_dir
-
-#     # - name: Download the BIND9 source code
-#     #   ansible.builtin.get_url:
-#     #     url: "{{ bind_url }}"
-#     #     dest: "{{ temp_build_dir.path }}/bind-{{ bind_version }}.tar.xz"
-#     #     mode: "0755"
-
-#     # - name: Extract the BIND9 tar.xz file
-#     #   ansible.builtin.unarchive:
-#     #     src: "{{ temp_build_dir.path }}/bind-{{ bind_version }}.tar.xz"
-#     #     dest: "{{ temp_build_dir.path }}"
-#     #     remote_src: true
-#     #     extra_opts: ["--strip-components=1"]
-
-#     # - name: Run configure
-#     #   ansible.builtin.command: ./configure {{ configure_options }}
-#     #   args:
-#     #     chdir: "{{ temp_build_dir.path }}"
-
-#     # - name: Compile BIND9
-#     #   community.general.make:
-#     #     chdir: "{{ temp_build_dir.path }}"
-
-#     # - name: Install BIND9
-#     #   community.general.make:
-#     #     target: install
-#     #     chdir: "{{ temp_build_dir.path }}"
-
-#     # - name: Clean up the temporary build directory
-#     #   ansible.builtin.file:
-#     #     path: "{{ temp_build_dir.path }}"
-#     #     state: absent
-
-#     - name: Create bind group
-#       group:
-#         name: "{{ bind_group }}"
-#         system: true
-#         state: present
-
-#     - name: Create bind user
-#       user:
-#         name: "{{ bind_user }}"
-#         group: "{{ bind_group }}"
-#         shell: /bin/false
-#         createhome: false
-#         system: true
-#         state: present
-
-- name: DEBUG
-  ansible.builtin.debug:
-    var: _dns_slaves
+    - /var/named/dynamic
 
 - name: Copy named config
   ansible.builtin.template:
     src: "{{ item }}"
     dest: "/etc/bind/{{ item | basename | regex_replace('\\.j2$', '') }}"
-    owner: root
-    group: root
+    owner: "{{ bind_user }}"
+    group: "{{ bind_group }}"
     mode: "0644"
   with_fileglob:
     - ../templates/etc/bind/*.j2
@@ -122,8 +105,8 @@
   ansible.builtin.template:
     src: "{{ item }}"
     dest: "/var/lib/bind/zones/{{ item | basename | regex_replace('\\.j2$', '') }}"
-    owner: root
-    group: root
+    owner: "{{ bind_user }}"
+    group: "{{ bind_group }}"
     mode: "0644"
   with_fileglob:
     - ../templates/var/lib/bind/zones/*.j2
