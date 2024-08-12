@@ -1,0 +1,21 @@
+$TTL 604800
+@   IN  SOA ns1.codecubed.xyz. admin.codecubed.xyz. (
+             2024081201  ; Serial
+             604800      ; Refresh
+             86400       ; Retry
+             2419200     ; Expire
+             604800 )    ; Negative Cache TTL
+
+; Name servers
+@       IN  NS      ns1.codecubed.xyz.
+@       IN  NS      ns2.codecubed.xyz.
+@       IN  NS      ns3.codecubed.xyz.
+
+; A records for name servers
+ns1     IN  A       192.168.2.221   # Master DNS server
+ns2     IN  A       192.168.2.222   # Slave DNS server 1
+ns3     IN  A       192.168.2.223   # Slave DNS server 2
+
+; Internal services
+traefik IN  A       192.168.2.220   # IP of Traefik service
+pihole  IN  A       192.168.2.220   # IP of Pi-hole service

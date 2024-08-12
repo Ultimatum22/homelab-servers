@@ -102,14 +102,14 @@
   notify: restart named
 
 - name: Copy zones
-  ansible.builtin.template:
+  ansible.builtin.copy:
     src: "{{ item }}"
-    dest: "/var/lib/bind/zones/{{ item | basename | regex_replace('\\.j2$', '') }}"
+    dest: "/var/lib/bind/zones/{{ item | basename }}"
     owner: "{{ bind_user }}"
     group: "{{ bind_group }}"
     mode: "0644"
   with_fileglob:
-    - ../templates/var/lib/bind/zones/*.j2
+    - ../files/var/lib/bind/zones/*
   notify: restart named
   when: _is_master
 

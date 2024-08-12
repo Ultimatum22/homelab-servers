@@ -1,24 +1,31 @@
-//
-// This file contains the own local DNS server configuration.
-// This is where you declare the zones associated with this server's domain(s). 
-// Consider adding the 1918 zones here, if they are not used in your organization 
-// include "/etc/bind/zones.rfc1918";
-//
-
-// ----------------------- Zones -----------------------
-
-// Forward-Lookup
-zone "berry.home" {
-    type {% if _is_master %}master{% else %}slave{% endif %};
-    file "/var/lib/bind/zones/berry.home.zone";
-    {% if _is_slave %}masters { {{ _dns_masters }}};{% endif %}
+ acl "trusted" {
+    192.168.2.0/24;    # Internal network
+    localhost;
 };
 
-// Reverse-Lookup
-zone "2.168.192.in-addr.arpa" {
-    type {% if _is_master %}master{% else %}slave{% endif %};
-    file "/var/lib/bind/zones/db.2.168.192.inv";
-    {% if _is_slave %}masters { {{ _dns_masters }}};{% endif %}
+view "internal" {
+    match-clients { trusted; };
+
+    zone "codecubed.xyz" {
+        type {% if _is_master %}master{% else %}slave{% endif %};
+        file "/var/lib/bind/zones/db.internal.codecubed.xyz";
+        {% if _is_slave %}masters { {{ _dns_masters }}};{% endif %}
+        
+        allow-transfer { {{ _dns_slaves }} }; 
+        also-notify { {{ _dns_slaves }} };
+    };
 };
 
-// ----------------------- Zones -----------------------
+view "external" {
+    match-clients { any; };
+
+    // Forward external queries for codecubed.xyz to Cloudflare
+    zone "codecubed.xyz" {
+        type forward;
+        forward only;
+        forwarders {
+            1.1.1.1;    # Cloudflare DNS
+            1.0.0.1;    # Cloudflare secondary DNS
+        };
+    };
+};

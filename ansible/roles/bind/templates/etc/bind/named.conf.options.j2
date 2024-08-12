@@ -1,22 +1,14 @@
 options {
-        listen-on port 5354 { 127.0.0.1; {{ ansible_host }}; };
-        listen-on-v6 { none; };
         directory       "/var/named";
         dump-file       "/var/named/data/cache_dump.db";
         statistics-file "/var/named/data/named_stats.txt";
         memstatistics-file "/var/named/data/named_mem_stats.txt";
-        allow-query     { any;};
-        recursion no;
-        dnssec-validation no;
-        bindkeys-file "/etc/named.iscdlv.key";
-        managed-keys-directory "/var/named/dynamic";
-        pid-file "/run/named/named.pid";
-        session-keyfile "/run/named/session.key";
+        recursion yes;                 # Enables DNS recursion
+        allow-recursion { trusted; };  # Allow recursion for internal clients only
+        listen-on port 5354 { 127.0.0.1; {{ ansible_host }}; };
+        listen-on-v6 { none; };
 
-        notify {% if _is_master %}yes{% else %}no{% endif %};
+        dnssec-validation auto;
 
-        {% if _is_master %}
-        also-notify { {{ _dns_slaves }} };
-        {% endif %}
-        allow-transfer { {% if _is_master %}127.0.0.1;{{ _dns_slaves }}{% else %}none;{% endif %} };
+        auth-nxdomain no;    # Conform to RFC1035
 };
