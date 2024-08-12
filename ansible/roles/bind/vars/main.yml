@@ -25,6 +25,6 @@ _is_master: "\
   {% set _dns_node_role = hostvars[inventory_hostname]['dns_node_role'] | default('master', false) %}\
   {{ ( _dns_node_role == 'master') | bool }}"
 
-_is_client: "\
+_is_slave: "\
   {% set _dns_node_role = hostvars[inventory_hostname]['dns_node_role'] | default('slave', false) %}\
   {{ ( _dns_node_role == 'slave') | bool }}"
