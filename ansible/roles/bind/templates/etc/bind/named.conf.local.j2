@@ -4,15 +4,20 @@
 };
 
 view "internal" {
-    match-clients { trusted; };
+    match-clients { any; };
 
     zone "codecubed.xyz" {
         type {% if _is_master %}master{% else %}slave{% endif %};
         file "/var/lib/bind/zones/db.internal.codecubed.xyz";
-        {% if _is_slave %}masters { {{ _dns_masters }}};{% endif %}
+        {% if _is_slave %}
+        masters { {{ _dns_masters }}};
+        notify no;
+        {% endif %}
         
+        {% if _is_master %}
         allow-transfer { {{ _dns_slaves }} }; 
-        also-notify { {{ _dns_slaves }} };
+        also-notify { {{ _dns_slaves_also_notify }} };
+        {% endif %}
     };
 };
 

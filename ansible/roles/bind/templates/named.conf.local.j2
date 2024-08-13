@@ -1,9 +1,0 @@
-view "internal" {
-     match-clients {
-        internal;
-    };
-    zone "codecubed.xyz" IN {
-        type master;
-        file "/data/bind/etc/db.codecubed.xyz.internal";
-    };
-};

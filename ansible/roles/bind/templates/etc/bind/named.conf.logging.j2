@@ -1,6 +1,12 @@
 logging {
-        channel default_debug {
-                file "/var/named/data/named.run";
-                severity dynamic;
-        };
+    channel default_debug {
+        file "/var/named/data/named.run" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity yes;
+        print-category yes;
+    };
+    category default { default_debug; };
+    category xfer-in { default_debug; };
+    category xfer-out { default_debug; };
 };

@@ -1,14 +1,17 @@
 options {
         directory       "/var/named";
+        
         dump-file       "/var/named/data/cache_dump.db";
         statistics-file "/var/named/data/named_stats.txt";
         memstatistics-file "/var/named/data/named_mem_stats.txt";
-        recursion yes;                 # Enables DNS recursion
-        allow-recursion { trusted; };  # Allow recursion for internal clients only
-        listen-on port 5354 { 127.0.0.1; {{ ansible_host }}; };
+        
+        recursion yes;
+        allow-recursion { any; };
+        
+        listen-on port 5353 { 127.0.0.1; {{ ansible_host }}; };
         listen-on-v6 { none; };
 
-        dnssec-validation auto;
+        dnssec-validation no;
 
         auth-nxdomain no;    # Conform to RFC1035
 };
