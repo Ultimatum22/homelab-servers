@@ -17,5 +17,3 @@
       tags: [homepage]
     - role: pihole
       tags: [pihole]
-    - role: bind
-      tags: [bind]

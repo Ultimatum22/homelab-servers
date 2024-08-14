@@ -37,10 +37,7 @@
 - name: Deploy and start Pi-hole service
   community.docker.docker_swarm_service:
     name: pihole
-    image: pihole/pihole:latest
-    dns:
-      - 127.0.0.1
-      - 1.1.1.1
+    image: pihole/pihole:2024.07.0
     publish:
       - target_port: 53
         published_port: 53
@@ -56,13 +53,9 @@
         target: /etc/dnsmasq.d/
         type: bind
     env:
-      ServerIP: "{{ ansible_host }}"
       IPv6: "false"
-      PROXY_LOCATION: pihole
       VIRTUAL_HOST: "pihole.{{ root_domain }}"
-      VIRTUAL_PORT: "80"
       WEBPASSWORD: "test123"
-      DNSMASQ_LISTENING: all
       TZ: "{{ system_timezone }}"
       PUID: "{{ ansible_user_pid | int }}"
       PGID: "{{ ansible_user_gid | int }}"
@@ -71,6 +64,16 @@
     networks:
       - traefik
       - internal
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.pihole.rule: "Host(`pihole.{{ root_domain }}`)"
+      traefik.http.routers.pihole.entrypoints: https
+      traefik.http.routers.pihole.tls: "true"
+      traefik.http.routers.pihole.tls.certresolver: letsencrypt
+      traefik.http.routers.pihole.service: pihole@swarm
+      traefik.http.routers.pihole.middlewares: authelia@swarm
+      # traefik.http.routers.pihole.middlewares: authelia@swarm,pihole-addprefix@file,pihole-redirectregex@file
+      traefik.http.services.pihole.loadbalancer.server.port: "80"
     restart_config:
       condition: any
       delay: 5s
@@ -89,3 +92,14 @@
       constraints:
         - node.role == manager
   when: inventory_hostname == groups['cluster'][0]
+
+
+# - name: Create Pi-hole dnsmasq configuration
+#   ansible.builtin.copy:
+#     content: |
+#       server=127.0.0.1#5353
+#     dest: "{{ docker_pihole.data }}/99-custom.conf"
+#     owner: "{{ ansible_user }}"
+#     group: "{{ ansible_user }}"
+#     mode: "0644"
+#   when: inventory_hostname == groups['cluster'][0]
