@@ -1,0 +1,10 @@
+#!/bin/bash
+STATUS=$(systemctl show -p ActiveState pihole-FTL | cut -d'=' -f2)
+STATUS1=$(systemctl show -p ActiveState unbound | cut -d'=' -f2)
+
+if [ "$STATUS" = "active" ] && [ "$STATUS1" = "active" ]
+then
+    exit 0
+else
+    exit 1
+fi

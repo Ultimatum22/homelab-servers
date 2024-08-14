@@ -1,5 +1,5 @@
 ---
-_keepalived_unicats_peers: >-
+_keepalived_unicast_peers: >-
   {{
     groups['cluster'] | 
     map('extract', hostvars, ['ansible_host']) | 
