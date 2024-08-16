@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Array of hosts
-hosts=("192.168.2.221" "192.168.2.222" "192.168.2.223")
+hosts=("192.168.2.200" "192.168.2.221" "192.168.2.222" "192.168.2.223")
 
 # Path to your known_hosts file and new RSA key
 KNOWN_HOSTS="$HOME/.ssh/known_hosts"
