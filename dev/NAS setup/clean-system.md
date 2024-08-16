@@ -20,7 +20,7 @@ echo "Wiping RAID superblocks and clearing partitions from /dev/sda to /dev/sdf.
 for disk in {a..f}; do
     if [ -e /dev/sd$disk ]; then
         # Zero out RAID superblock
-        mdadm --zero-superblock /dev/sd$disk
+        mdadm --zero-superblock /dev/sd$disk1
         echo "Cleared RAID superblock on /dev/sd$disk"
 
         # Clear all partitions
