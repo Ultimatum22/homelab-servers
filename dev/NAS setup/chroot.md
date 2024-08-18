@@ -1,6 +1,7 @@
 # When accessing chroot only to make changes
 
 `bash
+RAID_ARRAY="/dev/md0"
 MOUNT_POINT="/mnt/boot"
 
 mkdir -p $MOUNT_POINT

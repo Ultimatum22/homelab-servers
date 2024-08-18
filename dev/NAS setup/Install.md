@@ -14,7 +14,7 @@ HOSTNAME="my-debian-server"
 
 # Ensure that necessary packages are installed on the live environment
 apt-get update
-apt-get install -y mdadm debootstrap grub-pc
+apt-get install -y mdadm debootstrap grub-pc parted
 
 # Wipe the partition tables on both disks to avoid conflicts
 sgdisk --zap-all $DISK1
@@ -24,16 +24,24 @@ sgdisk --zap-all $DISK2
 parted -s $DISK1 mklabel gpt
 parted -s $DISK2 mklabel gpt
 
-# Create a single primary partition on each disk
-parted -s -a optimal $DISK1 mkpart primary 0% 100%
-parted -s -a optimal $DISK2 mkpart primary 0% 100%
+# Create a BIOS boot partition (2MB) at the beginning of each disk
+parted -s $DISK1 mkpart primary 1MiB 3MiB
+parted -s $DISK2 mkpart primary 1MiB 3MiB
+
+# Set the BIOS boot flag on the BIOS boot partition
+parted -s $DISK1 set 1 bios_grub on
+parted -s $DISK2 set 1 bios_grub on
+
+# Create a single primary partition for RAID on each disk, after the BIOS boot partition
+parted -s -a optimal $DISK1 mkpart primary 3MiB 100%
+parted -s -a optimal $DISK2 mkpart primary 3MiB 100%
 
 # Set the partition type to Linux RAID
-parted -s $DISK1 set 1 raid on
-parted -s $DISK2 set 1 raid on
+parted -s $DISK1 set 2 raid on
+parted -s $DISK2 set 2 raid on
 
 # Create the RAID 1 array
-mdadm --create --verbose $RAID_ARRAY --level=1 --raid-devices=2 ${DISK1}1 ${DISK2}1
+mdadm --create --verbose $RAID_ARRAY --level=1 --raid-devices=2 ${DISK1}2 ${DISK2}2
 
 # Wait for RAID array to sync
 echo "Waiting for RAID 1 array to synchronize..."
@@ -73,9 +81,9 @@ mdadm --detail --scan >> /etc/mdadm/mdadm.conf
 # Update initramfs
 update-initramfs -u
 
-# Install GRUB on both drives
-grub-install --recheck $DISK1
-grub-install --recheck $DISK2
+# Install GRUB on both drives explicitly
+grub-install --target=i386-pc --boot-directory=/boot $DISK1
+grub-install --target=i386-pc --boot-directory=/boot $DISK2
 
 # Update GRUB configuration
 update-grub

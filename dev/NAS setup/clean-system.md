@@ -10,7 +10,7 @@ mdadm --stop --scan
 
 # Remove all RAID devices
 echo "Removing all RAID devices..."
-for raid in $(ls /dev/md* | grep -v 'stat'); do
+for raid in $(mdadm --detail --scan | awk '{print $2}'); do
     mdadm --stop $raid
     mdadm --remove $raid
 done
@@ -19,9 +19,11 @@ done
 echo "Wiping RAID superblocks and clearing partitions from /dev/sda to /dev/sdf..."
 for disk in {a..f}; do
     if [ -e /dev/sd$disk ]; then
-        # Zero out RAID superblock
-        mdadm --zero-superblock /dev/sd$disk1
-        echo "Cleared RAID superblock on /dev/sd$disk"
+        # Zero out RAID superblocks on all partitions
+        for part in $(ls /dev/sd${disk}* 2>/dev/null); do
+            mdadm --zero-superblock $part
+            echo "Cleared RAID superblock on $part"
+        done
 
         # Clear all partitions
         sgdisk --zap-all /dev/sd$disk
