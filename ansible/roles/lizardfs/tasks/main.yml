@@ -1,0 +1,130 @@
+---
+- name: Partition the USB disk if not already partitioned
+  community.general.parted:
+    device: /dev/sda
+    number: 1
+    state: present
+    part_type: primary
+    fs_type: ext4
+    resize: true
+  when: ansible_facts['devices']['sda']['partitions'] | length == 0
+
+- name: Format the partition with ext4
+  community.general.filesystem:
+    fstype: ext4
+    dev: /dev/sda1
+    force: true
+  when: ansible_facts['devices']['sda']['partitions'] | length > 0
+
+- name: Create mount point for LizardFS chunk storage
+  ansible.builtin.file:
+    path: /mnt/mfs
+    state: directory
+    mode: '0755'
+
+- name: Mount the USB disk at /mnt/mfs
+  ansible.posix.mount:
+    path: /mnt/mfs
+    src: /dev/sda1
+    fstype: ext4
+    state: mounted
+    opts: defaults
+
+- name: Ensure the USB disk is mounted on boot
+  ansible.posix.mount:
+    path: /mnt/mfs
+    src: /dev/sda1
+    fstype: ext4
+    opts: defaults
+    state: present
+
+- name: Add LizardFS APT repository
+  ansible.builtin.apt_repository:
+    repo: 'deb http://packages.lizardfs.com/ubuntu focal main'
+    state: present
+
+- name: Add LizardFS GPG key
+  ansible.builtin.apt_key:
+    url: 'https://packages.lizardfs.com/lizardfs.key'
+    state: present
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Install LizardFS Master package
+  ansible.builtin.apt:
+    name: lizardfs-master
+    state: present
+
+- name: Install LizardFS Metalogger package
+  ansible.builtin.apt:
+    name: lizardfs-metalogger
+    state: present
+
+- name: Install LizardFS Chunkserver package
+  ansible.builtin.apt:
+    name: lizardfs-chunkserver
+    state: present
+
+- name: Install LizardFS Client package
+  ansible.builtin.apt:
+    name: lizardfs-client
+    state: present
+
+- name: Ensure /etc/lizardfs exists
+  ansible.builtin.file:
+    path: /etc/lizardfs
+    state: directory
+    mode: '0755'
+
+- name: Create LizardFS master configuration
+  ansible.builtin.copy:
+    dest: /etc/lizardfs/mfsmaster.cfg
+    content: |
+      # LizardFS master server configuration
+      # Customize according to your needs
+      WORKING_USER = mfsmaster
+      WORKING_GROUP = mfsmaster
+      DATA_PATH = /var/lib/mfs
+
+- name: Create LizardFS metalogger configuration
+  ansible.builtin.copy:
+    dest: /etc/lizardfs/mfsmetalogger.cfg
+    content: |
+      # LizardFS metalogger configuration
+      WORKING_USER = mfsmetalogger
+      WORKING_GROUP = mfsmetalogger
+
+- name: Create LizardFS chunkserver configuration
+  ansible.builtin.copy:
+    dest: /etc/lizardfs/mfschunkserver.cfg
+    content: |
+      # LizardFS chunkserver configuration
+      WORKING_USER = mfschunkserver
+      WORKING_GROUP = mfschunkserver
+      CHUNKS_PATH = /mnt/mfs
+
+- name: Start and enable lizardfs-master service
+  ansible.builtin.systemd:
+    name: lizardfs-master
+    enabled: true
+    state: started
+
+- name: Start and enable lizardfs-metalogger service
+  ansible.builtin.systemd:
+    name: lizardfs-metalogger
+    enabled: true
+    state: started
+
+- name: Start and enable lizardfs-chunkserver service
+  ansible.builtin.systemd:
+    name: lizardfs-chunkserver
+    enabled: true
+    state: started
+
+- name: Start and enable lizardfs-client service
+  ansible.builtin.systemd:
+    name: lizardfs-client
+    enabled: true
+    state: started

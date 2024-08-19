@@ -93,12 +93,12 @@
         - node.role == manager
   when: inventory_hostname == groups['cluster'][0]
 
-# - name: Create Pi-hole dnsmasq configuration
-#   ansible.builtin.copy:
-#     content: |
-#       server=/codecubed/{{ ansible_host }}:5353
-#     dest: "{{ docker_pihole.data }}/05-local.conf"
-#     owner: "{{ ansible_user }}"
-#     group: "{{ ansible_user }}"
-#     mode: "0644"
+- name: Create Pi-hole dnsmasq configuration
+  ansible.builtin.copy:
+    content: |
+      server=/codecubed/{{ ansible_host }}:5353
+    dest: "{{ docker_pihole.data }}/05-local.conf"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
   # when: inventory_hostname == groups['cluster'][0]

@@ -1,0 +1,22 @@
+---
+- name: Check if /dev/sda is already partitioned
+  community.general.parted:
+    device: /dev/sda
+  register: parted_info
+
+- name: Create a primary partition on /dev/sda if none exists
+  community.general.parted:
+    device: /dev/sda
+    number: 1
+    state: present
+    part_type: primary
+    fs_type: ext4
+    resize: true
+  when: parted_info.partitions | length == 0
+
+- name: Format the partition /dev/sda1 with ext4
+  community.general.filesystem:
+    fstype: ext4
+    dev: /dev/sda1
+    force: true
+  when: parted_info.partitions | length == 0
