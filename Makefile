@@ -64,10 +64,20 @@ docker.provision:
 
 # Vagrant
 vagrant.cluster.up:
-	cd vagrant && VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 vagrant up cluster-node1 cluster-node2 cluster-node3 cluster-node4
+	@if [ -z "$(playbook)" ]; then \
+		echo "Error: playbook parameter is missing. Usage: make ansible.run playbook=<nas|cluster>"; \
+		exit 1; \
+	fi
+
+	cd vagrant && ANSIBLE_PLAYBOOK=$(playbook) VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 vagrant up cluster-node1 cluster-node2 cluster-node3 cluster-node4
 
 vagrant.cluster.provision:
-	cd vagrant && vagrant provision cluster-node1 cluster-node2 cluster-node3 cluster-node4
+	@if [ -z "$(playbook)" ]; then \
+		echo "Error: playbook parameter is missing. Usage: make ansible.run playbook=<nas|cluster>"; \
+		exit 1; \
+	fi
+
+	cd vagrant && ANSIBLE_PLAYBOOK=$(playbook) vagrant provision cluster-node1 cluster-node2 cluster-node3 cluster-node4
 
 vagrant.cluster.restart: vagrant.destroy vagrant.cluster.up
 
