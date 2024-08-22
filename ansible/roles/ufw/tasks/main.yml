@@ -1,35 +1,35 @@
 ---
-# - name: Install ufw
-#   ansible.builtin.apt:
-#     package: ufw
-#     state: present
+- name: Install ufw
+  ansible.builtin.apt:
+    package: ufw
+    state: present
 
-# - name: Configure ufw rules
-#   community.general.ufw:
-#     rule: "{{ item.rule }}"
-#     port: "{{ item.port }}"
-#     proto: "{{ item.proto }}"
-#     from_ip: "{{ item.from_ip | default('any') }}"
-#     to_ip: "{{ item.to | default('any') }}"
-#     comment: "{{ item.comment }}"
-#   with_items:
-#     - "{{ ufw_rules }}"
-#   when: ufw_rules|length > 0
-#   notify:
-#     - reload ufw
+- name: Configure ufw rules
+  community.general.ufw:
+    rule: "{{ item.rule }}"
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    from_ip: "{{ item.from_ip | default('any') }}"
+    to_ip: "{{ item.to | default('any') }}"
+    comment: "{{ item.comment }}"
+  with_items:
+    - "{{ ufw_rules }}"
+  when: ufw_rules|length > 0
+  notify:
+    - reload ufw
 
 # - name: Configure ufw redirect rules
 #   community.general.ufw:
 #     rule: "{{ item.rule }}"
 #     port: "{{ item.port }}"
 #     proto: "{{ item.proto }}"
-#     from_ip: "{{ item.from_ip|default('any') }}"
-#     to_ip: "{{ item.to|default('any') }}"
+#     from_ip: "{{ item.from_ip | default('any') }}"
+#     to_ip: "{{ item.to | default('any') }}"
 #     direction: "{{ item.direction }}"
 #     comment: "{{ item.comment }}"
 #   with_items:
 #     - "{{ ufw_redirect_rules }}"
-#   when: ufw_redirect_rules|length > 0
+#   when: ufw_redirect_rules | length > 0
 #   notify:
 #     - reload ufw
 #   tags: ufw
@@ -40,6 +40,7 @@
   ansible.builtin.blockinfile:
     dest: /etc/ufw/after.rules
     block: "{{ lookup('template', 'after.rules.j2') }}"
+    marker: "#{mark} ANSIBLE MANAGED BLOCK"
   notify: reload ufw
 
 - name: Set DEFAULT_FORWARD_POLICY=DROP in /etc/default/ufw
