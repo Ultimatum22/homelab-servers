@@ -1,7 +1,0 @@
----
-- name: Install Docker
-  pacman:
-    name: docker
-    state: present
-    update_cache: "{{ omit if skip_package_cache_update is defined else 'true' }}"
-  notify: restart docker
