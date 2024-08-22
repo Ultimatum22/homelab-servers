@@ -21,8 +21,6 @@
     #   tags: [cloudflared]
     - role: bind
       tags: [bind]
-    - role: lizardfs
-      tags: [lizardfs]
     # - role: haproxy
     #   tags: [haproxy]
     # - role: consul
