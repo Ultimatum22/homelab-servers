@@ -1,25 +1,25 @@
 ---
-- name: Check whether a package called dphys-swapfile is installed
-  ansible.builtin.package_facts:
-    manager: auto
+# - name: Check whether a package called dphys-swapfile is installed
+#   ansible.builtin.package_facts:
+#     manager: auto
 
-- name: Install dphys-swapfile
-  ansible.builtin.apt:
-    pkg: dphys-swapfile
+# - name: Install dphys-swapfile
+#   ansible.builtin.apt:
+#     pkg: dphys-swapfile
 
-- name: Turn off "dphys-swapfile"
-  ansible.builtin.command: dphys-swapfile swapoff
+# - name: Turn off "dphys-swapfile"
+#   ansible.builtin.command: dphys-swapfile swapoff
 
-- name: Uninstall "dphys-swapfile"
-  ansible.builtin.command: dphys-swapfile uninstall
+# - name: Uninstall "dphys-swapfile"
+#   ansible.builtin.command: dphys-swapfile uninstall
 
-- name: Remove and purge "dphys-swapfile" package
-  ansible.builtin.apt:
-    pkg: dphys-swapfile
-    state: absent
-    purge: yes
-    autoclean: yes
-    autoremove: yes
+# - name: Remove and purge "dphys-swapfile" package
+#   ansible.builtin.apt:
+#     pkg: dphys-swapfile
+#     state: absent
+#     purge: yes
+#     autoclean: yes
+#     autoremove: yes
 
 - name: Enable cgroup in /boot/firmware/cmdline.txt
   ansible.builtin.shell: |

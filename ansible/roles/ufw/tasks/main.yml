@@ -15,8 +15,6 @@
   with_items:
     - "{{ ufw_rules }}"
   when: ufw_rules|length > 0
-  notify:
-    - reload ufw
 
 # - name: Configure ufw redirect rules
 #   community.general.ufw:

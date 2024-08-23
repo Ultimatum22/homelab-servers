@@ -4,6 +4,6 @@
     name: ufw_rules
   vars:
     ufw_rules:
-      - { rule: allow, port: 5353, proto: tcp, comment: DNS cloudflared }
-      - { rule: allow, port: 5353, proto: udp, comment: DNS cloudflared }
+      - { rule: allow, port: 5353, proto: tcp, from_ip: 192.168.2.0/24, comment: DNS cloudflared }
+      - { rule: allow, port: 5353, proto: udp, from_ip: 192.168.2.0/24, comment: DNS cloudflared }
 
