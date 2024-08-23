@@ -41,7 +41,7 @@
     dest: /etc/ufw/after.rules
     block: "{{ lookup('template', 'after.rules.j2') }}"
     marker: "#{mark} ANSIBLE MANAGED BLOCK"
-  notify: reload ufw
+  notify: restart ufw
 
 - name: Set DEFAULT_FORWARD_POLICY=DROP in /etc/default/ufw
   ansible.builtin.lineinfile:
@@ -50,16 +50,16 @@
     line: 'DEFAULT_FORWARD_POLICY="DROP"'
     backup: true
     backrefs: true
-  notify: reload ufw
+  notify: restart ufw
 
-- name: Set IPV6=no in /etc/default/ufw
-  ansible.builtin.lineinfile:
-    path: /etc/default/ufw
-    regexp: '^IPV6=(.*)$'
-    line: 'IPV6=no'
-    backup: true
-    backrefs: true
-  notify: reload ufw
+# - name: Set IPV6=no in /etc/default/ufw
+#   ansible.builtin.lineinfile:
+#     path: /etc/default/ufw
+#     regexp: '^IPV6=(.*)$'
+#     line: 'IPV6=no'
+#     backup: true
+#     backrefs: true
+#   notify: restart ufw
 
 - name: Enable ufw
   community.general.ufw:
