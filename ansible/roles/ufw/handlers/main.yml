@@ -2,7 +2,3 @@
 - name: reload ufw
   ansible.builtin.ufw:
     state: reloaded
-
-- name: restart ufw
-  ansible.builtin.ufw:
-    state: restarted
