@@ -1,7 +1,7 @@
 ---
 - name: Open ports
   include_role:
-    name: ufw
+    name: ufw_rules
   vars:
     ufw_rules:
       - { rule: allow, port: 8300, proto: tcp, comment: Consul RPC } # server only

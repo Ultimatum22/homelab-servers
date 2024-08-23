@@ -1,0 +1,14 @@
+---
+- name: Configure ufw rules
+  community.general.ufw:
+    rule: "{{ item.rule }}"
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    from_ip: "{{ item.from_ip | default('any') }}"
+    to_ip: "{{ item.to | default('any') }}"
+    comment: "{{ item.comment }}"
+  with_items:
+    - "{{ ufw_rules }}"
+  when: ufw_rules | length > 0
+  notify:
+    - reload ufw
