@@ -38,3 +38,14 @@
     name: docker
     state: started
     enabled: true
+
+- name: Create "docker" group
+  ansible.builtin.group:
+    name: docker
+    state: present
+
+- name: Add user to "docker" group
+  ansible.builtin.user:
+    name: system
+    groups: docker
+    append: true
