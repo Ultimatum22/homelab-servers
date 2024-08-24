@@ -1,2 +1,3 @@
 ---
-ufw_rules: []
+external_iface_list:
+  - eth0

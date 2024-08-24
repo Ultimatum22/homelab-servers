@@ -1,0 +1,12 @@
+- name: Configure UFW rules
+  community.general.ufw:
+    rule: "{{ item.rule | default('allow') }}"
+    port: "{{ item.port | default('any') }}"
+    proto: "{{ item.proto | default('any') }}"
+    from_ip: "{{ item.from_ip | default('any') }}"
+    to_ip: "{{ item.to_ip | default('any') }}"
+    comment: "{{ item.comment | default('No comment provided') }}"
+  loop: "{{ ufw_rules }}"
+  loop_control:
+    label: "{{ item.comment | default(item.port) }}"
+  when: ufw_rules | length > 0

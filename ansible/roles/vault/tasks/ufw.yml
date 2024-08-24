@@ -1,8 +1,8 @@
 ---
 - name: Open ports
   include_role:
-    name: ufw
+    name: ufw_rules
   vars:
     ufw_rules:
-      - { rule: allow, port: 8200, proto: tcp, comment: Vault UI }
-      - { rule: allow, port: 8201, proto: tcp, comment: Vault Cluster Addr }
+      - { rule: allow, port: 8200, proto: tcp, from_ip: 192.168.2.0/24, comment: Vault UI }
+      - { rule: allow, port: 8201, proto: tcp, from_ip: 192.168.2.0/24, comment: Vault Cluster Addr }
