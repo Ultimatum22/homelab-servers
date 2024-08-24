@@ -1,12 +1,22 @@
 ---
-- name: Create network
+- name: Create Docker networks
   community.general.docker_network:
-    name: "{{ item }}"
+    name: "{{ item.name }}"
     driver: overlay
-    scope: swarm
-  with_items:
-    - traefik
-    - internal
+    attachable: true
+    internal: "{{ item.internal | default(false) }}"
+    ipam_config:
+      - subnet: "{{ item.subnet }}"
+  loop:
+    - name: private
+      subnet: 172.16.204.0/24
+      internal: true
+    - name: public
+      subnet: 172.16.200.0/24
+    - name: monitoring
+      subnet: 172.16.201.0/24
+    - name: databases
+      subnet: 172.16.202.0/24
   when: inventory_hostname == groups['cluster'][0]
 
 - name: Create directories
