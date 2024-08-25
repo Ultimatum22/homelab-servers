@@ -1,7 +1,7 @@
 ---
 - name: Create Docker networks
   community.general.docker_network:
-    name: "{{ item.name }}"
+    name: "homelab_{{ item.name }}"
     driver: overlay
     attachable: true
     internal: "{{ item.internal | default(false) }}"
@@ -26,7 +26,7 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: "0775"
-  with_items:
+  loop:
     - "{{ docker_traefik.config }}"
     - "{{ docker_traefik.data }}"
     - "{{ docker_traefik.data }}/rules"
@@ -34,8 +34,8 @@
 - name: Create traefik volumes
   community.docker.docker_volume:
     name: "{{ item }}"
-  with_items:
-    - treafik-certificates
+  loop:
+    - traefik-certificates
 
 - name: Deploy and start Traefik service
   community.docker.docker_swarm_service:
@@ -59,14 +59,14 @@
       - --log
       - --api
     env:
-      - CLOUDFLARE_DNS_API_TOKEN={{ secret_cloudflare_zone_token }}
-      - CLOUDFLARE_HTTP_TIMEOUT=60
-      - CLOUDFLARE_POLLING_INTERVAL=10
-      - CLOUDFLARE_PROPAGATION_TIMEOUT=3600
-      - CLOUDFLARE_TTL=300
+      CLOUDFLARE_DNS_API_TOKEN: "{{ secret_cloudflare_zone_token }}"
+      CLOUDFLARE_HTTP_TIMEOUT: "60"
+      CLOUDFLARE_POLLING_INTERVAL: "10"
+      CLOUDFLARE_PROPAGATION_TIMEOUT: "3600"
+      CLOUDFLARE_TTL: "300"
     networks:
-      - traefik
-      - internal
+      - homelab_public
+      - homelab_private
     publish:
       - target_port: 80
         published_port: 80
@@ -74,18 +74,18 @@
         published_port: 443
     labels:
       traefik.enable: "true"
-      traefik.docker.network: traefik
+      traefik.docker.network: homelab_public
       traefik.http.middlewares.https-redirect.redirectscheme.scheme: https
       traefik.http.middlewares.https-redirect.redirectscheme.permanent: "true"
-      traefik.http.routers.traefik-public-http.rule: Host(`traefik.{{ root_domain }}`)
+      traefik.http.routers.traefik-public-http.rule: "Host(`traefik.{{ root_domain }}`)"
       traefik.http.routers.traefik-public-http.entrypoints: http
       traefik.http.routers.traefik-public-http.middlewares: https-redirect
-      traefik.http.routers.traefik-public-https.rule: Host(`traefik.{{ root_domain }}`)
+      traefik.http.routers.traefik-public-https.rule: "Host(`traefik.{{ root_domain }}`)"
       traefik.http.routers.traefik-public-https.entrypoints: https
       traefik.http.routers.traefik-public-https.tls: "true"
-      traefik.http.routers.traefik-public-https.service: api@internal
+      traefik.http.routers.traefik-public-https.service: "api@internal"
       traefik.http.routers.traefik-public-https.tls.certresolver: letsencrypt
-      traefik.http.routers.traefik-public-https.middlewares: authelia@swarm
+      traefik.http.routers.traefik-public-https.middlewares: "authelia@swarm"
       traefik.http.services.traefik-public.loadbalancer.server.port: "8080"
     mounts:
       - source: /var/run/docker.sock
@@ -95,7 +95,7 @@
       - source: "{{ docker_traefik.data }}/rules"
         target: /rules
         type: bind
-      - source: treafik-certificates
+      - source: traefik-certificates
         target: /certificates
         type: volume
     restart_config:
@@ -124,5 +124,4 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: "0644"
-  with_fileglob:
-    - ../templates/rules/*.yml.j2
+  loop: "{{ lookup('fileglob', '../templates/rules/*.yml.j2') }}"
