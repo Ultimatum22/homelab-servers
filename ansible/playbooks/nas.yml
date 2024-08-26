@@ -8,6 +8,8 @@
       tags: [ufw]
     - role: docker
       tags: [docker]
+    - role: exports
+      tags: [exports]
     # - role: homepage
     #   tags: [homepage]
     # - role: vpn

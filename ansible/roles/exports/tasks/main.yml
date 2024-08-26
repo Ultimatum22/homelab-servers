@@ -1,60 +1,63 @@
 ---
 - name: Install necessary packages
-  apt:
+  ansible.builtin.apt:
     name:
       - nfs-kernel-server
       - samba
       - cifs-utils
     state: present
-    update_cache: yes
+    update_cache: true
 
-- name: Create the shared directory
-  file:
-    path: "{{ export_dir }}"
+- name: Create the shared directories
+  ansible.builtin.file:
+    path: "{{ item }}"
     state: directory
     owner: nobody
     group: nogroup
     mode: '0777'
+  loop: "{{ export_dirs }}"
 
 - name: Configure NFS exports
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/exports
-    line: "{{ export_dir }} *(rw,sync,no_root_squash,no_subtree_check)"
-    create: yes
+    line: "{{ item }} *(rw,sync,no_root_squash,no_subtree_check)"
+    create: true
+  loop: "{{ export_dirs }}"
 
 - name: Export the NFS shares
-  command: exportfs -ra
+  ansible.builtin.command: exportfs -ra
 
 - name: Ensure NFS server is running and enabled
-  systemd:
+  ansible.builtin.systemd:
     name: nfs-kernel-server
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Create Samba user
-  command: "smbpasswd -a {{ samba_user }} {{ samba_password }}"
+  ansible.builtin.command: "smbpasswd -a {{ samba_user }} {{ samba_password }}"
   args:
     creates: "/var/lib/samba/private/passdb.tdb"
 
-- name: Add Samba configuration for shared directory
-  blockinfile:
+- name: Add Samba configuration for shared directories
+  ansible.builtin.blockinfile:
     path: /etc/samba/smb.conf
     block: |
-      [shared]
-      path = {{ export_dir }}
+      [{{ item | basename }}]
+      path = {{ item }}
       browseable = yes
       read only = no
       guest ok = no
       valid users = {{ samba_user }}
+  loop: "{{ export_dirs }}"
 
 - name: Ensure Samba services are running and enabled
-  systemd:
+  ansible.builtin.systemd:
     name: smbd
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Ensure Samba services are running and enabled
-  systemd:
+  ansible.builtin.systemd:
     name: nmbd
     state: started
-    enabled: yes
+    enabled: true
