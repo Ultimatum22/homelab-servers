@@ -20,3 +20,27 @@
     dev: /dev/sda1
     force: true
   when: parted_info.partitions | length == 0
+
+- name: Create mount point directory /mnt/shared
+  ansible.builtin.file:
+    path: /mnt/shared
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Mount the partition /dev/sda1 on /mnt/shared
+  ansible.posix.mount:
+    src: /dev/sda1
+    path: /mnt/shared
+    fstype: ext4
+    opts: defaults
+    state: mounted
+
+- name: Add the mount to fstab
+  ansible.posix.mount:
+    src: /dev/sda1
+    path: /mnt/shared
+    fstype: ext4
+    opts: defaults
+    state: present

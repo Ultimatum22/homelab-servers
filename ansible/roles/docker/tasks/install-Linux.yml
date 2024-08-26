@@ -16,11 +16,6 @@
   copy:
     content: |
       {
-        "runtimes": {
-          "runsc": {
-            "path": "/usr/local/bin/runsc"
-          }
-        }
       }
     dest: /etc/docker/daemon.json
     mode: 0644

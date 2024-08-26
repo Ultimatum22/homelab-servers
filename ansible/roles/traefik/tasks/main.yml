@@ -17,6 +17,8 @@
       subnet: 172.16.201.0/24
     - name: databases
       subnet: 172.16.202.0/24
+    - name: resilio
+      subnet: 172.16.203.0/24
   when: inventory_hostname == groups['cluster'][0]
 
 - name: Create directories

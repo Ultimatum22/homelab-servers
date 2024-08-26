@@ -1,0 +1,54 @@
+---
+- name: Create directories for Resilio
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0775"
+  loop:
+    - /mnt/shared
+
+- name: Deploy and start Resilio Sync service
+  community.docker.docker_swarm_service:
+    name: resilio
+    image: outlyernet/resiliosync-multiarch:2.8.0
+    env:
+      RESILIO_STORAGE: /mnt/shared
+      RSLSYNC_SECRET: blablatestsdfasdf
+    publish:
+      - target_port: 8888
+        published_port: 8888
+        mode: host
+      - target_port: 55555
+        published_port: 55555
+    networks:
+      - homelab_resilio
+    mounts:
+      - source: /etc/localtime
+        target: /etc/localtime
+        readonly: true
+      - source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
+      - source: /mnt/shared
+        target: /mnt/sync/folders
+        type: bind
+    restart_config:
+      condition: any
+      delay: 5s
+      max_attempts: 3
+      window: 120s
+    update_config:
+      delay: 10s
+      order: start-first
+      parallelism: 1
+    rollback_config:
+      parallelism: 0
+      order: stop-first
+    state: present
+    mode: global
+    placement:
+      constraints:
+        - node.role == manager
+  when: inventory_hostname == groups['cluster'][0]
