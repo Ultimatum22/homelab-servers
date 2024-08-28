@@ -5,6 +5,8 @@
   roles:
     - role: bootstrap
       tags: [bootstrap]
+    - role: exports_client
+      tags: [exports_client]
     - role: prepare_disks
       tags: [disks]
     - role: ufw

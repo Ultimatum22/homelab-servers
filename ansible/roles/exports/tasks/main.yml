@@ -1,4 +1,7 @@
 ---
+- name: Configure UFW
+  ansible.builtin.include_tasks: ufw.yml
+
 - name: Install necessary packages
   ansible.builtin.apt:
     name:
@@ -20,7 +23,7 @@
 - name: Configure NFS exports
   ansible.builtin.lineinfile:
     path: /etc/exports
-    line: "{{ item }} *(rw,sync,no_root_squash,no_subtree_check)"
+    line: "{{ item }} 192.168.2.0/24(rw,sync,no_root_squash,no_subtree_check)"
     create: true
   loop: "{{ export_dirs }}"
 

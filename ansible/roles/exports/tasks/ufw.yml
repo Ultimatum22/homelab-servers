@@ -1,0 +1,14 @@
+---
+- name: Open ports
+  include_role:
+    name: ufw_rules
+  vars:
+    ufw_rules:
+      - { rule: allow, port: 2049, proto: tcp, from_ip: 192.168.2.0/24, comment: NFS to handle requests. }
+      - { rule: allow, port: 2049, proto: udp, from_ip: 192.168.2.0/24, comment: NFS to handle requests. }
+      - { rule: allow, port: 111, proto: tcp, from_ip: 192.168.2.0/24, comment: The NFS server uses this to communicate with the client. }
+      - { rule: allow, port: 111, proto: udp, from_ip: 192.168.2.0/24, comment: The NFS server uses this to communicate with the client. }
+      - { rule: allow, port: 32803, proto: tcp, from_ip: 192.168.2.0/24, comment: Used for file locking, which is necessary for NFS to function correctly in environments where multiple clients might access the same files simultaneously. }
+      - { rule: allow, port: 32803, proto: udp, from_ip: 192.168.2.0/24, comment: Used for file locking, which is necessary for NFS to function correctly in environments where multiple clients might access the same files simultaneously. }
+      - { rule: allow, port: 20048, proto: tcp, from_ip: 192.168.2.0/24, comment: Handles mounting requests from clients. }
+      - { rule: allow, port: 20048, proto: udp, from_ip: 192.168.2.0/24, comment: Handles mounting requests from clients. }
