@@ -13,6 +13,9 @@ ansible_ssh_private_key_file=~/.ssh/homelab-infra
 [nas]
 homelab-nas01
 
+[update]
+homelab-swarm01
+
 [provision]
 homelab-swarm01
 homelab-swarm02

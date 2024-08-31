@@ -20,21 +20,24 @@
 
 - name: Create mount point
   ansible.builtin.file:
-    path: "{{ docker_data_root }}"
+    path: "{{ docker_root }}"
     state: directory
+    owner: nobody
+    group: nogroup
+    mode: "0755"
 
-- name: Mount NFS share
-  ansible.builtin.mount:
-    path: "{{ docker_data_root }}"
-    src: "192.168.2.200:/mnt/storage/homelab"
-    fstype: nfs
-    opts: defaults
-    state: mounted
+# - name: Mount NFS share
+#   ansible.builtin.mount:
+#     path: "{{ docker_data_root }}"
+#     src: "192.168.2.200:/mnt/storage/homelab"
+#     fstype: nfs
+#     opts: rw
+#     state: mounted
 
 - name: Ensure NFS share is mounted at boot
   ansible.builtin.mount:
-    path: "{{ docker_data_root }}"
+    path: "{{ docker_root }}"
     src: "192.168.2.200:/mnt/storage/homelab"
     fstype: nfs
-    opts: defaults
+    opts: rw
     state: present

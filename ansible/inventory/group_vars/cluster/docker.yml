@@ -1,7 +1,7 @@
 ---
-
-docker_data_root: /mnt/shared/docker/data
-docker_config_root: /mnt/shared/docker/config
+docker_root: /mnt/shared/docker
+docker_data_root: "{{ docker_root }}/data"
+docker_config_root: "{{ docker_root }}/config"
 
 docker_traefik:
   config: "{{ docker_config_root }}/traefik"

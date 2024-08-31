@@ -1,6 +1,7 @@
 ---
-docker_data_root: /mnt/data/docker/data
-docker_config_root: /mnt/data/docker/config
+docker_root: /mnt/data/docker
+docker_data_root: "{{ docker_root }}/data"
+docker_config_root: "{{ docker_root }}/config"
 
 docker_backup: /mnt/storage/backup
 docker_homelab: /mnt/storage/homelab
