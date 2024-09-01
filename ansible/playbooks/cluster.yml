@@ -21,8 +21,8 @@
       tags: [keepalived]
     # - role: cloudflared
     #   tags: [cloudflared]
-    # - role: bind
-    #   tags: [bind]
+    - role: bind
+      tags: [bind]
     # - role: haproxy
     #   tags: [haproxy]
     # - role: consul
