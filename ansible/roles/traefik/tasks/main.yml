@@ -1,4 +1,18 @@
 ---
+
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0775"
+  with_items:
+    - "{{ docker_traefik.data }}"
+    - "{{ docker_traefik.config }}"
+    - "{{ docker_traefik.data }}/rules"
+    - "{{ docker_traefik.config }}/certificates"
+
 - name: Create Docker networks
   community.general.docker_network:
     name: "homelab_{{ item.name }}"
@@ -20,18 +34,6 @@
     - name: resilio
       subnet: 172.16.203.0/24
   when: inventory_hostname == groups['cluster'][0]
-
-- name: Create traefik volumes
-  community.docker.docker_volume:
-    name: "traefik_{{ item }}"
-    driver: local
-    driver_options:
-      type: nfs
-      o: addr=192.168.2.200,rw
-      device: ":/mnt/data/homelab/{{ item }}"
-  loop:
-    - rules
-    - certificates
 
 - name: Deploy and start Traefik service
   community.docker.docker_swarm_service:
@@ -88,10 +90,10 @@
         target: /var/run/docker.sock
         type: bind
         readonly: true
-      - source: traefik_rules
+      - source: "{{ docker_traefik.data }}/rules"
         target: /rules
         type: volume
-      - source: traefik_certificates
+      - source: "{{ docker_traefik.config }}/certificates"
         target: /certificates
         type: volume
     restart_config:
@@ -113,12 +115,13 @@
         - node.role == manager
   when: inventory_hostname == groups['cluster'][0]
 
-# - name: Copy rules
-#   ansible.builtin.template:
-#     src: "{{ item }}"
-#     dest: "/mnt/nfs/traefik/rules/{{ item | basename | regex_replace('.yml.j2$', '.yml') }}"
-#     owner: "{{ ansible_user }}"
-#     group: "{{ ansible_user }}"
-#     mode: "0644"
-#   with_fileglob:
-#     - ../templates/rules/*.yml.j2
+- name: Copy rules
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ docker_traefik.data }}/rules/{{ item | basename | regex_replace('.yml.j2$', '.yml') }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+  with_fileglob:
+    - ../templates/rules/*.yml.j2
+  when: inventory_hostname == groups['cluster'][0]

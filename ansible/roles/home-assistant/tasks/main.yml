@@ -1,14 +1,4 @@
 ---
-- name: Create network
-  community.general.docker_network:
-    name: "{{ item }}"
-    driver: overlay
-    scope: swarm
-  with_items:
-    - traefik
-    - internal
-  when: inventory_hostname == groups['cluster'][0]
-
 - name: Create directories
   ansible.builtin.file:
     path: "{{ item }}"
@@ -27,23 +17,19 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: "0644"
-
-- name: Create Home Assistant volumes
-  community.docker.docker_volume:
-    name: "{{ item }}"
-  with_items:
-    - home_assistant_config
+  when: inventory_hostname == groups['cluster'][0]
 
 - name: Create and start Home Assistant container
   community.docker.docker_swarm_service:
     name: home_assistant
     image: "{{ docker_home_assistant.image }}"
     networks:
-      - traefik
+      - homelab_private
     env:
       TZ: "{{ system_timezone }}"
     labels:
       traefik.enable: "true"
+      traefik.docker.network: homelab_private
       traefik.http.routers.ha.rule: "Host(`ha.{{ root_domain }}`)"
       traefik.http.routers.ha.entrypoints: https
       traefik.http.routers.ha.tls: "true"

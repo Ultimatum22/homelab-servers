@@ -7,8 +7,8 @@
       tags: [traefik]
     # - role: swarmpit
     #   tags: [swarmpit]
-    - role: resilio
-      tags: [resilio]
+    # - role: resilio
+    #   tags: [resilio]
     - role: authelia
       tags: [authelia]
     # - role: cloudflare-ddns

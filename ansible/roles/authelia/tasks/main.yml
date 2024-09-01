@@ -17,16 +17,17 @@
   loop:
     - configuration
     - users_database
+  when: inventory_hostname == groups['cluster'][0]
 
 - name: Create and start Authelia container
   community.docker.docker_swarm_service:
     name: authelia
     image: "{{ docker_authelia.image }}"
     networks:
-      - traefik
+      - homelab_private
     labels:
       traefik.enable: "true"
-      traefik.docker.network: traefik
+      traefik.docker.network: homelab_private
       traefik.http.routers.auth.rule: "Host(`auth.{{ root_domain }}`)"
       traefik.http.routers.auth.entrypoints: https
       traefik.http.routers.auth.tls: "true"
@@ -63,3 +64,4 @@
     placement:
       constraints:
         - node.role == manager
+  when: inventory_hostname == groups['cluster'][0]
