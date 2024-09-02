@@ -1,5 +1,4 @@
 ---
-
 - name: Create directories
   ansible.builtin.file:
     path: "{{ item }}"
@@ -12,6 +11,11 @@
     - "{{ docker_traefik.config }}"
     - "{{ docker_traefik.data }}/rules"
     - "{{ docker_traefik.config }}/certificates"
+
+- name: Create network
+  docker_network:
+    name: testhomelabtest
+    driver: overlay
 
 - name: Create Docker networks
   community.general.docker_network:
@@ -31,8 +35,6 @@
       subnet: 172.16.201.0/24
     - name: databases
       subnet: 172.16.202.0/24
-    - name: resilio
-      subnet: 172.16.203.0/24
   when: inventory_hostname == groups['cluster'][0]
 
 - name: Deploy and start Traefik service
@@ -62,29 +64,46 @@
       CLOUDFLARE_POLLING_INTERVAL: "10"
       CLOUDFLARE_PROPAGATION_TIMEOUT: "3600"
       CLOUDFLARE_TTL: "300"
+    # networks:
+    #   - homelab_public
+    #   - homelab_private
     networks:
-      - homelab_public
-      - homelab_private
+      - name: testhomelabtest
     publish:
       - target_port: 80
         published_port: 80
       - target_port: 443
         published_port: 443
+      - target_port: 8080
+        published_port: 8080
     labels:
       traefik.enable: "true"
-      # traefik.docker.network: homelab_public
+      traefik.docker.network: testhomelabtest
       traefik.http.middlewares.https-redirect.redirectscheme.scheme: https
       traefik.http.middlewares.https-redirect.redirectscheme.permanent: "true"
-      traefik.http.routers.traefik-public-http.rule: "Host(`traefik.{{ root_domain }}`)"
-      traefik.http.routers.traefik-public-http.entrypoints: http
+      traefik.http.routers.traefik-public-http.rule: Host(`traefik.{{ root_domain }}`)
+      traefik.http.routers.traefik-public-http.entryPoints: http
       traefik.http.routers.traefik-public-http.middlewares: https-redirect
-      traefik.http.routers.traefik-public-https.rule: "Host(`traefik.{{ root_domain }}`)"
-      traefik.http.routers.traefik-public-https.entrypoints: https
+      traefik.http.routers.traefik-public-https.rule: Host(`traefik.{{ root_domain }}`)
+      traefik.http.routers.traefik-public-https.entryPoints: https
       traefik.http.routers.traefik-public-https.tls: "true"
-      traefik.http.routers.traefik-public-https.service: "api@internal"
+      traefik.http.routers.traefik-public-https.service: api@internal
       traefik.http.routers.traefik-public-https.tls.certresolver: letsencrypt
-      # traefik.http.routers.traefik-public-https.middlewares: "authelia@swarm"
       traefik.http.services.traefik-public.loadbalancer.server.port: "8080"
+
+
+      # traefik.http.middlewares.https-redirect.redirectscheme.scheme: https
+      # traefik.http.middlewares.https-redirect.redirectscheme.permanent: "true"
+      # traefik.http.routers.traefik-public-http.rule: "Host(`traefik.{{ root_domain }}`)"
+      # traefik.http.routers.traefik-public-http.entrypoints: http
+      # traefik.http.routers.traefik-public-http.middlewares: https-redirect
+      # traefik.http.routers.traefik-public-https.rule: "Host(`traefik.{{ root_domain }}`)"
+      # traefik.http.routers.traefik-public-https.entrypoints: https
+      # traefik.http.routers.traefik-public-https.tls: "true"
+      # traefik.http.routers.traefik-public-https.service: "api@internal"
+      # traefik.http.routers.traefik-public-https.tls.certresolver: letsencrypt
+      # # traefik.http.routers.traefik-public-https.middlewares: "authelia@swarm"
+      # traefik.http.services.traefik-public.loadbalancer.server.port: "8080"
     mounts:
       - source: /var/run/docker.sock
         target: /var/run/docker.sock
@@ -116,13 +135,13 @@
         - node.hostname == homelab-swarm01
   when: inventory_hostname == groups['cluster'][0]
 
-- name: Copy rules
-  ansible.builtin.template:
-    src: "{{ item }}"
-    dest: "{{ docker_traefik.data }}/rules/{{ item | basename | regex_replace('.yml.j2$', '.yml') }}"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: "0644"
-  with_fileglob:
-    - ../templates/rules/*.yml.j2
-  when: inventory_hostname == groups['cluster'][0]
+# - name: Copy rules
+#   ansible.builtin.template:
+#     src: "{{ item }}"
+#     dest: "{{ docker_traefik.data }}/rules/{{ item | basename | regex_replace('.yml.j2$', '.yml') }}"
+#     owner: "{{ ansible_user }}"
+#     group: "{{ ansible_user }}"
+#     mode: "0644"
+#   with_fileglob:
+#     - ../templates/rules/*.yml.j2
+#   when: inventory_hostname == groups['cluster'][0]
