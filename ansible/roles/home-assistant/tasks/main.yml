@@ -24,12 +24,12 @@
     name: home_assistant
     image: "{{ docker_home_assistant.image }}"
     networks:
-      - homelab_private
+      - homelab_public
     env:
       TZ: "{{ system_timezone }}"
     labels:
       traefik.enable: "true"
-      traefik.docker.network: homelab_private
+      traefik.docker.network: homelab_public
       traefik.http.routers.ha.rule: "Host(`ha.{{ root_domain }}`)"
       traefik.http.routers.ha.entrypoints: https
       traefik.http.routers.ha.tls: "true"

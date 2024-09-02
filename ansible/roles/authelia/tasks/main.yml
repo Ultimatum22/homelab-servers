@@ -24,19 +24,19 @@
     name: authelia
     image: "{{ docker_authelia.image }}"
     networks:
-      - homelab_private
+      #- homelab_public
     labels:
       traefik.enable: "true"
-      traefik.docker.network: homelab_private
+      #traefik.docker.network: homelab_public
       traefik.http.routers.auth.rule: "Host(`auth.{{ root_domain }}`)"
       traefik.http.routers.auth.entrypoints: https
       traefik.http.routers.auth.tls: "true"
       traefik.http.routers.auth.tls.certresolver: letsencrypt
       traefik.http.routers.auth.service: auth@swarm
       traefik.http.services.auth.loadbalancer.server.port: "9091"
-      traefik.http.middlewares.authelia.forwardauth.address: http://authelia:9091/api/verify?rd=https://auth.{{ root_domain }}
-      traefik.http.middlewares.authelia.forwardauth.trustForwardHeader: "true"
-      traefik.http.middlewares.authelia.forwardauth.authResponseHeaders: Remote-User,Remote-Groups,Remote-Name,Remote-Email
+      # traefik.http.middlewares.authelia.forwardauth.address: http://authelia:9091/api/verify?rd=https://auth.{{ root_domain }}
+      # traefik.http.middlewares.authelia.forwardauth.trustForwardHeader: "true"
+      # traefik.http.middlewares.authelia.forwardauth.authResponseHeaders: Remote-User,Remote-Groups,Remote-Name,Remote-Email
 
       homepage.group: Home
       homepage.name: Authelia

@@ -72,7 +72,7 @@
         published_port: 443
     labels:
       traefik.enable: "true"
-      traefik.docker.network: homelab_public
+      # traefik.docker.network: homelab_public
       traefik.http.middlewares.https-redirect.redirectscheme.scheme: https
       traefik.http.middlewares.https-redirect.redirectscheme.permanent: "true"
       traefik.http.routers.traefik-public-http.rule: "Host(`traefik.{{ root_domain }}`)"
@@ -83,7 +83,7 @@
       traefik.http.routers.traefik-public-https.tls: "true"
       traefik.http.routers.traefik-public-https.service: "api@internal"
       traefik.http.routers.traefik-public-https.tls.certresolver: letsencrypt
-      traefik.http.routers.traefik-public-https.middlewares: "authelia@swarm"
+      # traefik.http.routers.traefik-public-https.middlewares: "authelia@swarm"
       traefik.http.services.traefik-public.loadbalancer.server.port: "8080"
     mounts:
       - source: /var/run/docker.sock
@@ -92,10 +92,10 @@
         readonly: true
       - source: "{{ docker_traefik.data }}/rules"
         target: /rules
-        type: volume
+        type: bind
       - source: "{{ docker_traefik.config }}/certificates"
         target: /certificates
-        type: volume
+        type: bind
     restart_config:
       condition: any
       delay: 5s
@@ -113,6 +113,7 @@
     placement:
       constraints:
         - node.role == manager
+        - node.hostname == homelab-swarm01
   when: inventory_hostname == groups['cluster'][0]
 
 - name: Copy rules
