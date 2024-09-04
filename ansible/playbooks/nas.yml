@@ -46,6 +46,8 @@
     #   tags: [mealie]
     - role: syncthing
       tags: [syncthing]
+    - role: restic
+      tags: [restic]
     # - role: dozzle
     #   tags: [dozzle]
     # - role: pgadmin
