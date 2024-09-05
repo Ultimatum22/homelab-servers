@@ -1,0 +1,50 @@
+---
+restic_url: '{{ restic_url_default }}'
+restic_version: '0.16.3'
+restic_download_path: '/opt/restic'
+restic_install_path: '/usr/local/bin'
+restic_script_dir: '/opt/restic'
+restic_backup_script_shell: sh
+restic_log_dir: '{{ restic_script_dir }}/log'
+restic_repos:
+  b2:
+    location: b2:homelabstorage:mnt/storage1
+    password: "{{ secret_restic_password }}"
+    init: true
+    b2_account_id: "{{ secret_restic_aws_access_key_id }}"
+    b2_account_key: "{{ secret_restic_aws_secret_access_key }}"
+restic_backups:
+  homelab:
+    name: homelab
+    repo: remote
+    src: /mnt/storage/homelab
+    scheduled: true
+    schedule_oncalendar: '*-*-* 01:00:00'
+
+restic_create_schedule: "{{ restic_create_cron }}"
+restic_schedule_type: "systemd"
+restic_backup_now: false
+# restic_schedule_type: "cronjob"
+restic_no_log: false
+
+restic_dir_owner: '{{ ansible_user | default(ansible_user_id) }}'
+restic_dir_group: '{{ ansible_user | default(ansible_user_id) }}'
+
+# timer defaults
+restic_systemd_timer_randomizeddelaysec: '4h'
+restic_systemd_timer_default_oncalendar: '*-*-* 02:00:00'
+
+# perform simple version check for this role? (true is recomended)
+submodules_versioncheck: false
+restic_do_not_cleanup_cron: true
+
+# cache
+restic__cache_config: false
+restic__cache_dir: '~/.cache/restic'
+
+# limit maximum number of CPUs that can be used simultaneously
+restic__limit_cpu_usage: false
+restic__max_cpus: 1
+
+# outdated variables because of irritating names, but kept for compatibility
+restic_create_cron: false
