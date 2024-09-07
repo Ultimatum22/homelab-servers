@@ -41,7 +41,7 @@
 - name: Deploy and start Traefik service
   community.docker.docker_swarm_service:
     name: traefik
-    image: traefik:v3.0
+    image: "{{ docker_traefik.image }}"
     publish:
       - target_port: 80
         published_port: 80
@@ -61,6 +61,7 @@
       traefik.http.routers.traefik-public-https.tls: "true"
       traefik.http.routers.traefik-public-https.service: api@internal
       traefik.http.routers.traefik-public-https.tls.certresolver: letsencrypt
+      # traefik.http.routers.traefik-public-https.middlewares: "auth@swarm"
       traefik.http.services.traefik-public.loadbalancer.server.port: "8080"
     mounts:
       - source: /var/run/docker.sock
