@@ -5,5 +5,5 @@
   roles:
     - role: update
       tags: [update]
-    - role: reboot
-      tags: [reboot]
+    # - role: reboot
+    #   tags: [reboot]
