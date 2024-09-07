@@ -1,0 +1,7 @@
+---
+restic_backups:
+  homelabdata:
+    name: homelab-data
+    src: /mnt/storage/homelab/
+    scheduled: true
+    schedule_oncalendar: '*-*-* 01:00:00'
