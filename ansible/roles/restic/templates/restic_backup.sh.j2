@@ -71,6 +71,7 @@ case $? in
         echo "$(date -u '+%Y-%m-%d %H:%M:%S') ERROR" {{ backup_result_log }}
 esac
 
+{# 
 # Forget commands
 {{ restic_install_dir }}/restic forget {{ paths(item) }} {{ retention_pattern(item) }} {% if item.prune is defined and item.prune == true %}--prune{% endif %} {{ forget_output_log }}
 if [[ $? -eq 0 ]]
@@ -78,8 +79,8 @@ then
     echo "$(date -u '+%Y-%m-%d %H:%M:%S') OK" {{ forget_result_log }}
 else
     echo "$(date -u '+%Y-%m-%d %H:%M:%S') ERROR" {{ forget_result_log }}
-fi
-
+fi 
+#}
 
 rm -f $pid # remove pid file just before exiting
 exit
