@@ -1,14 +1,4 @@
 ---
-# - name: Create directories
-#   ansible.builtin.file:
-#     path: "{{ item }}"
-#     state: directory
-#     owner: "{{ ansible_user }}"
-#     group: "{{ ansible_user }}"
-#     mode: "0775"
-#   with_items:
-#     - "{{ restic_download_path }}/bin/restic-{{ restic_version }}"
-
 - name: Create a temporary directory for the install
   ansible.builtin.tempfile:
     state: directory
@@ -39,8 +29,8 @@
 
     - name: Download client binary
       ansible.builtin.get_url:
-        url: '{{ restic_download_url }}'
-        dest: '{{ temp_install_dir.path }}/restic.bz2'
+        url: "{{ restic_download_url }}"
+        dest: "{{ temp_install_dir.path }}/restic.bz2"
         force: true
         mode: 0644
       register: get_url_restic
@@ -53,9 +43,24 @@
         path: "{{ restic_install_dir }}/restic"
         owner: root
         group: root
-        mode: '0755'
+        mode: "0755"
 
     - name: Clean up the temporary install directory
       ansible.builtin.file:
         path: "{{ temp_install_dir.path }}"
         state: absent
+
+- name: Initialize repository
+  ansible.builtin.command: "{{ restic_install_dir }}/restic init"
+  environment:
+    RESTIC_REPOSITORY: "{{ secret_restic_backblaze_location }}"
+    RESTIC_PASSWORD: "{{ secret_restic_password }}"
+    AWS_ACCESS_KEY_ID: "{{ secret_restic_backblaze_access_key_id }}"
+    AWS_SECRET_ACCESS_KEY: "{{ secret_restic_backblaze_secret_access_key }}"
+  register: restic_init
+  changed_when: "'created restic repository' in restic_init.stdout"
+  failed_when:
+    - restic_init.rc != 0
+    - not "config file already exists" in restic_init.stderr
+    - not "config already initialized" in restic_init.stderr
+    - not "config already exists" in restic_init.stderr

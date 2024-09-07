@@ -1,0 +1,18 @@
+#!/usr/bin/bash
+
+# Backup script for {{ item.src }}
+
+pid="/var/run/restic_backup_{{  item.name | regex_replace('\'', '\'\\\'\'') }}.pid"
+
+trap "rm -f $pid" SIGSEGV
+trap "rm -f $pid" SIGINT
+
+if [ -e $pid ]; then
+    echo "Another version of this restic backup script is already running!"
+    exit # pid file exists, another instance is running, so now we politely exit
+else
+    echo $$ > $pid # pid file doesn't exit, create one and go on
+fi
+# your normal workflow here...
+
+echo $RESTIC_REPOSITORY

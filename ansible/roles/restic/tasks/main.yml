@@ -1,9 +1,16 @@
 ---
-- name: Install restic
-  ansible.builtin.include_tasks: ./install.yml
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0775"
+  with_items:
+    - "{{ restic_config_dir }}"
 
-- name: Initialize repositories
-  ansible.builtin.include_tasks: ./configure.yml
+# - name: Install restic
+#   ansible.builtin.include_tasks: ./install.yml
 
 - name: Create backup script
   ansible.builtin.include_tasks: ./backup.yml
