@@ -1,29 +1,16 @@
 ---
 restic_version: 0.17.1
 
-restic_datacenter: "{{ datacenter_name }}"
-
-restic_user: restic
-restic_group: restic
-
 restic_download_url: "https://github.com/restic/restic/releases/download/v{{ restic_version }}/restic_{{ restic_version }}_linux_{{ arch[ansible_architecture] }}.bz2"
 
 restic_install_dir: /usr/bin
 restic_data_dir: /opt/restic
 restic_log_dir: "{{ restic_data_dir }}/log"
 
-cni_version: 1.5.1
-cni_install_dir: /opt/cni/bin
-cni_download_url: "https://github.com/containernetworking/plugins/releases/download/v{{ cni_version }}/cni-plugins-linux-{{ arch[ansible_architecture] }}-v{{ cni_version }}.tgz"
+restic_systemd_timer_randomizeddelaysec: '4h'
+restic_systemd_timer_default_oncalendar: '*-*-* 02:00:00'
 
 arch:
   x86_64: amd64
   aarch64: arm64
   armv7l: arm
-
-restic_ports:
-  http: "4646"
-  rpc: "4647"
-  serf: "4648"
-
-restic_bootstrap_expect_value: "{{ _restic_servers_servercount | int }}"

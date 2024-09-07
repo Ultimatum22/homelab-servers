@@ -20,8 +20,67 @@
     dest: "{{ restic_data_dir }}/backup-{{ item.name | replace(' ', '') }}.sh"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: "0700"
+    mode: "a+x"
   with_items: '{{ restic_backups }}'
   when:
     - item.name is defined
     - item.src is defined
+
+- name: Copy systemd timer
+  ansible.builtin.template:
+    src: restic.timer.j2
+    dest: "/lib/systemd/system/restic-{{ item.name | replace(' ', '') }}.timer"
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  with_items: '{{ restic_backups }}'
+  notify: restart timer
+  when:
+    - item.name is defined
+    - item.scheduled | default(false)
+
+- name: Copy systemd service
+  ansible.builtin.template:
+    src: restic.service.j2
+    dest: "/lib/systemd/system/restic-{{ item.name | replace(' ', '') }}.service"
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  with_items: '{{ restic_backups }}'
+  when:
+    - item.name is defined
+    - item.scheduled | default(false)
+
+- name: Enable restic service
+  ansible.builtin.systemd:
+    name: "restic-{{ item.name | replace(' ', '') | string }}.service"
+    enabled: true
+    daemon_reload: true
+    masked: false
+  with_items: '{{ restic_backups }}'
+  notify: restart timer
+  when:
+    - item.name is defined
+    - item.scheduled | default(false)
+
+- name: Enable and start restic timer
+  ansible.builtin.systemd:
+    name: "restic-{{ item.name | replace(' ', '') | string }}.timer"
+    enabled: true
+    state: started
+    daemon_reload: true
+    masked: false
+  with_items: '{{ restic_backups }}'
+  notify: restart timer
+  when:
+    - item.name is defined
+    - item.scheduled | default(false)
+
+- name: Run backup script
+  ansible.builtin.command:
+    cmd: "/usr/bin/env sh {{ restic_data_dir }}/backup-{{ item.name | replace(' ', '') }}.sh"
+  with_items: '{{ restic_backups }}'
+  when:
+    - item.name is defined
+  register: result
+  changed_when: result.rc != 0
