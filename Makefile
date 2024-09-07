@@ -21,9 +21,9 @@ ansible.run:
 		exit 1; \
 	fi
 	@if [ -n "$(role)" ]; then \
-		cd ansible && ansible-playbook playbooks/$(playbook).yml --tags $(role) -v; \
+		cd ansible && ansible-playbook playbooks/$(playbook).yml --tags $(role); \
 	else \
-		cd ansible && ansible-playbook playbooks/$(playbook).yml -vvv; \
+		cd ansible && ansible-playbook playbooks/$(playbook).yml; \
 	fi
 
 # Docker
