@@ -7,7 +7,7 @@
 - name: Ensure Restic is installed
   block:
     - name: Test restic
-      ansible.builtin.command: restic --version
+      ansible.builtin.command: restic version
       register: restic_version_test
       changed_when: false
 

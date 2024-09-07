@@ -10,8 +10,8 @@
     - "{{ restic_data_dir }}"
     - "{{ restic_log_dir }}"
 
-# - name: Install restic
-#   ansible.builtin.include_tasks: ./install.yml
+- name: Install restic
+  ansible.builtin.include_tasks: ./install.yml
 
 - name: Create backup script
   ansible.builtin.include_tasks: ./backup.yml

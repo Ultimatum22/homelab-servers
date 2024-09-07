@@ -22,8 +22,6 @@ else
     echo $$ > $pid # pid file doesn't exit, create one and go on
 fi
 
-set -uxo pipefail
-
 {% set pre_backup_cmd_result_log, pre_backup_cmd_output_log = ">> " + restic_log_dir + "/" + item.name + "-pre_backup_cmd-result.log", "| tee " + restic_log_dir + "/" + item.name + "-pre_backup_cmd-output.log" %}
 {% set backup_result_log, backup_output_log = ">> " + restic_log_dir + "/" + item.name + "-backup-result.log", "| tee " + restic_log_dir + "/" + item.name + "-backup-output.log" %}
 {% set forget_result_log, forget_output_log = ">> " + restic_log_dir + "/" + item.name + "-forget-result.log", "| tee " + restic_log_dir + "/" + item.name + "-forget-output.log" %}
