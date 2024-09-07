@@ -1,1 +1,63 @@
 ---
+# - name: Create directories
+#   ansible.builtin.file:
+#     path: "{{ item }}"
+#     state: directory
+#     owner: "{{ ansible_user }}"
+#     group: "{{ ansible_user }}"
+#     mode: "0775"
+#   with_items:
+#     - "{{ restic_download_path }}/bin/restic-{{ restic_version }}"
+
+- name: Create a temporary directory for the install
+  ansible.builtin.tempfile:
+    state: directory
+  register: temp_install_dir
+
+- name: Ensure Restic is installed
+  block:
+    - name: Test restic
+      ansible.builtin.command: restic --version
+      register: restic_version_test
+      changed_when: false
+
+    - name: Test if correct version is installed
+      ansible.builtin.assert:
+        that:
+          - restic_version in restic_version_test.stdout
+        success_msg: "Restic version {{ restic_version }} is installed"
+        fail_msg: Restic was not successfully installed
+  rescue:
+    - name: Ensure old restic is removed
+      ansible.builtin.file:
+        path: "{{ restic_install_dir }}/restic"
+        state: absent
+
+    - name: Install dir
+      debug:
+        var: temp_install_dir.path
+
+    - name: Download client binary
+      ansible.builtin.get_url:
+        url: '{{ restic_download_url }}'
+        dest: '{{ temp_install_dir.path }}/restic.bz2'
+        force: true
+        mode: 0644
+      register: get_url_restic
+
+    - name: Decompress the binary
+      ansible.builtin.shell: "bzip2 -dc {{ get_url_restic.dest }} > {{ restic_install_dir }}/restic"
+      # args:
+        # creates: '{{ restic_download_path }}/bin/restic-{{ restic_version }}'
+
+    - name: (INSTALL) Ensure permissions are correct
+      ansible.builtin.file:
+        path: "{{ restic_install_dir }}/restic"
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Clean up the temporary install directory
+      ansible.builtin.file:
+        path: "{{ temp_install_dir.path }}"
+        state: absent

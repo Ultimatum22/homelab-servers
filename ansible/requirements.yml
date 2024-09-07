@@ -14,3 +14,6 @@ roles:
     version: 7.0.2
   - name: artis3n.tailscale
   - name: jason_riddle.tailscale
+  - name: compscidr.uncompress
+    src: https://github.com/compscidr/ansible-uncompress
+    version: 0.0.3
