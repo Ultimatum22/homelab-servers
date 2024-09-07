@@ -1,6 +1,0 @@
----
-# tasks file for skeleton
-
-- name: Message
-  ansible.builtin.debug:
-    msg: 'Your {{ ansible_system }} is not supported'
