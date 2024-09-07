@@ -1,0 +1,84 @@
+#!/usr/bin/bash
+
+# Restore script for {{ item.src }}
+
+export RESTIC_REPOSITORY="{{ secret_restic_backblaze_location }}"
+export RESTIC_PASSWORD="{{ secret_restic_password }}"
+export AWS_ACCESS_KEY_ID="{{ secret_restic_backblaze_access_key_id }}"
+export AWS_SECRET_ACCESS_KEY="{{ secret_restic_backblaze_secret_access_key }}"
+
+BACKUP_NAME={{ item.name }}
+BACKUP_SOURCE={{ item.src }}
+
+pid="/var/run/restic_backup_{{  item.name | regex_replace('\'', '\'\\\'\'') }}.pid"
+
+trap "rm -f $pid" SIGSEGV
+trap "rm -f $pid" SIGINT
+
+if [ -e $pid ]; then
+    echo "Another version of this restic backup script is already running!"
+    exit # pid file exists, another instance is running, so now we politely exit
+else
+    echo $$ > $pid # pid file doesn't exit, create one and go on
+fi
+
+{% set pre_backup_cmd_result_log, pre_backup_cmd_output_log = ">> " + restic_log_dir + "/" + item.name + "-pre_backup_cmd-result.log", "| tee " + restic_log_dir + "/" + item.name + "-pre_backup_cmd-output.log" %}
+{% set backup_result_log, backup_output_log = ">> " + restic_log_dir + "/" + item.name + "-backup-result.log", "| tee " + restic_log_dir + "/" + item.name + "-backup-output.log" %}
+{% set forget_result_log, forget_output_log = ">> " + restic_log_dir + "/" + item.name + "-forget-result.log", "| tee " + restic_log_dir + "/" + item.name + "-forget-output.log" %}
+{% set past_backup_cmd_result_log, past_backup_cmd_output_log = ">> " + restic_log_dir + "/" + item.name + "-past_backup_cmd-result.log", "| tee " + restic_log_dir + "/" + item.name + "-past_backup_cmd-output.log" %}
+
+# Define paths
+{% macro paths(repo) -%}
+{% if repo.src is defined and repo.src != None and (repo.src is not string)  %}{%for path in repo.src %} --path {{ path }}{% endfor %}{%elif repo.src is string %}--path {{repo.src}} {% else %} --path {{ repo.stdin_filename }}{% endif %}
+{%- endmacro %}
+
+# Define retention pattern
+{% macro retention_pattern(repo) -%}
+  {% if repo.keep_last is defined and repo.keep_last != None %}--keep-last {{ item.keep_last }}{% endif %} \
+  {% if repo.keep_hourly is defined and repo.keep_hourly != None %}--keep-hourly {{ item.keep_hourly }}{% endif %} \
+  {% if repo.keep_daily is defined and repo.keep_daily != None %}--keep-daily {{ item.keep_daily }}{% endif %} \
+  {% if repo.keep_weekly is defined and repo.keep_weekly != None %}--keep-weekly {{ item.keep_weekly }}{% endif %} \
+  {% if repo.keep_monthly is defined and repo.keep_monthly != None %}--keep-monthly {{ item.keep_monthly }}{% endif %} \
+  {% if repo.keep_yearly is defined and repo.keep_yearly != None %}--keep-yearly {{ item.keep_yearly }}{% endif %} \
+  {% if repo.keep_within is defined and repo.keep_within != None %}--keep-within {{ item.keep_within }}{% endif %} \
+  {% if repo.keep_tag is defined and (repo.keep_tag|length>0) %}{{ keep_tags(repo.keep_tag) }}{% endif %}
+{%- endmacro %}
+
+# Backup
+if [[ -z ${CRON+x} ]]; then
+  MODE_TAG="--tag manual"
+else
+  MODE_TAG="--tag cron"
+fi
+
+{
+  {{ restic_install_dir }}/restic backup $BACKUP_SOURCE $MODE_TAG \
+    {% if item.exclude is defined %}{{ exclude(item.exclude) }}{% endif %} \
+    $@
+} \
+{{ backup_output_log }}
+
+case $? in
+    0)
+        echo "$(date -u '+%Y-%m-%d %H:%M:%S') OK" {{ backup_result_log }}
+        ;;
+    3)
+        echo "$(date -u '+%Y-%m-%d %H:%M:%S') WARNING" {{ backup_result_log }}
+        ;;
+    *)
+        echo "$(date -u '+%Y-%m-%d %H:%M:%S') ERROR" {{ backup_result_log }}
+esac
+
+{# 
+# Forget commands
+{{ restic_install_dir }}/restic forget {{ paths(item) }} {{ retention_pattern(item) }} {% if item.prune is defined and item.prune == true %}--prune{% endif %} {{ forget_output_log }}
+if [[ $? -eq 0 ]]
+then
+    echo "$(date -u '+%Y-%m-%d %H:%M:%S') OK" {{ forget_result_log }}
+else
+    echo "$(date -u '+%Y-%m-%d %H:%M:%S') ERROR" {{ forget_result_log }}
+fi 
+#}
+
+rm -f $pid # remove pid file just before exiting
+exit

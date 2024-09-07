@@ -28,6 +28,18 @@
     - item.name is defined
     - item.src is defined
 
+- name: Create restore script
+  ansible.builtin.template:
+    src: restic_restore.sh.j2
+    dest: "{{ restic_data_dir }}/restore-{{ item.name | replace(' ', '') }}.sh"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "a+x"
+  with_items: '{{ restic_backups }}'
+  when:
+    - item.name is defined
+    - item.src is defined
+
 - name: Copy systemd timer
   ansible.builtin.template:
     src: restic.timer.j2
