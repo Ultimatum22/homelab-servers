@@ -7,7 +7,8 @@
     group: "{{ ansible_user }}"
     mode: "0775"
   with_items:
-    - "{{ restic_config_dir }}"
+    - "{{ restic_data_dir }}"
+    - "{{ restic_log_dir }}"
 
 # - name: Install restic
 #   ansible.builtin.include_tasks: ./install.yml
