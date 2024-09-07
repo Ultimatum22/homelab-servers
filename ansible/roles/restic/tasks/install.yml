@@ -47,10 +47,8 @@
 
     - name: Decompress the binary
       ansible.builtin.shell: "bzip2 -dc {{ get_url_restic.dest }} > {{ restic_install_dir }}/restic"
-      # args:
-        # creates: '{{ restic_download_path }}/bin/restic-{{ restic_version }}'
 
-    - name: (INSTALL) Ensure permissions are correct
+    - name: Ensure permissions are correct
       ansible.builtin.file:
         path: "{{ restic_install_dir }}/restic"
         owner: root
