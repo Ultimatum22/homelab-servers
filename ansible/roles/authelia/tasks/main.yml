@@ -17,7 +17,6 @@
   loop:
     - configuration
     - users_database
-  when: inventory_hostname == groups['cluster'][0]
 
 - name: Create and start Authelia container
   community.docker.docker_swarm_service:
@@ -32,9 +31,9 @@
       traefik.http.routers.auth.entrypoints: https
       traefik.http.routers.auth.tls: "true"
       traefik.http.routers.auth.tls.certresolver: letsencrypt
-      traefik.http.routers.auth.service: auth@swarm
+      traefik.http.routers.auth.service: authelia@swarm
       traefik.http.services.auth.loadbalancer.server.port: "9091"
-      traefik.http.middlewares.authelia.forwardauth.address: http://authelia:9091/api/verify?rd=https://auth.{{ root_domain }}
+      traefik.http.middlewares.authelia.forwardauth.address: https://authelia:9091/api/verify?rd=https://auth.{{ root_domain }}
       traefik.http.middlewares.authelia.forwardauth.trustForwardHeader: "true"
       traefik.http.middlewares.authelia.forwardauth.authResponseHeaders: Remote-User,Remote-Groups,Remote-Name,Remote-Email
 
@@ -64,4 +63,3 @@
     placement:
       constraints:
         - node.role == manager
-  when: inventory_hostname == groups['cluster'][0]

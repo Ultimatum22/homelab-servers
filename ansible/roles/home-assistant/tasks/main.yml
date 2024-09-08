@@ -17,26 +17,29 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: "0644"
-  when: inventory_hostname == groups['cluster'][0]
 
 - name: Create and start Home Assistant container
   community.docker.docker_swarm_service:
     name: home_assistant
     image: "{{ docker_home_assistant.image }}"
     networks:
-      - homelab_public
+      - homelab-public
     env:
       TZ: "{{ system_timezone }}"
     labels:
       traefik.enable: "true"
-      traefik.docker.network: homelab_public
-      traefik.http.routers.ha.rule: "Host(`ha.{{ root_domain }}`)"
-      traefik.http.routers.ha.entrypoints: https
-      traefik.http.routers.ha.tls: "true"
-      traefik.http.routers.ha.tls.certresolver: letsencrypt
-      traefik.http.routers.ha.service: ha@swarm
-      traefik.http.routers.ha.middlewares: authelia@swarm
-      traefik.http.services.ha.loadbalancer.server.port: "8123"
+      traefik.docker.network: homelab-public
+
+      # Traefik routing for Home Assistant
+      traefik.http.routers.auth.rule: "Host(`homeassistant.{{ root_domain }}`)"
+      traefik.http.routers.auth.entrypoints: https
+      traefik.http.routers.auth.tls: "true"
+      traefik.http.routers.auth.tls.certresolver: letsencrypt
+      # Authelia Authentication Middleware
+      traefik.http.routers.homeassistant.middlewares: authelia@swarm
+
+      traefik.http.services.auth.loadbalancer.server.port: "8123"
+
 
       # diun.enable: "true"
       # homepage.group: Home
@@ -56,4 +59,3 @@
     placement:
       constraints:
         - node.role == manager
-  when: inventory_hostname == groups['cluster'][0]

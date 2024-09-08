@@ -85,6 +85,9 @@
       traefik.http.routers.traefik-public-https.service: api@internal
       traefik.http.routers.traefik-public-https.tls.certresolver: letsencrypt
 
+      # Authelia Authentication Middleware
+      traefik.http.routers.traefik-public-https.middlewares: authelia@swarm
+
       # Service configuration (Traefik dashboard)
       traefik.http.services.traefik-public.loadbalancer.server.port: "8080"
     env:
