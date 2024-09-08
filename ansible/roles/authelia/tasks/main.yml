@@ -34,9 +34,9 @@
       traefik.http.routers.auth.tls.certresolver: letsencrypt
       traefik.http.routers.auth.service: auth@swarm
       traefik.http.services.auth.loadbalancer.server.port: "9091"
-      # traefik.http.middlewares.authelia.forwardauth.address: http://authelia:9091/api/verify?rd=https://auth.{{ root_domain }}
-      # traefik.http.middlewares.authelia.forwardauth.trustForwardHeader: "true"
-      # traefik.http.middlewares.authelia.forwardauth.authResponseHeaders: Remote-User,Remote-Groups,Remote-Name,Remote-Email
+      traefik.http.middlewares.authelia.forwardauth.address: http://authelia:9091/api/verify?rd=https://auth.{{ root_domain }}
+      traefik.http.middlewares.authelia.forwardauth.trustForwardHeader: "true"
+      traefik.http.middlewares.authelia.forwardauth.authResponseHeaders: Remote-User,Remote-Groups,Remote-Name,Remote-Email
 
       homepage.group: Home
       homepage.name: Authelia
