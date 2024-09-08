@@ -3,10 +3,12 @@ restic_backups:
   homelabdata:
     name: homelab-data
     src: /mnt/storage/homelab/
+    bucket: homelabstorage
     scheduled: true
     schedule_oncalendar: '*-*-* 01:00:00'
   pcdata:
     name: pc-data
     src: /mnt/data/docker/data
+    bucket: pcstorage
     scheduled: true
     schedule_oncalendar: '*-*-* 02:00:00'
