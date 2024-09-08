@@ -1,9 +1,4 @@
 ---
-- name: Reformat dict to list
-  ansible.builtin.set_fact:
-    restic_backups: "{{ restic_backups | default([]) | map('extract', restic_backups) | list }}"
-  when:
-    - restic_backups
 
 - name: Create backup credentials
   ansible.builtin.template:
@@ -78,11 +73,11 @@
     - item.name is defined
     - item.scheduled | default(false)
 
-- name: Run backup script
-  ansible.builtin.command:
-    cmd: "/usr/bin/env sh {{ restic_data_dir }}/backup-{{ item.name | replace(' ', '') }}.sh"
-  with_items: '{{ restic_backups }}'
-  when:
-    - item.name is defined
-  register: result
-  changed_when: result.rc != 0
+# - name: Run backup script
+#   ansible.builtin.command:
+#     cmd: "/usr/bin/env sh {{ restic_data_dir }}/backup-{{ item.name | replace(' ', '') }}.sh"
+#   with_items: '{{ restic_backups }}'
+#   when:
+#     - item.name is defined
+#   register: result
+#   changed_when: result.rc != 0
