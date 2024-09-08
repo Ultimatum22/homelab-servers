@@ -1,17 +1,15 @@
 options {
+        version         "No, just no";
+
         directory       "/var/named";
         
         dump-file       "/var/named/data/cache_dump.db";
         statistics-file "/var/named/data/named_stats.txt";
         memstatistics-file "/var/named/data/named_mem_stats.txt";
         
-        recursion yes;
-        allow-recursion { any; };
+        allow-query { any; };
 
-        forwarders {
-                8.8.8.8;
-                4.4.4.4;
-        };
+        recursion no;
         
         listen-on port 53 { 127.0.0.1; {{ ansible_host }}; };
         listen-on-v6 { none; };

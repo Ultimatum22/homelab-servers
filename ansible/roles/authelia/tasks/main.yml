@@ -37,7 +37,7 @@
       traefik.http.middlewares.auth.forwardauth.trustForwardHeader: "true"
       traefik.http.middlewares.auth.forwardauth.authResponseHeaders: Remote-User,Remote-Groups,Remote-Name,Remote-Email
 
-      homepage.group: Home
+      homepage.group: Security
       homepage.name: Authelia
       homepage.icon: authelia
       homepage.href: "http://{{ url_authelia }}"

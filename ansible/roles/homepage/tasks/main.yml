@@ -16,16 +16,6 @@
   with_items:
     - "{{ docker_homepage.config }}"
 
-- name: Create network
-  community.docker.docker_network:
-    name: homelab
-
-- name: Create homepage volumes
-  community.docker.docker_volume:
-    name: "{{ item }}"
-  with_items:
-    - homepage_config
-
 # - name: Create and start dockerproxy container
 #   community.general.docker_container:
 #     name: dockerproxy
@@ -65,50 +55,39 @@
       traefik.http.routers.homepage.tls: "true"
       traefik.http.routers.homepage.tls.certresolver: letsencrypt
       # Authelia Authentication Middleware
-      traefik.http.routers.homepage.middlewares: auth@swarm
-
+      # traefik.http.routers.homepage.middlewares: auth@swarm
       traefik.http.services.homepage.loadbalancer.server.port: "3000"
+
+      homepage.group: Security
+      homepage.name: Traefik
+      homepage.icon: traefik
+      homepage.href: "http://{{ url_authelia }}"
+      homepage.descripti"on: Easily add recipes into your database by providing the URL and Authelia will automatically import the relevant data.
     mounts:
       - source: /var/run/docker.sock
         target: /var/run/docker.sock
         type: bind
         readonly: true
-      - source: homepage_config
+      - source: "{{ docker_homepage.config }}"
         target: /app/config
-        type: volume
+        type: bind
+    restart_config:
+      condition: any
+      delay: 5s
+      max_attempts: 3
+      window: 120s
+    update_config:
+      delay: 10s
+      order: start-first
+      parallelism: 1
+    rollback_config:
+      parallelism: 0
+      order: stop-first
     state: present
     mode: replicated
     placement:
       constraints:
         - node.role == manager
 
-# - name: Create and start homepage container
-#   community.general.docker_container:
-#     name: homepage
-#     image: "{{ docker_homepage.image }}"
-#     pull: true
-#     recreate: true
-#     volumes:
-#       - /var/run/docker.sock:/var/run/docker.sock:ro  # Mounted as read-only
-#       - "{{ docker_homepage.config }}:/app/config"
-#     networks:
-#       - name: homelab
-#         aliases:
-#           - homepage
-#     restart_policy: unless-stopped
-#     state: started
-#     labels:
-#       traefik.enable: "true"
-#       traefik.docker.network: traefik
-
-#       # HTTP Routers
-#       traefik.http.routers.homepage-rtr.entrypoints: websecure
-#       traefik.http.routers.homepage-rtr.rule: Host(`homepage.{{ root_domain }}`)
-#       # traefik.http.routers.ha-rtr.middlewares: authelia
-#       # HTTP Services
-#       traefik.http.routers.homepage-rtr.service: homepage-svc
-#       traefik.http.services.homepage-svc.loadbalancer.server.port: "3000"
-
-
-# - name: Homepage Settings Tasks
-#   ansible.builtin.include_tasks: "settings.yml"
+- name: Homepage Settings Tasks
+  ansible.builtin.include_tasks: "settings.yml"

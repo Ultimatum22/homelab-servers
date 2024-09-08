@@ -1,24 +1,10 @@
-    zone "codecubed.internal" {
-    type {% if _is_master %}master{% else %}slave{% endif %};
-    file "/var/lib/bind/zones/db.codecubed.internal";
-    {% if _is_slave %}
-    masters { {{ _dns_masters }}};
-    notify no;
-    {% endif %}
-    
-    {% if _is_master %}
-    allow-transfer { {{ _dns_slaves }} }; 
-    also-notify { {{ _dns_slaves_also_notify }} };
-    {% endif %}
-};
- 
- {# acl "trusted" {
+{# acl "trusted" {
     192.168.2.0/24;    # Internal network
     localhost;
-};
+}; #}
 
 view "internal" {
-    match-clients { any; };
+    match-clients { 192.168.2.0/24; };
 
     zone "codecubed.xyz" {
         type {% if _is_master %}master{% else %}slave{% endif %};
@@ -33,18 +19,19 @@ view "internal" {
         also-notify { {{ _dns_slaves_also_notify }} };
         {% endif %}
     };
-}; #}
+};
 
-{# view "external" {
+view "external" {
     match-clients { any; };
+    recursion yes;
 
     // Forward external queries for codecubed.xyz to Cloudflare
-    zone "codecubed.xyz" {
-        type forward;
-        forward only;
+    {# zone "codecubed.xyz" { #}
+        {# type forward;
+        forward only; #}
         forwarders {
             1.1.1.1;    # Cloudflare DNS
             1.0.0.1;    # Cloudflare secondary DNS
         };
-    };
-}; #}
+    {# }; #}
+};
