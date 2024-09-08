@@ -121,7 +121,7 @@
   ignore_errors: false
 
 - name: Set /etc/resolv.conf to localhost
-  ansible.builtin.file:
+  ansible.builtin.copy:
     dest: /etc/resolv.conf
     src: etc/resolv.conf
     mode: '0644'
