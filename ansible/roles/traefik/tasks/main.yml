@@ -8,8 +8,8 @@
     mode: "0775"
   with_items:
     - "{{ docker_traefik.data }}"
-    - "{{ docker_traefik.config }}"
     - "{{ docker_traefik.data }}/rules"
+    - "{{ docker_traefik.config }}"
     - "{{ docker_traefik.config }}/certificates"
 
 - name: Create acme.json file
@@ -36,47 +36,11 @@
       subnet: 172.16.201.0/24
     - name: databases
       subnet: 172.16.202.0/24
-  when: inventory_hostname == groups['cluster'][0]
 
 - name: Deploy and start Traefik service
   community.docker.docker_swarm_service:
     name: traefik
     image: "{{ docker_traefik.image }}"
-    publish:
-      - target_port: 80
-        published_port: 80
-      - target_port: 443
-        published_port: 443
-    labels:
-      traefik.enable: "true"
-      traefik.docker.network: homelab-public
-      traefik.constraint-label: homelab-public
-      traefik.http.middlewares.https-redirect.redirectscheme.scheme: https
-      traefik.http.middlewares.https-redirect.redirectscheme.permanent: "true"
-      traefik.http.routers.traefik-public-http.rule: Host(`traefik.{{ root_domain }}`)
-      traefik.http.routers.traefik-public-http.entrypoints: http
-      traefik.http.routers.traefik-public-http.middlewares: https-redirect
-      traefik.http.routers.traefik-public-https.rule: Host(`traefik.{{ root_domain }}`)
-      traefik.http.routers.traefik-public-https.entrypoints: https
-      traefik.http.routers.traefik-public-https.tls: "true"
-      traefik.http.routers.traefik-public-https.service: api@internal
-      traefik.http.routers.traefik-public-https.tls.certresolver: letsencrypt
-      # traefik.http.routers.traefik-public-https.middlewares: "auth@swarm"
-      traefik.http.services.traefik-public.loadbalancer.server.port: "8080"
-    mounts:
-      - source: /var/run/docker.sock
-        target: /var/run/docker.sock
-        type: bind
-        readonly: true
-      - source: "{{ docker_traefik.config }}/certificates"
-        target: /certificates
-        type: bind
-    env:
-      CLOUDFLARE_DNS_API_TOKEN: "{{ secret_cloudflare_zone_token }}"
-      CLOUDFLARE_HTTP_TIMEOUT: "60"
-      CLOUDFLARE_POLLING_INTERVAL: "10"
-      CLOUDFLARE_PROPAGATION_TIMEOUT: "3600"
-      CLOUDFLARE_TTL: "300"
     args:
       - --providers.docker
       - --providers.docker.constraints=Label(`traefik.constraint-label`, `homelab-public`)
@@ -93,6 +57,79 @@
       - --log.level=DEBUG
       - --log
       - --api
+    publish:
+      - target_port: 80
+        published_port: 80
+      - target_port: 443
+        published_port: 443
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: homelab-public
+      traefik.constraint-label: homelab-public
+
+      # Middleware to redirect HTTP to HTTPS
+      traefik.http.middlewares.https-redirect.redirectscheme.scheme: https
+      traefik.http.middlewares.https-redirect.redirectscheme.permanent: "true"
+
+      # Single Router for both HTTP (redirected) and HTTPS
+      traefik.http.routers.traefik-public.rule: Host(`traefik.{{ root_domain }}`)
+
+      # Redirect HTTP to HTTPS using middleware
+      traefik.http.routers.traefik-public.entrypoints: http
+      traefik.http.routers.traefik-public.middlewares: https-redirect
+
+      # HTTPS Router with TLS settings
+      traefik.http.routers.traefik-public-https.rule: Host(`traefik.{{ root_domain }}`)
+      traefik.http.routers.traefik-public-https.entrypoints: https
+      traefik.http.routers.traefik-public-https.tls: "true"
+      traefik.http.routers.traefik-public-https.service: api@internal
+      traefik.http.routers.traefik-public-https.tls.certresolver: letsencrypt
+
+      # Service configuration (Traefik dashboard)
+      traefik.http.services.traefik-public.loadbalancer.server.port: "8080"
+    env:
+      CLOUDFLARE_DNS_API_TOKEN: "{{ secret_cloudflare_zone_token }}"
+      CLOUDFLARE_HTTP_TIMEOUT: "60"
+      CLOUDFLARE_POLLING_INTERVAL: "10"
+      CLOUDFLARE_PROPAGATION_TIMEOUT: "3600"
+      CLOUDFLARE_TTL: "300"
+    mounts:
+      - source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
+        readonly: true
+      - source: "{{ docker_traefik.config }}/certificates"
+        target: /certificates
+        type: bind
+      - source: "{{ docker_traefik.data }}/rules"
+        target: /rules
+        type: bind
+    restart_config:
+      condition: any
+      delay: 5s
+      max_attempts: 3
+      window: 120s
+    update_config:
+      delay: 10s
+      order: start-first
+      parallelism: 1
+    rollback_config:
+      parallelism: 0
+      order: stop-first
+    state: present
+    mode: replicated
+    placement:
+      constraints:
+        - node.role == manager
     networks:
       - homelab-public
-  when: inventory_hostname == groups['cluster'][0]
+
+- name: Copy rules
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ docker_traefik.data }}/rules/{{ item | basename | regex_replace('.yml.j2$', '.yml') }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+  with_fileglob:
+    - ../templates/rules/*.yml.j2
