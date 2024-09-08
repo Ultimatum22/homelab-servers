@@ -41,7 +41,7 @@
       homepage.name: Authelia
       homepage.icon: authelia
       homepage.href: "http://{{ url_authelia }}"
-      homepage.descripti"on: Easily add recipes into your database by providing the URL and Authelia will automatically import the relevant data.
+      homepage.description: Easily add recipes into your database by providing the URL and Authelia will automatically import the relevant data.
     mounts:
       - source: "{{ docker_authelia.config }}"
         target: /config

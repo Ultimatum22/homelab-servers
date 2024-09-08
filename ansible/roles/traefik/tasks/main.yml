@@ -90,6 +90,12 @@
 
       # Service configuration (Traefik dashboard)
       traefik.http.services.traefik-public.loadbalancer.server.port: "8080"
+
+      homepage.group: Security
+      homepage.name: Traefik
+      homepage.icon: traefik
+      homepage.href: "http://{{ url_authelia }}"
+      homepage.description: Easily add recipes into your database by providing the URL and Authelia will automatically import the relevant data.
     env:
       CLOUDFLARE_DNS_API_TOKEN: "{{ secret_cloudflare_zone_token }}"
       CLOUDFLARE_HTTP_TIMEOUT: "60"

@@ -57,12 +57,6 @@
       # Authelia Authentication Middleware
       # traefik.http.routers.homepage.middlewares: auth@swarm
       traefik.http.services.homepage.loadbalancer.server.port: "3000"
-
-      homepage.group: Security
-      homepage.name: Traefik
-      homepage.icon: traefik
-      homepage.href: "http://{{ url_authelia }}"
-      homepage.descripti"on: Easily add recipes into your database by providing the URL and Authelia will automatically import the relevant data.
     mounts:
       - source: /var/run/docker.sock
         target: /var/run/docker.sock
