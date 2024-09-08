@@ -72,14 +72,14 @@
       traefik.http.middlewares.https-redirect.redirectscheme.permanent: "true"
 
       # Single Router for both HTTP (redirected) and HTTPS
-      traefik.http.routers.traefik-public.rule: Host(`traefik.{{ root_domain }}`)
+      traefik.http.routers.traefik-public.rule: Host(`{{ url_traefik }}`)
 
       # Redirect HTTP to HTTPS using middleware
       traefik.http.routers.traefik-public.entrypoints: http
       traefik.http.routers.traefik-public.middlewares: https-redirect
 
       # HTTPS Router with TLS settings
-      traefik.http.routers.traefik-public-https.rule: Host(`traefik.{{ root_domain }}`)
+      traefik.http.routers.traefik-public-https.rule: Host(`{{ url_traefik }}`)
       traefik.http.routers.traefik-public-https.entrypoints: https
       traefik.http.routers.traefik-public-https.tls: "true"
       traefik.http.routers.traefik-public-https.service: api@internal
@@ -94,8 +94,8 @@
       homepage.group: Security
       homepage.name: Traefik
       homepage.icon: traefik
-      homepage.href: "http://{{ url_authelia }}"
-      homepage.description: Easily add recipes into your database by providing the URL and Authelia will automatically import the relevant data.
+      homepage.href: "https://{{ url_traefik }}"
+      homepage.description: The Cloud Native Application Proxy
     env:
       CLOUDFLARE_DNS_API_TOKEN: "{{ secret_cloudflare_zone_token }}"
       CLOUDFLARE_HTTP_TIMEOUT: "60"

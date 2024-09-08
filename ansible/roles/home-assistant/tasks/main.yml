@@ -31,7 +31,7 @@
       traefik.docker.network: homelab-public
 
       # Traefik routing for Home Assistant
-      traefik.http.routers.homeassistant.rule: "Host(`homeassistant.{{ root_domain }}`)"
+      traefik.http.routers.homeassistant.rule: "Host(`{{ url_home_assistant }}`)"
       traefik.http.routers.homeassistant.entrypoints: https
       traefik.http.routers.homeassistant.tls: "true"
       traefik.http.routers.homeassistant.tls.certresolver: letsencrypt
@@ -40,13 +40,11 @@
 
       traefik.http.services.homeassistant.loadbalancer.server.port: "8123"
 
-
-      # diun.enable: "true"
-      # homepage.group: Home
-      # homepage.name: Home Assistant
-      # homepage.icon: home_assistant
-      # homepage.href: "http://{{ url_home_assistant }}"
-      # homepage.description: Easily add recipes into your database by providing the URL and Home Assistant will automatically import the relevant data.
+      homepage.group: Home
+      homepage.name: Home Assistant
+      homepage.icon: home-assistant
+      homepage.href: "https://{{ url_home_assistant }}"
+      homepage.description: Home Assistant is free and open-source software used for home automation.
     mounts:
       # - source: home_assistant_config
       #   target: /config

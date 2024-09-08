@@ -40,8 +40,8 @@
       homepage.group: Security
       homepage.name: Authelia
       homepage.icon: authelia
-      homepage.href: "http://{{ url_authelia }}"
-      homepage.description: Easily add recipes into your database by providing the URL and Authelia will automatically import the relevant data.
+      homepage.href: "https://{{ url_authelia }}"
+      homepage.description: The Single Sign-On Multi-Factor portal for web apps
     mounts:
       - source: "{{ docker_authelia.config }}"
         target: /config
