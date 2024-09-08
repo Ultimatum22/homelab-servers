@@ -1,5 +1,5 @@
 ---
-- hosts: cluster
+- hosts: cluster[0]
   become: true
   # strategy: free
   roles:
