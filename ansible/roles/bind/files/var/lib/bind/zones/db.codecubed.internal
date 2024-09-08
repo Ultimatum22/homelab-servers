@@ -1,16 +1,16 @@
 $TTL 60       ; 1 minute
 ; $TTL 604800
-@   IN  SOA ns1.codecubed.xyz. admin.codecubed.xyz. (
-             2024081401  ; Serial
+@   IN  SOA ns1.codecubed.internal. admin.codecubed.internal. (
+             2024090801  ; Serial
              604800      ; Refresh (7 days)
              86400       ; Retry (1 day)
              2419200     ; Expire (4 weeks)
              3600 )      ; Negative Cache TTL (1 hour)
 
 ; Name servers
-@       IN  NS      ns1.codecubed.xyz.
-@       IN  NS      ns2.codecubed.xyz.
-@       IN  NS      ns3.codecubed.xyz.
+@       IN  NS      ns1.codecubed.internal.
+@       IN  NS      ns2.codecubed.internal.
+@       IN  NS      ns3.codecubed.internal.
 
 ; A records for name servers
 ns1     IN  A       192.168.2.221

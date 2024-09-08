@@ -7,8 +7,13 @@ options {
         
         recursion yes;
         allow-recursion { any; };
+
+        forwarders {
+                8.8.8.8;
+                4.4.4.4;
+        };
         
-        listen-on port 5353 { 127.0.0.1; {{ ansible_host }}; };
+        listen-on port 53 { 127.0.0.1; {{ ansible_host }}; };
         listen-on-v6 { none; };
 
         dnssec-validation no;

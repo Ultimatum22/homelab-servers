@@ -31,14 +31,14 @@
       traefik.docker.network: homelab-public
 
       # Traefik routing for Home Assistant
-      traefik.http.routers.auth.rule: "Host(`homeassistant.{{ root_domain }}`)"
-      traefik.http.routers.auth.entrypoints: https
-      traefik.http.routers.auth.tls: "true"
-      traefik.http.routers.auth.tls.certresolver: letsencrypt
+      traefik.http.routers.homeassistant.rule: "Host(`homeassistant.{{ root_domain }}`)"
+      traefik.http.routers.homeassistant.entrypoints: https
+      traefik.http.routers.homeassistant.tls: "true"
+      traefik.http.routers.homeassistant.tls.certresolver: letsencrypt
       # Authelia Authentication Middleware
-      traefik.http.routers.homeassistant.middlewares: authelia@swarm
+      traefik.http.routers.homeassistant.middlewares: auth@swarm
 
-      traefik.http.services.auth.loadbalancer.server.port: "8123"
+      traefik.http.services.homeassistant.loadbalancer.server.port: "8123"
 
 
       # diun.enable: "true"

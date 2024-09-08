@@ -119,3 +119,11 @@
   changed_when: false
   failed_when: named_checkconf_result.rc != 0
   ignore_errors: false
+
+- name: Set /etc/resolv.conf to localhost
+  ansible.builtin.file:
+    dest: /etc/resolv.conf
+    src: etc/resolv.conf
+    mode: '0644'
+    owner: root
+    group: root
