@@ -17,7 +17,7 @@
     state: directory
     owner: nobody
     group: nogroup
-    mode: "0755"
+    mode: "0777"
   loop: "{{ export_dirs }}"
 
 - name: Configure NFS exports
