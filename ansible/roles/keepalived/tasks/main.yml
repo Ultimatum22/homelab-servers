@@ -1,4 +1,20 @@
 ---
+- name: Ensure "ip_vs" is added to /etc/modules
+  lineinfile:
+    path: /etc/modules
+    line: "modprobe ip_vs"
+    state: present
+  # No condition required, it will ensure line is present if not already there
+
+- name: Check if ip_vs module is already loaded
+  ansible.builtin.shell: lsmod | grep -w ip_vs
+  register: ip_vs_loaded
+  ignore_errors: true
+
+- name: Load ip_vs module if not already loaded
+  ansible.builtin.command: modprobe ip_vs
+  when: ip_vs_loaded.rc != 0
+
 - name: Create directories
   ansible.builtin.file:
     path: "{{ item }}"
@@ -9,10 +25,6 @@
   with_items:
     - /etc/keepalived
     - /etc/scripts
-
-- name: Show IPs excluding the current host
-  debug:
-    var: _keepalived_unicast_peers
 
 - name: Install keepalived
   apt:

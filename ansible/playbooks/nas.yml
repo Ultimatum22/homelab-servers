@@ -44,8 +44,6 @@
     #   tags: [paperless]
     # - role: mealie
     #   tags: [mealie]
-    - role: syncthing
-      tags: [syncthing]
     - role: restic
       tags: [restic]
     # - role: dozzle

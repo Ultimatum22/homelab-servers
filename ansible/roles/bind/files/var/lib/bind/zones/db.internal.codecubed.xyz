@@ -1,7 +1,7 @@
 $TTL 60       ; 1 minute
 ; $TTL 604800
 @   IN  SOA ns1.codecubed.xyz. admin.codecubed.xyz. (
-             2024090802  ; Serial
+             2024090803  ; Serial
              604800      ; Refresh (7 days)
              86400       ; Retry (1 day)
              2419200     ; Expire (4 weeks)
@@ -18,6 +18,7 @@ ns2     IN  A       192.168.2.222
 ns3     IN  A       192.168.2.223
 
 ; Internal services
-traefik     IN  A       192.168.2.221
-pihole      IN  A       192.168.2.221
-homepage    IN  A       192.168.2.221
+traefik     IN  A       192.168.2.220
+pihole      IN  A       192.168.2.220
+homepage    IN  A       192.168.2.220
+sync        IN  A       192.168.2.220

@@ -1,14 +1,13 @@
-global_defs {
+{# global_defs {
     router_id pihole-dns
     script_user root
     enable_script_security
 }
-
 vrrp_script chk_ftl {
     script "/etc/scripts/chk_ftl"
     interval 1
     weight -10
-}
+} #}
 
 vrrp_instance PIHOLE {
     state {{ keepalived_state }}
@@ -34,9 +33,9 @@ vrrp_instance PIHOLE {
         {{ keepalived_virtual_ip_address }}
     }
     
-    track_script {
+    {# track_script {
         chk_ftl
-    }
+    } #}
 }
 
 

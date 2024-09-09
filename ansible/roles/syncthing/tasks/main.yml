@@ -18,29 +18,53 @@
     - "{{ docker_syncthing.config }}"
 
 - name: Create and start container
-  community.docker.docker_container:
+  community.docker.docker_swarm_service:
     name: syncthing
     image: "{{ docker_syncthing.image }}"
-    pull: true
-    recreate: true
-    image_name_mismatch: "recreate"
-    volumes:
-      - "{{ docker_syncthing.config }}:/home/syncthing/.config/syncthing"
-      - "{{ docker_syncthing.data }}:/var/syncthing"
-    ports:
-      - "{{ docker_port_syncthing_http }}:8384" # Web UI
-      - 22000:22000/tcp # TCP file transfers
-      - 22000:22000/udp # QUIC file transfers
-      - 21027:21027/udp # Receive local discovery broadcasts
-    restart_policy: unless-stopped
-    state: started
+    mounts:
+      - source: "{{ docker_syncthing.config }}"
+        target: /home/syncthing/.config/syncthing
+        type: bind
+      - source: "{{ docker_syncthing.data }}"
+        target: /var/syncthing
+        type: bind
     labels:
+      traefik.enable: "true"
+      traefik.docker.network: homelab-public
+
+      # Traefik routing for Home Assistant
+      traefik.http.routers.syncthing.rule: "Host(`{{ url_syncthing }}`)"
+      traefik.http.routers.syncthing.entrypoints: https
+      traefik.http.routers.syncthing.tls: "true"
+      traefik.http.routers.syncthing.tls.certresolver: letsencrypt
+
+      traefik.http.services.syncthing.loadbalancer.server.port: "8384"
+
       homepage.group: Tools
       homepage.name: SyncThing
       homepage.icon: syncthing.svg
-      homepage.href: http://{{ url_syncthing }}
+      homepage.href: https://{{ url_syncthing }}
       homepage.description: Syncthing lets you synchronize your files bidirectionally across multiple devices.
     env:
       TZ: "{{ system_timezone }}"
       PUID: "1000"
       PGID: "1000"
+    restart_config:
+      condition: any
+      delay: 5s
+      max_attempts: 3
+      window: 120s
+    update_config:
+      delay: 10s
+      order: start-first
+      parallelism: 1
+    rollback_config:
+      parallelism: 0
+      order: stop-first
+    state: present
+    mode: replicated
+    placement:
+      constraints:
+        - node.role == manager
+    networks:
+      - homelab-public

@@ -19,3 +19,5 @@
       tags: [homepage]
     - role: pihole
       tags: [pihole]
+    - role: syncthing
+      tags: [syncthing]
