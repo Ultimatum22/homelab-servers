@@ -1,0 +1,19 @@
+---
+- name: Wait for 'configuration.yaml' to be created
+  ansible.builtin.wait_for:
+    path: "{{ docker_home_assistant.config }}/configuration.yaml"
+    state: present
+
+- name: Stop the Home Assistant service
+  ansible.builtin.command: docker service scale home_assistant=0
+
+- name: Copy configuration.yaml
+  ansible.builtin.template:
+    src: "configuration.yaml.j2"
+    dest: "{{ docker_home_assistant.config }}/configuration.yaml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+
+- name: Start the Home Assistant service
+  ansible.builtin.command: docker service scale home_assistant=1

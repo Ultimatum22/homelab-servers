@@ -10,14 +10,6 @@
     - "{{ docker_home_assistant.config }}"
     - "{{ docker_home_assistant.data }}"
 
-- name: Copy configuration.yaml
-  ansible.builtin.template:
-    src: "configuration.yaml.j2"
-    dest: "{{ docker_home_assistant.config }}/configuration.yaml"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: "0644"
-
 - name: Create and start Home Assistant container
   community.docker.docker_swarm_service:
     name: home_assistant
@@ -34,7 +26,7 @@
       traefik.http.routers.homeassistant.tls: "true"
       traefik.http.routers.homeassistant.tls.certresolver: letsencrypt
       # Authelia Authentication Middleware
-      traefik.http.routers.homeassistant.middlewares: auth@swarm
+      # traefik.http.routers.homeassistant.middlewares: auth@swarm
 
       traefik.http.services.homeassistant.loadbalancer.server.port: "8123"
 
@@ -44,8 +36,8 @@
       homepage.href: "https://{{ url_home_assistant }}"
       homepage.description: Home Assistant is free and open-source software used for home automation.
     mounts:
-      - source: "{{ docker_home_assistant.config }}/configuration.yaml"
-        target: /config/configuration.yml
+      - source: "{{ docker_home_assistant.config }}"
+        target: /config
         type: bind
     restart_config:
       condition: any
@@ -66,4 +58,7 @@
         - node.role == manager
     networks:
       - homelab-public
+
+- name: Home Assistant Settings Tasks
+  ansible.builtin.include_tasks: "settings.yml"
 
