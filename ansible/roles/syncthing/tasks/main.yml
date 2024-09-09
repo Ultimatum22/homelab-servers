@@ -7,7 +7,7 @@
     group: "{{ ansible_user }}"
     mode: "0775"
   with_items:
-    - "{{ docker_syncthing.bulk_data_root }}"
+    - "{{ docker_syncthing.bulk_data }}"
     - "{{ docker_syncthing.config }}"
 
 - name: Create and start container
@@ -18,7 +18,7 @@
       - source: "{{ docker_syncthing.config }}"
         target: /home/syncthing/.config/syncthing
         type: bind
-      - source: "{{ docker_syncthing.bulk_data_root }}"
+      - source: "{{ docker_syncthing.bulk_data }}"
         target: /var/syncthing
         type: bind
     labels:
