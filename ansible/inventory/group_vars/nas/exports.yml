@@ -1,8 +1,0 @@
----
-samba_user: "{{ ansible_user }}"
-samba_password: your_samba_password
-
-export_dirs:
-  - "{{ docker_media }}"
-  - "{{ docker_homelab }}"
-  - "{{ docker_backup }}"

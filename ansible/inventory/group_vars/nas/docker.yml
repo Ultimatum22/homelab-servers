@@ -1,5 +1,5 @@
 ---
-docker_root: /mnt/data/docker
+docker_root: "{{ nas_storage }}/docker"
 docker_data_root: "{{ docker_root }}/data"
 docker_config_root: "{{ docker_root }}/config"
 

@@ -2,32 +2,22 @@
 # - name: Configure UFW
 #   ansible.builtin.include_tasks: ufw.yml
 
-- name: Create directories
+- name: Create mount point
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: "0775"
-  with_items:
-    - "{{ docker_data_root }}"
-    - "{{ docker_config_root }}"
+    owner: nobody
+    group: nogroup
+    mode: "0755"
+  loop: "{{ export_dirs }}"
 
 - name: Ensure NFS package is installed
   ansible.builtin.package:
     name: nfs-common
     state: present
 
-- name: Create mount point
-  ansible.builtin.file:
-    path: "{{ docker_root }}"
-    state: directory
-    owner: nobody
-    group: nogroup
-    mode: "0755"
-
 # - name: Mount NFS share
-#   ansible.builtin.mount:
+#   ansible.posix.mount:
 #     path: "{{ docker_data_root }}"
 #     src: "192.168.2.200:/mnt/storage/homelab"
 #     fstype: nfs
@@ -35,9 +25,10 @@
 #     state: mounted
 
 - name: Ensure NFS share is mounted at boot
-  ansible.builtin.mount:
-    path: "{{ docker_root }}"
-    src: "192.168.2.200:/mnt/storage/homelab"
+  ansible.posix.mount:
+    path: "{{ item }}"
+    src: "192.168.2.200:{{ item }}"
     fstype: nfs
     opts: rw
     state: present
+  loop: "{{ export_dirs }}"

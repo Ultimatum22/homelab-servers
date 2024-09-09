@@ -1,0 +1,9 @@
+---
+samba_user: "{{ ansible_user }}"
+samba_password: your_samba_password
+
+export_dirs:
+  - "{{ docker_root }}"
+  - "{{ bulk_data_root }}"
+  - "{{ media_root }}"
+  - "{{ backup_root }}"
