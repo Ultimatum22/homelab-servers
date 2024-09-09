@@ -14,7 +14,7 @@ docker_cloudflare_ddns:
 docker_home_assistant:
   config: "{{ docker_config_root }}/home_assistant"
   data: "{{ docker_data_root }}/home_assistant"
-  image: homeassistant/home-assistant:2024.7.4
+  image: homeassistant/home-assistant:2024.9.1
 
 docker_homepage:
   config: "{{ docker_config_root }}/homepage"
