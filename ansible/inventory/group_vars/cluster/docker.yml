@@ -1,7 +1,19 @@
 ---
-docker_root: /mnt/shared/docker
+dirctory_nas_storage: /mnt/shared
+
+docker_root: "{{ nas_storage }}/docker"
 docker_data_root: "{{ docker_root }}/data"
 docker_config_root: "{{ docker_root }}/config"
+bulk_data: "{{ nas_storage }}/bulk_data"
+media: "{{ nas_storage }}/media"
+media_personal: "{{ nas_storage }}/media/personal"
+media_personal_images: "{{ nas_storage }}/media/personal/images"
+media_personal_videos: "{{ nas_storage }}/media/personal/videos"
+media_images: "{{ nas_storage }}/media/images"
+media_movies: "{{ nas_storage }}/media/movies"
+media_series: "{{ nas_storage }}/media/series"
+backup: "{{ nas_storage }}/backup"
+backup_restic: "{{ nas_storage }}/backup/restic"
 
 docker_traefik:
   config: "{{ docker_config_root }}/traefik"
@@ -33,5 +45,5 @@ docker_pihole:
 
 docker_syncthing:
   config: "{{ docker_config_root }}/syncthing"
-  data: "{{ docker_data_root }}/syncthing"
+  bullk_data: "{{ bulk_data }}/syncthing"
   image: syncthing/syncthing:1.27.9
