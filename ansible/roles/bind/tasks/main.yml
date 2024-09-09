@@ -1,7 +1,4 @@
 ---
-- name: Configure UFW
-  ansible.builtin.include_tasks: ufw.yml
-
 - name: Install required dependencies
   ansible.builtin.apt:
     name:

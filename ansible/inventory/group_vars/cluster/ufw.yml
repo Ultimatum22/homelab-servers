@@ -1,0 +1,12 @@
+---
+ufw_rules:
+  - { rule: allow, port: 22, proto: tcp, comment: SSH }
+  - { rule: allow, port: 53, proto: tcp, comment: DNS bind }
+  - { rule: allow, port: 53, proto: udp, comment: DNS bind }
+  - { rule: allow, port: 80, proto: tcp, comment: Traefik HTTP }
+  - { rule: allow, port: 443, proto: tcp, comment: Traefik HTTPS }
+  - { rule: allow, port: 50, proto: tcp, comment: Docker Swarm ESP Encrypted network }
+  - { rule: allow, port: 2377, proto: tcp, comment: Docker Swarm communication with and between manager nodes }
+  - { rule: allow, port: 4789, proto: udp, comment: Docker Swarm overlay network traeffic }
+  - { rule: allow, port: 7946, proto: tcp, comment: Docker Swarm overlay network node discovery }
+  - { rule: allow, port: 7946, proto: udp, comment: Docker Swarm overlay network node discovery }

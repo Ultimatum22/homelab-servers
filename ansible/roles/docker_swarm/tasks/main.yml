@@ -6,9 +6,6 @@
   with_items:
     - python3-jsondiff
 
-- name: Configure UFW
-  ansible.builtin.include_tasks: ufw.yml
-
 - name: Check if "Swarm Mode" is enabled.
   shell: docker info
   changed_when: false

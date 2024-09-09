@@ -4,7 +4,7 @@
     name: ufw_rules
   vars:
     ufw_rules:
-      - { rule: allow, port: 4646, proto: tcp, from_ip: 192.168.2.0/24, comment: Nomad HTTP }
-      - { rule: allow, port: 4647, proto: tcp, from_ip: 192.168.2.0/24, comment: Nomad RPC }
-      - { rule: allow, port: 4648, proto: tcp, from_ip: 192.168.2.0/24, comment: Nomad Serf WAN } # server only
-      - { rule: allow, port: 4648, proto: udp, from_ip: 192.168.2.0/24, comment: Nomad Serf WAN } # server only
+      - { rule: allow, port: 4646, proto: tcp, comment: Nomad HTTP }
+      - { rule: allow, port: 4647, proto: tcp, comment: Nomad RPC }
+      - { rule: allow, port: 4648, proto: tcp, comment: Nomad Serf WAN } # server only
+      - { rule: allow, port: 4648, proto: udp, comment: Nomad Serf WAN } # server only

@@ -1,0 +1,11 @@
+---
+ufw_rules:
+  - { rule: allow, port: 22, proto: tcp, comment: SSH }
+  - { rule: allow, port: 2049, proto: tcp, comment: NFS to handle requests. }
+  - { rule: allow, port: 2049, proto: udp, comment: NFS to handle requests. }
+  - { rule: allow, port: 111, proto: tcp, comment: The NFS server uses this to communicate with the client. }
+  - { rule: allow, port: 111, proto: udp, comment: The NFS server uses this to communicate with the client. }
+  - { rule: allow, port: 32803, proto: tcp, comment: Used for file locking, which is necessary for NFS to function correctly in environments where multiple clients might access the same files simultaneously. }
+  - { rule: allow, port: 32803, proto: udp, comment: Used for file locking, which is necessary for NFS to function correctly in environments where multiple clients might access the same files simultaneously. }
+  - { rule: allow, port: 20048, proto: tcp, comment: Handles mounting requests from clients. }
+  - { rule: allow, port: 20048, proto: udp, comment: Handles mounting requests from clients. }

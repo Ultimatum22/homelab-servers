@@ -4,14 +4,14 @@
     name: ufw_rules
   vars:
     ufw_rules:
-      - { rule: allow, port: 8300, proto: tcp, from_ip: 192.168.2.0/24, comment: Consul RPC } # server only
-      - { rule: allow, port: 8301, proto: tcp, from_ip: 192.168.2.0/24, comment: Consul Serf LAN }
-      - { rule: allow, port: 8301, proto: udp, from_ip: 192.168.2.0/24, comment: Consul Serf LAN }
-      - { rule: allow, port: 8302, proto: tcp, from_ip: 192.168.2.0/24, comment: Consul Serf WAN }
-      - { rule: allow, port: 8302, proto: udp, from_ip: 192.168.2.0/24, comment: Consul Serf WAN }
-      - { rule: allow, port: 8500, proto: tcp, from_ip: 192.168.2.0/24, comment: Consul UI }
-      - { rule: allow, port: 8501, proto: tcp, from_ip: 192.168.2.0/24, comment: Consul HTTPS }
-      - { rule: allow, port: 8502, proto: tcp, from_ip: 192.168.2.0/24, comment: Consul gRPC }
-      - { rule: allow, port: 8503, proto: tcp, from_ip: 192.168.2.0/24, comment: Consul gRPC TLS }
-      - { rule: allow, port: 8600, proto: tcp, from_ip: 192.168.2.0/24, comment: Consul DNS }
-      - { rule: allow, port: 8600, proto: udp, from_ip: 192.168.2.0/24, comment: Consul DNS }
+      - { rule: allow, port: 8300, proto: tcp, comment: Consul RPC } # server only
+      - { rule: allow, port: 8301, proto: tcp, comment: Consul Serf LAN }
+      - { rule: allow, port: 8301, proto: udp, comment: Consul Serf LAN }
+      - { rule: allow, port: 8302, proto: tcp, comment: Consul Serf WAN }
+      - { rule: allow, port: 8302, proto: udp, comment: Consul Serf WAN }
+      - { rule: allow, port: 8500, proto: tcp, comment: Consul UI }
+      - { rule: allow, port: 8501, proto: tcp, comment: Consul HTTPS }
+      - { rule: allow, port: 8502, proto: tcp, comment: Consul gRPC }
+      - { rule: allow, port: 8503, proto: tcp, comment: Consul gRPC TLS }
+      - { rule: allow, port: 8600, proto: tcp, comment: Consul DNS }
+      - { rule: allow, port: 8600, proto: udp, comment: Consul DNS }

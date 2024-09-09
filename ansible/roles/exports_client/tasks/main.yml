@@ -1,7 +1,4 @@
 ---
-# - name: Configure UFW
-#   ansible.builtin.include_tasks: ufw.yml
-
 - name: Create mount point
   ansible.builtin.file:
     path: "{{ item }}"

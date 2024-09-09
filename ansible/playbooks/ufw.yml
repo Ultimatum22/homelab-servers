@@ -1,0 +1,6 @@
+---
+- hosts: all
+  become: true
+  roles:
+    - role: ufw_rules
+      tags: [ufw_rules]
