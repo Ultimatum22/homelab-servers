@@ -15,6 +15,8 @@
 - name: Create acme.json file
   ansible.builtin.file:
     path: "{{ docker_traefik.config }}/certificates/acme.json"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     state: touch
     mode: "0600"
 
