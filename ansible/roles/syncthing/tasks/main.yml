@@ -1,11 +1,4 @@
 ---
-- name: Install required packages
-  ansible.builtin.apt:
-    package: "{{ item }}"
-    state: present
-  with_items:
-    - python3-requests
-
 - name: Create directories
   ansible.builtin.file:
     path: "{{ item }}"
@@ -14,7 +7,7 @@
     group: "{{ ansible_user }}"
     mode: "0775"
   with_items:
-    - "{{ docker_syncthing.data }}"
+    - "{{ docker_syncthing.bullk_data }}"
     - "{{ docker_syncthing.config }}"
 
 - name: Create and start container
@@ -25,7 +18,7 @@
       - source: "{{ docker_syncthing.config }}"
         target: /home/syncthing/.config/syncthing
         type: bind
-      - source: "{{ docker_syncthing.data }}"
+      - source: "{{ docker_syncthing.bullk_data }}"
         target: /var/syncthing
         type: bind
     labels:

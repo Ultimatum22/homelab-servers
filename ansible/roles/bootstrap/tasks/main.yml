@@ -11,6 +11,9 @@
 - name: Set Locale
   ansible.builtin.include_tasks: 04-locale.yml
 
+- name: Install required packages
+  ansible.builtin.include_tasks: 05-packages.yml
+
 - name: Include OS-specific package tasks
   ansible.builtin.include_tasks: "packages/{{ ansible_os_family | lower }}.yml"
   tags: packages

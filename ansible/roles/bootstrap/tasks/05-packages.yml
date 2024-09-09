@@ -1,0 +1,7 @@
+
+- name: Install required packages
+  ansible.builtin.apt:
+    package: "{{ item }}"
+    state: present
+  with_items:
+    - python3-requests
