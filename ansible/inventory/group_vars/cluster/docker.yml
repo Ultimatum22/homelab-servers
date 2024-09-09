@@ -14,7 +14,7 @@ docker_cloudflare_ddns:
 docker_home_assistant:
   config: "{{ docker_config_root }}/home_assistant"
   data: "{{ docker_data_root }}/home_assistant"
-  image: homeassistant/home-assistant:2024.9.1
+  image: homeassistant/home-assistant:2024.7.4
 
 docker_homepage:
   config: "{{ docker_config_root }}/homepage"
@@ -29,5 +29,5 @@ docker_pihole:
 
 docker_syncthing:
   config: "{{ docker_config_root }}/syncthing"
-  bulk_data: "{{ bulk_data_root }}/syncthing"
+  bullk_data: "{{ bulk_data }}/syncthing"
   image: syncthing/syncthing:1.27.9
