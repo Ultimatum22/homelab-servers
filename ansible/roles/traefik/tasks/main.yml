@@ -1,7 +1,4 @@
 ---
-- name: Configure UFW
-  ansible.builtin.include_tasks: ufw.yml
-  
 - name: Create directories
   ansible.builtin.file:
     path: "{{ item }}"
@@ -42,6 +39,17 @@
     - name: databases
       subnet: 172.16.202.0/24
 
+- name: Copy rules
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ docker_traefik.data }}/rules/{{ item | basename | regex_replace('.yml.j2$', '.yml') }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+  with_fileglob:
+    - ../templates/rules/*.yml.j2
+
+
 - name: Deploy and start Traefik service
   community.docker.docker_swarm_service:
     name: traefik
@@ -51,6 +59,7 @@
       - --providers.docker.constraints=Label(`traefik.constraint-label`, `homelab-public`)
       - --providers.docker.exposedbydefault=false
       - --providers.swarm.endpoint=unix:///var/run/docker.sock
+      - --providers.file.directory=/rules
       - --entrypoints.http.address=:80
       - --entrypoints.https.address=:443
       - --certificatesresolvers.letsencrypt.acme.caServer=https://acme-v02.api.letsencrypt.org/directory # https://acme-staging-v02.api.letsencrypt.org/directory 
@@ -137,13 +146,3 @@
         - node.role == manager
     networks:
       - homelab-public
-
-- name: Copy rules
-  ansible.builtin.template:
-    src: "{{ item }}"
-    dest: "{{ docker_traefik.data }}/rules/{{ item | basename | regex_replace('.yml.j2$', '.yml') }}"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: "0644"
-  with_fileglob:
-    - ../templates/rules/*.yml.j2
