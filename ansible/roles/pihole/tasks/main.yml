@@ -45,7 +45,11 @@
       traefik.http.routers.pihole.tls: "true"
       traefik.http.routers.pihole.tls.certresolver: letsencrypt
       # Authelia Authentication Middleware
-      # traefik.http.routers.homeassistant.middlewares: auth@swarm
+      traefik.http.routers.pihole.middlewares: pihole-addprefix@file,pihole-redirectregex@file
+
+      traefik.http.middlewares.pihole.chain.middlewares: frame-deny,browser-xss-filter
+      traefik.http.middlewares.frame-deny.headers.framedeny: true
+      traefik.http.middlewares.browser-xss-filter.headers.browserxssfilter: true
 
       traefik.http.services.pihole.loadbalancer.server.port: "80"
 
