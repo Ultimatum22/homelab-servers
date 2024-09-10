@@ -1,14 +1,4 @@
 ---
-- name: Create network
-  community.general.docker_network:
-    name: "{{ item }}"
-    driver: overlay
-    scope: swarm
-  with_items:
-    - traefik
-    - internal
-  when: inventory_hostname == groups['cluster'][0]
-
 - name: Create directories
   ansible.builtin.file:
     path: "{{ item }}"
@@ -19,21 +9,6 @@
   with_items:
     - "{{ docker_pihole.config }}"
     - "{{ docker_pihole.data }}"
-
-# - name: Copy configuration.yaml
-#   ansible.builtin.template:
-#     src: "configuration.yaml.j2"
-#     dest: "{{ docker_pihole.config }}/configuration.yaml"
-#     owner: "{{ ansible_user }}"
-#     group: "{{ ansible_user }}"
-#     mode: "0644"
-
-- name: Create Pihole volumes
-  community.docker.docker_volume:
-    name: "{{ item }}"
-  with_items:
-    - pihole_config
-
 - name: Deploy and start Pi-hole service
   community.docker.docker_swarm_service:
     name: pihole
@@ -45,6 +20,12 @@
       - target_port: 53
         published_port: 5353
         protocol: udp
+    cap_add:
+      - NET_ADMIN
+    env:
+      TZ: "{{ system_timezone }}"
+      VIRTUAL_HOST: "{{ url_pihole }}"
+      VIRTUAL_PORT: "80"
     mounts:
       - source: "{{ docker_pihole.config }}"
         target: /etc/pihole/
@@ -52,25 +33,13 @@
       - source: "{{ docker_pihole.data }}"
         target: /etc/dnsmasq.d/
         type: bind
-    env:
-      IPv6: "false"
-      VIRTUAL_HOST: "pihole.{{ root_domain }}"
-      WEBPASSWORD: "test123"
-      TZ: "{{ system_timezone }}"
-      PUID: "{{ ansible_user_pid | int }}"
-      PGID: "{{ ansible_user_gid | int }}"
-      FTL_CMD: "debug"
-      DNSMASQ_LISTENING: "all"
-    # extra_hosts:
-    #   - "pihole.{{ root_domain }}:192.168.2.220"
     networks:
-      - traefik
-      - internal
+      - homelab-public
     labels:
       traefik.enable: "true"
       traefik.docker.network: homelab-public
 
-      # Traefik routing for Home Assistant
+      # Traefik routing for PiHole
       traefik.http.routers.pihole.rule: "Host(`{{ url_pihole }}`)"
       traefik.http.routers.pihole.entrypoints: https
       traefik.http.routers.pihole.tls: "true"
@@ -82,19 +51,9 @@
 
       homepage.group: Home
       homepage.name: PiHole
-      homepage.icon: PiHole
+      homepage.icon: pihole
       homepage.href: "https://{{ url_pihole }}"
-      homepage.description: Home Assistant is free and open-source software used for home automation.
-
-      # traefik.enable: "true"
-      # traefik.http.routers.pihole.rule: "Host(`pihole.{{ root_domain }}`)"
-      # traefik.http.routers.pihole.entrypoints: https
-      # traefik.http.routers.pihole.tls: "true"
-      # traefik.http.routers.pihole.tls.certresolver: letsencrypt
-      # traefik.http.routers.pihole.service: pihole@swarm
-      # # traefik.http.routers.pihole.middlewares: authelia@swarm
-      # # traefik.http.routers.pihole.middlewares: authelia@swarm,pihole-addprefix@file,pihole-redirectregex@file
-      # traefik.http.services.pihole.loadbalancer.server.port: "80"
+      homepage.description: Network-level blocking allows you to block ads in non-traditional places such as mobile apps and smart TVs, regardless of hardware or OS.
     restart_config:
       condition: any
       delay: 5s
@@ -111,15 +70,74 @@
     mode: replicated
     placement:
       constraints:
-        - node.role == manager
-  when: inventory_hostname == groups['cluster'][0]
 
-- name: Create Pi-hole dnsmasq configuration
-  ansible.builtin.copy:
-    content: |
-      server=/codecubed/{{ ansible_host }}:5353
-    dest: "{{ docker_pihole.data }}/05-local.conf"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: "0644"
-  # when: inventory_hostname == groups['cluster'][0]
+    # publish:
+    #   - target_port: 53
+    #     published_port: 5353
+    #     protocol: tcp
+    #   - target_port: 53
+    #     published_port: 5353
+    #     protocol: udp
+    # mounts:
+    #   - source: "{{ docker_pihole.config }}"
+    #     target: /etc/pihole/
+    #     type: bind
+    #   - source: "{{ docker_pihole.data }}"
+    #     target: /etc/dnsmasq.d/
+    #     type: bind
+    # env:
+    #   IPv6: "false"
+    #   VIRTUAL_HOST: "pihole.{{ root_domain }}"
+    #   WEBPASSWORD: "test123"
+    #   TZ: "{{ system_timezone }}"
+    #   PUID: "{{ ansible_user_pid | int }}"
+    #   PGID: "{{ ansible_user_gid | int }}"
+    #   FTL_CMD: "debug"
+    #   DNSMASQ_LISTENING: "all"
+    # networks:
+    #   - homelab-public
+    # labels:
+    #   traefik.enable: "true"
+    #   traefik.docker.network: homelab-public
+
+    #   # Traefik routing for Home Assistant
+    #   traefik.http.routers.pihole.rule: "Host(`{{ url_pihole }}`)"
+    #   traefik.http.routers.pihole.entrypoints: https
+    #   traefik.http.routers.pihole.tls: "true"
+    #   traefik.http.routers.pihole.tls.certresolver: letsencrypt
+    #   # Authelia Authentication Middleware
+    #   # traefik.http.routers.homeassistant.middlewares: auth@swarm
+
+    #   traefik.http.services.pihole.loadbalancer.server.port: "80"
+
+    #   homepage.group: Home
+    #   homepage.name: PiHole
+    #   homepage.icon: PiHole
+    #   homepage.href: "https://{{ url_pihole }}"
+    #   homepage.description: Home Assistant is free and open-source software used for home automation.
+    # restart_config:
+    #   condition: any
+    #   delay: 5s
+    #   max_attempts: 3
+    #   window: 120s
+    # update_config:
+    #   delay: 10s
+    #   order: start-first
+    #   parallelism: 1
+    # rollback_config:
+    #   parallelism: 0
+    #   order: stop-first
+    # state: present
+    # mode: replicated
+    # placement:
+    #   constraints:
+    #     - node.role == manager
+
+# - name: Create Pi-hole dnsmasq configuration
+#   ansible.builtin.copy:
+#     content: |
+#       server=/codecubed/{{ ansible_host }}:5353
+#     dest: "{{ docker_pihole.data }}/05-local.conf"
+#     owner: "{{ ansible_user }}"
+#     group: "{{ ansible_user }}"
+#     mode: "0644"
