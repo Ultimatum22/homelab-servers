@@ -26,6 +26,7 @@ docker_bind:
 docker_pihole:
   config: "{{ docker_config_root }}/pihole"
   data: "{{ docker_data_root }}/pihole"
+  image: pihole/pihole:2024.07.0
 
 docker_syncthing:
   config: "{{ docker_config_root }}/syncthing"

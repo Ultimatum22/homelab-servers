@@ -37,13 +37,13 @@
 - name: Deploy and start Pi-hole service
   community.docker.docker_swarm_service:
     name: pihole
-    image: pihole/pihole:2024.07.0
+    image: "{{ docker_pihole.image }}"
     publish:
       - target_port: 53
-        published_port: 53
+        published_port: 5353
         protocol: tcp
       - target_port: 53
-        published_port: 53
+        published_port: 5353
         protocol: udp
     mounts:
       - source: "{{ docker_pihole.config }}"
@@ -59,6 +59,8 @@
       TZ: "{{ system_timezone }}"
       PUID: "{{ ansible_user_pid | int }}"
       PGID: "{{ ansible_user_gid | int }}"
+      FTL_CMD: "debug"
+      DNSMASQ_LISTENING: "all"
     # extra_hosts:
     #   - "pihole.{{ root_domain }}:192.168.2.220"
     networks:
@@ -66,14 +68,33 @@
       - internal
     labels:
       traefik.enable: "true"
-      traefik.http.routers.pihole.rule: "Host(`pihole.{{ root_domain }}`)"
+      traefik.docker.network: homelab-public
+
+      # Traefik routing for Home Assistant
+      traefik.http.routers.pihole.rule: "Host(`{{ url_pihole }}`)"
       traefik.http.routers.pihole.entrypoints: https
       traefik.http.routers.pihole.tls: "true"
       traefik.http.routers.pihole.tls.certresolver: letsencrypt
-      traefik.http.routers.pihole.service: pihole@swarm
-      # traefik.http.routers.pihole.middlewares: authelia@swarm
-      # traefik.http.routers.pihole.middlewares: authelia@swarm,pihole-addprefix@file,pihole-redirectregex@file
+      # Authelia Authentication Middleware
+      # traefik.http.routers.homeassistant.middlewares: auth@swarm
+
       traefik.http.services.pihole.loadbalancer.server.port: "80"
+
+      homepage.group: Home
+      homepage.name: PiHole
+      homepage.icon: PiHole
+      homepage.href: "https://{{ url_pihole }}"
+      homepage.description: Home Assistant is free and open-source software used for home automation.
+
+      # traefik.enable: "true"
+      # traefik.http.routers.pihole.rule: "Host(`pihole.{{ root_domain }}`)"
+      # traefik.http.routers.pihole.entrypoints: https
+      # traefik.http.routers.pihole.tls: "true"
+      # traefik.http.routers.pihole.tls.certresolver: letsencrypt
+      # traefik.http.routers.pihole.service: pihole@swarm
+      # # traefik.http.routers.pihole.middlewares: authelia@swarm
+      # # traefik.http.routers.pihole.middlewares: authelia@swarm,pihole-addprefix@file,pihole-redirectregex@file
+      # traefik.http.services.pihole.loadbalancer.server.port: "80"
     restart_config:
       condition: any
       delay: 5s
