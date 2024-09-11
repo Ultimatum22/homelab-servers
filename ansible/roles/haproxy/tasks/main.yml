@@ -7,15 +7,6 @@
     force_apt_get: true
     update_cache: true
 
-- name: Copy cert generation script to host
-  ansible.builtin.template:
-    src: generate_certs.j2
-    dest: /tmp/generate_certs.sh
-    mode: '0755'
-
-- name: Run cert generation script
-  ansible.builtin.shell: /tmp/generate_certs.sh
-
 - name: Create HAProxy config file
   ansible.builtin.template:
     src: haproxy.j2
