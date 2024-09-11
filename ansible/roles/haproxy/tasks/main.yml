@@ -1,39 +1,29 @@
 ---
 - name: Install HAProxy
-  become: true
-  become_method: sudo
-  apt:
+  ansible.builtin.apt:
     pkg:
       - haproxy
     state: latest
     force_apt_get: true
-    update_cache: yes
+    update_cache: true
 
 - name: Copy cert generation script to host
-  become: true
-  become_method: sudo
-  template:
+  ansible.builtin.template:
     src: generate_certs.j2
     dest: /tmp/generate_certs.sh
     mode: '0755'
 
 - name: Run cert generation script
-  become: true
-  become_method: sudo
-  shell: /tmp/generate_certs.sh
+  ansible.builtin.shell: /tmp/generate_certs.sh
 
 - name: Create HAProxy config file
-  become: true
-  become_method: sudo
-  template:
+  ansible.builtin.template:
     src: haproxy.j2
     dest: /etc/haproxy/haproxy.cfg
-    mode: 0775
+    mode: "0775"
 
 - name: Restart HAProxy service
-  become: true
-  become_method: sudo
-  systemd:
+  ansible.builtin.systemd:
     name: haproxy
-    enabled: yes
+    enabled: true
     state: restarted

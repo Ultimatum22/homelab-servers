@@ -15,11 +15,15 @@
     image: "{{ docker_pihole.image }}"
     publish:
       - target_port: 53
-        published_port: 5353
+        published_port: 53
         protocol: tcp
       - target_port: 53
-        published_port: 5353
+        published_port: 53
         protocol: udp
+      - target_port: 80
+        published_port: 8888
+        protocol: tcp
+        mode: host
     cap_add:
       - NET_ADMIN
     env:
@@ -75,74 +79,5 @@
     mode: replicated
     placement:
       constraints:
-
-    # publish:
-    #   - target_port: 53
-    #     published_port: 5353
-    #     protocol: tcp
-    #   - target_port: 53
-    #     published_port: 5353
-    #     protocol: udp
-    # mounts:
-    #   - source: "{{ docker_pihole.config }}"
-    #     target: /etc/pihole/
-    #     type: bind
-    #   - source: "{{ docker_pihole.data }}"
-    #     target: /etc/dnsmasq.d/
-    #     type: bind
-    # env:
-    #   IPv6: "false"
-    #   VIRTUAL_HOST: "pihole.{{ root_domain }}"
-    #   WEBPASSWORD: "test123"
-    #   TZ: "{{ system_timezone }}"
-    #   PUID: "{{ ansible_user_pid | int }}"
-    #   PGID: "{{ ansible_user_gid | int }}"
-    #   FTL_CMD: "debug"
-    #   DNSMASQ_LISTENING: "all"
-    # networks:
-    #   - homelab-public
-    # labels:
-    #   traefik.enable: "true"
-    #   traefik.docker.network: homelab-public
-
-    #   # Traefik routing for Home Assistant
-    #   traefik.http.routers.pihole.rule: "Host(`{{ url_pihole }}`)"
-    #   traefik.http.routers.pihole.entrypoints: https
-    #   traefik.http.routers.pihole.tls: "true"
-    #   traefik.http.routers.pihole.tls.certresolver: letsencrypt
-    #   # Authelia Authentication Middleware
-    #   # traefik.http.routers.homeassistant.middlewares: auth@swarm
-
-    #   traefik.http.services.pihole.loadbalancer.server.port: "80"
-
-    #   homepage.group: Home
-    #   homepage.name: PiHole
-    #   homepage.icon: PiHole
-    #   homepage.href: "https://{{ url_pihole }}"
-    #   homepage.description: Home Assistant is free and open-source software used for home automation.
-    # restart_config:
-    #   condition: any
-    #   delay: 5s
-    #   max_attempts: 3
-    #   window: 120s
-    # update_config:
-    #   delay: 10s
-    #   order: start-first
-    #   parallelism: 1
-    # rollback_config:
-    #   parallelism: 0
-    #   order: stop-first
-    # state: present
-    # mode: replicated
-    # placement:
-    #   constraints:
-    #     - node.role == manager
-
-# - name: Create Pi-hole dnsmasq configuration
-#   ansible.builtin.copy:
-#     content: |
-#       server=/codecubed/{{ ansible_host }}:5353
-#     dest: "{{ docker_pihole.data }}/05-local.conf"
-#     owner: "{{ ansible_user }}"
-#     group: "{{ ansible_user }}"
-#     mode: "0644"
+        - node.role == manager
+        - node.hostname == homelab-swarm03

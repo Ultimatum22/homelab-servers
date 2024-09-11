@@ -1,10 +1,8 @@
 ---
 ufw_rules:
   - { rule: allow, port: 22, proto: tcp, comment: SSH }
-  - { rule: allow, port: 53, proto: tcp, comment: DNS bind }
-  - { rule: allow, port: 53, proto: udp, comment: DNS bind }
-  - { rule: allow, port: 5353, proto: tcp, comment: DNS PiHole }
-  - { rule: allow, port: 5353, proto: udp, comment: DNS PiHole }
+  - { rule: allow, port: 53, proto: tcp, comment: DNS PiHole }
+  - { rule: allow, port: 53, proto: udp, comment: DNS PiHole }
   - { rule: allow, port: 80, proto: tcp, comment: Traefik HTTP }
   - { rule: allow, port: 443, proto: tcp, comment: Traefik HTTPS }
   - { rule: allow, port: 50, proto: tcp, comment: Docker Swarm ESP Encrypted network }
