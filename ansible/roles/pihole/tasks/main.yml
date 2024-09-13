@@ -60,7 +60,7 @@
 
       homepage.group: Home
       homepage.name: PiHole
-      homepage.icon: pihole
+      homepage.icon: pi-hole
       homepage.href: "https://{{ url_pihole }}"
       homepage.description: Network-level blocking allows you to block ads in non-traditional places such as mobile apps and smart TVs, regardless of hardware or OS.
     restart_config:
@@ -80,4 +80,3 @@
     placement:
       constraints:
         - node.role == manager
-        - node.hostname == homelab-swarm03
