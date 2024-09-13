@@ -1,19 +1,15 @@
-{# global_defs {
-    router_id pihole-dns
-    script_user root
+global_defs {
+    script_user nobody
     enable_script_security
 }
-vrrp_script chk_ftl {
-    script "/etc/scripts/chk_ftl"
-    interval 1
-    weight -10
-} #}
 
 vrrp_instance PIHOLE {
     state {{ keepalived_state }}
     interface {{ keepalived_interface }}
-    virtual_router_id 111
+    virtual_router_id 55
     priority {{ keepalived_priority }}
+    
+    advert_int 1
 
     unicast_src_ip {{ keepalived_address }}
 
@@ -22,8 +18,6 @@ vrrp_instance PIHOLE {
         {{ peer }}
     {% endfor %}
     }
-    
-    advert_int 1
 
     authentication {
         auth_type PASS
@@ -32,10 +26,7 @@ vrrp_instance PIHOLE {
     virtual_ipaddress {
         {{ keepalived_virtual_ip_address }}
     }
-    
-    {# track_script {
-        chk_ftl
-    } #}
 }
+
 
 
