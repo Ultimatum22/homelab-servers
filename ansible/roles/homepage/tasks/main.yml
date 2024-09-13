@@ -55,7 +55,8 @@
       traefik.http.routers.homepage.tls: "true"
       traefik.http.routers.homepage.tls.certresolver: letsencrypt
       # Authelia Authentication Middleware
-      # traefik.http.routers.homepage.middlewares: auth@swarm
+      traefik.http.routers.homepage.middlewares: chain-no-auth@file
+
       traefik.http.services.homepage.loadbalancer.server.port: "3000"
     mounts:
       - source: /var/run/docker.sock

@@ -25,11 +25,13 @@
       traefik.enable: "true"
       traefik.docker.network: homelab-public
 
-      # Traefik routing for Home Assistant
       traefik.http.routers.syncthing.rule: "Host(`{{ url_syncthing }}`)"
       traefik.http.routers.syncthing.entrypoints: https
       traefik.http.routers.syncthing.tls: "true"
       traefik.http.routers.syncthing.tls.certresolver: letsencrypt
+
+      # Authelia Authentication Middleware
+      traefik.http.routers.syncthing.middlewares: chain-no-auth@file
 
       traefik.http.services.syncthing.loadbalancer.server.port: "8384"
 

@@ -26,7 +26,7 @@
       traefik.http.routers.homeassistant.tls: "true"
       traefik.http.routers.homeassistant.tls.certresolver: letsencrypt
       # Authelia Authentication Middleware
-      # traefik.http.routers.homeassistant.middlewares: auth@swarm
+      traefik.http.routers.homeassistant.middlewares: chain-authelia-auth@file
 
       traefik.http.services.homeassistant.loadbalancer.server.port: "8123"
 

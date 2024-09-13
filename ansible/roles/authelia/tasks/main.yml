@@ -1,11 +1,13 @@
 ---
 - name: Create directories
   ansible.builtin.file:
-    path: "{{ docker_authelia.config }}"
+    path: "{{ item }}"
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: "0775"
+  with_items:
+    - "{{ docker_authelia.config }}"
 
 - name: Copy configuration files
   ansible.builtin.template:
@@ -27,15 +29,12 @@
     labels:
       traefik.enable: "true"
       traefik.docker.network: homelab-public
-      traefik.http.routers.auth.rule: "Host(`auth.{{ root_domain }}`)"
+      traefik.http.routers.auth.rule: "Host(`{{ url_authelia }}`)"
       traefik.http.routers.auth.entrypoints: https
       traefik.http.routers.auth.tls: "true"
       traefik.http.routers.auth.tls.certresolver: letsencrypt
       traefik.http.routers.auth.service: auth@swarm
       traefik.http.services.auth.loadbalancer.server.port: "9091"
-      traefik.http.middlewares.auth.forwardauth.address: https://authelia:9091/api/verify?rd=https://auth.{{ root_domain }}
-      traefik.http.middlewares.auth.forwardauth.trustForwardHeader: "true"
-      traefik.http.middlewares.auth.forwardauth.authResponseHeaders: Remote-User,Remote-Groups,Remote-Name,Remote-Email
 
       homepage.group: Security
       homepage.name: Authelia
