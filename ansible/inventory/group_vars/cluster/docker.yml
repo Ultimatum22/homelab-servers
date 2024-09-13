@@ -30,5 +30,5 @@ docker_pihole:
 
 docker_syncthing:
   config: "{{ docker_config_root }}/syncthing"
-  bullk_data: "{{ bulk_data }}/syncthing"
+  bulk_data: "{{ bulk_data_root }}/syncthing"
   image: syncthing/syncthing:1.27.9
