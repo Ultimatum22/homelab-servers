@@ -5,19 +5,19 @@
   roles:
     - role: traefik
       tags: [traefik]
+    - role: pihole
+      tags: [pihole]
     # - role: swarmpit
     #   tags: [swarmpit]
     # - role: resilio
     #   tags: [resilio]
     - role: authelia
       tags: [authelia]
+    - role: homepage
+      tags: [homepage]
     # - role: cloudflare-ddns
     #   tags: [cloudflare-ddns,cc]
     - role: home-assistant
       tags: [home-assistant,ha,homeassistant]
-    - role: homepage
-      tags: [homepage]
-    - role: pihole
-      tags: [pihole]
     - role: syncthing
       tags: [syncthing]
