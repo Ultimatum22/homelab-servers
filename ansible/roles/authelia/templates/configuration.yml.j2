@@ -310,20 +310,37 @@ password_policy:
 access_control:
   ## Default policy can either be 'bypass', 'one_factor', 'two_factor' or 'deny'. It is the policy applied to any
   ## resource if there is no policy to be applied to the user.
-  default_policy: 'two_factor'
-
-  # networks:
-    # - name: 'internal'
-    #   networks:
-        # - '10.10.0.0/16'
-        # - '192.168.2.0/24'
-    # - name: 'VPN'
-    #   networks: '10.9.0.0/16'
+  default_policy: bypass
+  networks:
+    - name: 'internal'
+      networks:
+        - '172.16.200.0/24'
 
   rules:
     # Rules applied to everyone
-    - domain: 'auth.{{ root_domain }}'
-      policy: 'bypass'
+    - domain: "{{ url_authelia }}"
+      policy: bypass
+
+    - domain: "{{ url_home_assistant }}"
+      policy: bypass
+      resources:
+        - "^/api.*"
+        - "^/auth/token.*"
+        - "^/.external_auth=.*"
+        - "^/service_worker.js"
+        - "^/static.*"
+        - "^/local.*"
+        - "^/hacsfiles.*"
+        - "^/frontend_latest.*"
+      networks:
+        - 'internal'
+
+    - domain:
+        - "{{ root_domain }}"
+        - "*.{{ root_domain }}"
+      policy: 'two_factor'
+      networks:
+        - 'internal'
 
     ## Domain Regex examples. Generally we recommend just using a standard domain.
     # - domain_regex: '^(?P<User>\w+)\.example\.com$'
