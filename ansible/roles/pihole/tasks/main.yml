@@ -9,6 +9,7 @@
   with_items:
     - "{{ docker_pihole.config }}"
     - "{{ docker_pihole.data }}"
+
 - name: Deploy and start Pi-hole service
   community.docker.docker_swarm_service:
     name: pihole
@@ -21,7 +22,7 @@
         published_port: 53
         protocol: udp
       - target_port: 80
-        published_port: 8888
+        published_port: 8484
         protocol: tcp
         mode: host
     cap_add:
