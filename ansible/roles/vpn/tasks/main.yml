@@ -9,55 +9,22 @@
   with_items:
     - "{{ docker_vpn.config }}"
 
-- name: Create network
-  community.docker.docker_network:
-    name: media-network
-    driver: bridge
-    ipam_config:
-    - subnet: "{{ docker_subnet }}"
-      gateway: "{{ docker_gateway }}"
-
-- name: Create and start container
-  community.docker.docker_container:
+- name: Deploy and start VPN service
+  community.docker.docker_swarm_service:
     name: vpn
     image: "{{ docker_vpn.image }}"
-    pull: true
-    recreate: true
-    image_name_mismatch: "recreate"
-    restart_policy: unless-stopped
-    state: started
-    capabilities:
+    publish:
+      - target_port: 8888
+        published_port: 8888
+        protocol: tcp
+      - target_port: 8388
+        published_port: 8388
+        protocol: tcp
+      - target_port: 8388
+        published_port: 8388
+        protocol: udp
+    cap_add:
       - NET_ADMIN
-    devices:
-      - /dev/net/tun:/dev/net/tun
-    sysctls:
-      net.ipv6.conf.all.disable_ipv6: "1"
-    volumes:
-      - "{{ docker_vpn.config }}:/gluetun"
-      - /etc/localtime:/etc/localtime:ro
-    networks:
-      - name: media-network
-    ports:
-      - "8888:8888/tcp"
-      - "8388:8388/tcp"
-      - "8388:8388/udp"
-      - "{{ docker_port_prowlarr_http }}:9696"
-      - "{{ docker_port_flaresolverr_http }}:8191"
-      - "{{ docker_port_radarr_http }}:7878"
-      - "{{ docker_port_readarr_http }}:8787"
-      - "{{ docker_port_sonarr_http }}:8989"
-      - "{{ docker_port_whisparr_http }}:6969"
-      - "{{ docker_port_sabnzbd_http }}:8089"
-      - "{{ docker_port_bazarr_http }}:6767"
-      - "{{ docker_port_transmission_http }}:9091"
-      - "{{ docker_port_transmission_torrent }}:51413"
-      - "{{ docker_port_transmission_torrent }}:51413/udp"
-
-    labels:
-      homepage.group: Download
-      homepage.name: NordVPN
-      homepage.icon: nordvpn.png
-      homepage.description: Modern web UI for various torrent clients
     env:
       TZ: "{{ system_timezone }}"
       PUID: "{{ ansible_user_pid | int }}"
@@ -78,3 +45,42 @@
       # NETWORK: 192.168.2.0/24
       # CHECK_CONNECTION_INTERVAL: "60"
       # DEBUG: trace
+      net.ipv6.conf.all.disable_ipv6: "1"
+    mounts:
+      - source: /etc/localtime
+        target: /etc/localtime
+        type: bind
+        readonly: true
+      - source: /dev/net/tun
+        target: /dev/net/tun
+        type: bind
+      - source: "{{ docker_vpn.config }}"
+        target: /gluetun
+        type: bind
+    # sysctls:
+    #   net.ipv6.conf.all.disable_ipv6: "1"
+    networks:
+      - homelab-private
+      - homelab-vpn
+    labels:
+      homepage.group: Download
+      homepage.name: NordVPN
+      homepage.icon: nordvpn.png
+      homepage.description: Modern web UI for various torrent clients
+    restart_config:
+      condition: any
+      delay: 5s
+      max_attempts: 3
+      window: 120s
+    update_config:
+      delay: 10s
+      order: start-first
+      parallelism: 1
+    rollback_config:
+      parallelism: 0
+      order: stop-first
+    state: present
+    mode: replicated
+    placement:
+      constraints:
+        - node.role == manager
