@@ -21,3 +21,31 @@
       tags: [home-assistant,ha,homeassistant]
     - role: syncthing
       tags: [syncthing]
+    - role: vpn
+      tags: [vpn]
+    # - role: transmission
+    #   tags: [transmission]
+    # - role: flaresolverr
+    #   tags: [flaresolverr]
+    # - role: radarr
+    #   tags: [radarr]
+    # - role: readarr
+    #   tags: [readarr]
+    # - role: sonarr
+    #   tags: [sonarr]
+    # - role: bazarr
+    #   tags: [bazarr]
+    # - role: prowlarr
+    #   tags: [prowlarr]
+    # - role: jellyfin
+    #   tags: [jellyfin]
+    # - role: scrutiny
+    #   tags: [scrutiny]
+    # - role: uptime-kuma
+    #   tags: [uptime-kuma]
+    # - role: glances
+    #   tags: [glances]
+    # - role: gotify
+    #   tags: [gotify]
+    # - role: paperless
+    #   tags: [paperless]

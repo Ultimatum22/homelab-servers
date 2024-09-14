@@ -30,14 +30,16 @@
       - subnet: "{{ item.subnet }}"
   loop:
     - name: private
-      subnet: 172.16.204.0/24
+      subnet: 172.16.36.0/24
       internal: true
     - name: public
-      subnet: 172.16.200.0/24
+      subnet: 172.16.227.0/24
     - name: monitoring
-      subnet: 172.16.201.0/24
+      subnet: 172.16.158.0/24
     - name: databases
-      subnet: 172.16.202.0/24
+      subnet: 172.16.47.0/24
+    - name: vpn
+      subnet: 172.16.85.0/24
 
 - name: Copy rules
   ansible.builtin.template:
@@ -48,7 +50,6 @@
     mode: "0644"
   with_fileglob:
     - ../templates/rules/*.yml.j2
-
 
 - name: Deploy and start Traefik service
   community.docker.docker_swarm_service:
