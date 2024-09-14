@@ -32,3 +32,7 @@ docker_syncthing:
   config: "{{ docker_config_root }}/syncthing"
   bulk_data: "{{ bulk_data_root }}/syncthing"
   image: syncthing/syncthing:1.27.9
+
+docker_vpn:
+  config: "{{ docker_config_root }}/vpn"
+  image: qmcgaw/gluetun:v3.38
