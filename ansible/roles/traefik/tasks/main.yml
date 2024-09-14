@@ -31,7 +31,6 @@
   loop:
     - name: private
       subnet: 172.16.36.0/24
-      internal: true
     - name: public
       subnet: 172.16.227.0/24
     - name: monitoring
@@ -57,7 +56,6 @@
     image: "{{ docker_traefik.image }}"
     args:
       - --providers.docker
-      - --providers.docker.constraints=Label(`traefik.constraint-label`, `homelab-public`)
       - --providers.docker.exposedbydefault=false
       - --providers.swarm.endpoint=unix:///var/run/docker.sock
       - --providers.file.directory=/rules
