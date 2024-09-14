@@ -36,3 +36,11 @@ docker_syncthing:
 docker_vpn:
   config: "{{ docker_config_root }}/vpn"
   image: qmcgaw/gluetun:v3.38
+
+docker_scrutiny:
+  data: "{{ docker_data_root }}/scrutiny"
+  influxdb: "{{ docker_database_root }}/influxdb-scrutiny"
+  config: "{{ docker_config_root }}/scrutiny"
+  image: ghcr.io/analogj/scrutiny:v0.8.1-web
+  image_collector: ghcr.io/analogj/scrutiny:v0.8.1-collector
+  image_influxdb: arm32v7/influxdb:1.8.10

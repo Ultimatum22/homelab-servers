@@ -21,8 +21,10 @@
       tags: [home-assistant,ha,homeassistant]
     - role: syncthing
       tags: [syncthing]
-    - role: vpn
-      tags: [vpn]
+    # - role: scrutiny
+    #   tags: [scrutiny]
+    # - role: vpn
+    #   tags: [vpn]
     # - role: transmission
     #   tags: [transmission]
     # - role: flaresolverr
@@ -39,8 +41,6 @@
     #   tags: [prowlarr]
     # - role: jellyfin
     #   tags: [jellyfin]
-    # - role: scrutiny
-    #   tags: [scrutiny]
     # - role: uptime-kuma
     #   tags: [uptime-kuma]
     # - role: glances

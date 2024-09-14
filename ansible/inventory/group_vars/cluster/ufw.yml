@@ -10,3 +10,4 @@ ufw_rules:
   - { rule: allow, port: 4789, proto: udp, comment: Docker Swarm overlay network traeffic }
   - { rule: allow, port: 7946, proto: tcp, comment: Docker Swarm overlay network node discovery }
   - { rule: allow, port: 7946, proto: udp, comment: Docker Swarm overlay network node discovery }
+  - { rule: allow, port: 8086, proto: tcp, comment: Database }

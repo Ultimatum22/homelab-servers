@@ -9,43 +9,118 @@
   with_items:
     - "{{ docker_scrutiny.config }}"
     - "{{ docker_scrutiny.data }}"
+    - "{{ docker_scrutiny.influxdb }}"
 
 - name: Get disks
   ansible.builtin.shell: for line in $(lsblk --noheadings --list --scsi --output name); do echo "/dev/${line}:/dev/${line}"; done
   register: lsblk_disks
   changed_when: false
 
-- name: Create network
-  community.general.docker_network:
-    name: "{{ item }}"
-  with_items:
-    - homelab
-
-- name: Create and start container
-  community.general.docker_container:
-    name: scrutiny
-    image: "{{ docker_scrutiny.image }}"
-    pull: true
-    recreate: true
-    volumes:
-      - "{{ docker_scrutiny.config }}:/opt/scrutiny/config"
-      - "{{ docker_scrutiny.data }}/influxdb2:/opt/scrutiny/influxdb"
-      - "/run/udev:/run/udev:ro"
-    devices: "{{ lsblk_disks.stdout_lines }}"
+- name: Deploy InfluxDB for scrutiny service
+  community.docker.docker_swarm_service:
+    name: scrutiny_influxdb
+    image: "{{ docker_scrutiny.image_influxdb }}"
+    publish:
+      - target_port: 8086
+        published_port: 8086
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+    mounts:
+      - source: "{{ docker_scrutiny.influxdb }}"
+        target: /var/lib/influxdb2
+        type: bind
+    restart_config:
+      condition: any
+      delay: 5s
+      max_attempts: 3
+      window: 120s
+    update_config:
+      delay: 10s
+      order: start-first
+      parallelism: 1
+    rollback_config:
+      parallelism: 0
+      order: stop-first
+    state: present
+    mode: replicated
+    placement:
+      constraints:
+        - node.role == manager
     networks:
-      - name: homelab
-        aliases:
-          - scrutiny
-    ports:
-      - "{{ docker_port_scrutiny_http }}:8080"
-    restart_policy: unless-stopped
-    state: started
-    capabilities:
+      - homelab-databases
+
+- name: Deploy scrutiny Web service
+  community.docker.docker_swarm_service:
+    name: scrutiny_web
+    image: "{{ docker_scrutiny.image }}"
+    publish:
+      - target_port: 8081
+        published_port: 8080
+    env:
+      SCRUTINY_WEB_INFLUXDB_HOST: http://scrutiny_influxdb
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+      start_period: 10s
+    mounts:
+      - source: "{{ docker_scrutiny.config }}"
+        target: /opt/scrutiny/config
+        type: bind
+    restart_config:
+      condition: any
+      delay: 5s
+      max_attempts: 3
+      window: 120s
+    update_config:
+      delay: 10s
+      order: start-first
+      parallelism: 1
+    rollback_config:
+      parallelism: 0
+      order: stop-first
+    state: present
+    mode: replicated
+    placement:
+      constraints:
+        - node.role == manager
+    networks:
+      - homelab-databases
+      - homelab-private
+
+- name: Deploy Collector service
+  community.docker.docker_swarm_service:
+    name: scrutiny_collector
+    image: "{{ docker_scrutiny.image_collector }}"
+    cap_add:
       - SYS_RAWIO
-      - SYS_ADMIN
-    labels:
-      homepage.group: Monitoring
-      homepage.name: Scrutiny
-      homepage.icon: scrutiny.svg
-      homepage.href: http://{{ url_scrutiny }}
-      homepage.description: Hard Drive S.M.A.R.T Monitoring
+    mounts:
+      - source: /run/udev
+        target: /run/udev:ro
+        readonly: true
+    env:
+      COLLECTOR_API_ENDPOINT: http://scrutiny_web:8081
+      # COLLECTOR_HOST_ID: scrutiny_collector-hostname
+    # devices:
+    #   - "/dev/sda"
+    #   - "/dev/sdb"
+    restart_config:
+      condition: any
+      delay: 5s
+      max_attempts: 3
+      window: 120s
+    update_config:
+      delay: 10s
+      order: start-first
+      parallelism: 1
+    rollback_config:
+      parallelism: 0
+      order: stop-first
+    state: present
+    mode: global
+    networks:
+      - homelab-private

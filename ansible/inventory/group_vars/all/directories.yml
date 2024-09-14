@@ -4,6 +4,7 @@ nas_storage: /mnt/storage
 docker_root: "{{ nas_storage }}/docker"
 docker_data_root: "{{ docker_root }}/data"
 docker_config_root: "{{ docker_root }}/config"
+docker_database_root:  "{{ docker_root }}/databases"
 
 bulk_data_root: "{{ nas_storage }}/bulk_data"
 

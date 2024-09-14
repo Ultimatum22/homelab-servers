@@ -61,11 +61,6 @@ docker_jellyfin_beta:
 docker_jellyseerr:
   config: "{{ docker_config_root }}/jellyseerr"
 
-docker_scrutiny:
-  data: "{{ docker_data_root }}/scrutiny"
-  config: "{{ docker_config_root }}/scrutiny"
-  image: ghcr.io/analogj/scrutiny:v0.8.1-omnibus
-
 docker_qbittorrent:
   config: "{{ docker_config_root }}/qbittorrent"
 
