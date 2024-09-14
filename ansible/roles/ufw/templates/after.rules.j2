@@ -1,14 +1,21 @@
-# Refer https://github.com/moby/moby/issues/4737#issuecomment-419705925
-
-# Put Docker behind UFW
+# BEGIN UFW AND DOCKER
+# https://github.com/chaifeng/ufw-docker/tree/master
 *filter
+:ufw-user-forward - [0:0]
 :DOCKER-USER - [0:0]
-:ufw-user-input - [0:0]
+-A DOCKER-USER -j RETURN -s 10.0.0.0/8
+-A DOCKER-USER -j RETURN -s 172.16.0.0/12
+-A DOCKER-USER -j RETURN -s 192.168.0.0/16
 
--A DOCKER-USER -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
--A DOCKER-USER -m conntrack --ctstate INVALID -j DROP
-{% for iface in external_iface_list %}
--A DOCKER-USER -i {{ iface }} -j ufw-user-input
--A DOCKER-USER -i {{ iface }} -j DROP
-{% endfor %}
+-A DOCKER-USER -j ufw-user-forward
+
+-A DOCKER-USER -j DROP -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -d 192.168.0.0/16
+-A DOCKER-USER -j DROP -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -d 10.0.0.0/8
+-A DOCKER-USER -j DROP -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -d 172.16.0.0/12
+-A DOCKER-USER -j DROP -p udp -m udp --dport 0:32767 -d 192.168.0.0/16
+-A DOCKER-USER -j DROP -p udp -m udp --dport 0:32767 -d 10.0.0.0/8
+-A DOCKER-USER -j DROP -p udp -m udp --dport 0:32767 -d 172.16.0.0/12
+
+-A DOCKER-USER -j RETURN
 COMMIT
+# END UFW AND DOCKER
