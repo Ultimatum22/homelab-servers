@@ -10,41 +10,65 @@
     - "{{ docker_jellyfin.config }}"
     - "{{ docker_jellyfin.config }}/plugins"
     - "{{ docker_jellyfin.data }}"
-    - "{{ docker_media_movies }}"
-    - "{{ docker_media_tvshows }}"
+    - "{{ media_movies }}"
+    - "{{ media_tvshows }}"
 
-- name: Create network
-  community.general.docker_network:
-    name: "{{ item }}"
-  with_items:
-    - homelab
 
-- name: Create and start container
-  community.docker.docker_container:
+- name: Deploy and start Jellyfin service
+  community.docker.docker_swarm_service:
     name: jellyfin
     image: "{{ docker_jellyfin.image }}"
-    pull: true
-    recreate: true
-    image_name_mismatch: "recreate"
-    volumes:
-      - "{{ docker_jellyfin.config }}:/config"
-      - "{{ docker_media_tvshows }}:/data/tvshows"
-      - "{{ docker_media_movies }}:/data/movies"
-    networks:
-      - name: homelab
-        aliases:
-          - jellyfin
-    ports:
-      - "{{ docker_port_jellyfin_http }}:{{ docker_port_jellyfin_http | int }}"
-    restart_policy: unless-stopped
-    state: started
-    labels:
-      homepage.group: Media
-      homepage.name: Jellyfin
-      homepage.icon: jellyfin.png
-      homepage.href: http://{{ url_jellyfin }}
-      homepage.description: Stream to any device from your own server
     env:
       TZ: "{{ system_timezone }}"
       PUID: "{{ ansible_user_pid | int }}"
       PGID: "{{ ansible_user_gid | int }}"
+    mounts:
+      - source: "{{ docker_jellyfin.config }}"
+        target: /config
+        type: bind
+      - source: "{{ media_tvshows }}"
+        target: /data/tvshows
+        type: bind
+      - source: "{{ media_movies }}"
+        target: /data/movies
+        type: bind
+    networks:
+      - homelab-private
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: homelab-private
+
+      # Traefik routing for PiHole
+      traefik.http.routers.jellyfin.rule: "Host(`{{ url_jellyfin }}`)"
+      traefik.http.routers.jellyfin.entrypoints: https
+      traefik.http.routers.jellyfin.tls: "true"
+      traefik.http.routers.jellyfin.tls.certresolver: letsencrypt
+
+      # Authelia Authentication Middleware
+      traefik.http.routers.jellyfin.middlewares: chain-no-auth@file
+
+      traefik.http.services.jellyfin.loadbalancer.server.port: "8096"
+
+      homepage.group: Media
+      homepage.name: Jellyfin
+      homepage.icon: jellyfin.png
+      homepage.href: https://{{ url_jellyfin }}
+      homepage.description: Stream to any device from your own server
+    restart_config:
+      condition: any
+      delay: 5s
+      max_attempts: 3
+      window: 120s
+    update_config:
+      delay: 10s
+      order: start-first
+      parallelism: 1
+    rollback_config:
+      parallelism: 0
+      order: stop-first
+    state: present
+    mode: replicated
+    placement:
+      constraints:
+        - node.role == manager
+

@@ -39,8 +39,8 @@
     #   tags: [bazarr]
     # - role: prowlarr
     #   tags: [prowlarr]
-    # - role: jellyfin
-    #   tags: [jellyfin]
+    - role: jellyfin
+      tags: [jellyfin]
     # - role: uptime-kuma
     #   tags: [uptime-kuma]
     # - role: glances

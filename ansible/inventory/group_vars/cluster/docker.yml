@@ -44,3 +44,8 @@ docker_scrutiny:
   image: ghcr.io/analogj/scrutiny:v0.8.1-web
   image_collector: ghcr.io/analogj/scrutiny:v0.8.1-collector
   image_influxdb: arm32v7/influxdb:1.8.10
+
+docker_jellyfin:
+  data: "{{ docker_data_root }}/jellyfin"
+  config: "{{ docker_config_root }}/jellyfin"
+  image: jellyfin/jellyfin:2024090905
