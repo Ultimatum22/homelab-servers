@@ -36,7 +36,6 @@
       - homelab-private
     labels:
       traefik.enable: "true"
-      traefik.docker.network: homelab-private
 
       # Traefik routing for PiHole
       traefik.http.routers.jellyfin.rule: "Host(`{{ url_jellyfin }}`)"
