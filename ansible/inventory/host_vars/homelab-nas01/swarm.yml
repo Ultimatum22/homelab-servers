@@ -1,0 +1,3 @@
+---
+swarm_labels:
+  - "task=heavy"

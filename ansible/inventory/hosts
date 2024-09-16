@@ -28,13 +28,15 @@ homelab-swarm03
 homelab-swarm01
 homelab-swarm02
 homelab-swarm03
+homelab-nas01
 
 [cluster_manager]
 homelab-swarm01
-homelab-swarm02
-homelab-swarm03
 
 [cluster_worker]
+homelab-swarm02
+homelab-swarm03
+homelab-nas01
 
 [consul_cluster]
 homelab-swarm01 consul_node_role=both
