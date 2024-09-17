@@ -6,7 +6,7 @@
     - role: traefik
       tags: [traefik]
     - role: pihole
-    #   tags: [pihole]
+      tags: [pihole]
     - role: swarmpit
       tags: [swarmpit]
     # - role: resilio
