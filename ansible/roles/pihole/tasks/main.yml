@@ -18,9 +18,11 @@
       - target_port: 53
         published_port: 53
         protocol: tcp
+        mode: host
       - target_port: 53
         published_port: 53
         protocol: udp
+        mode: host
       - target_port: 80
         published_port: 8484
         protocol: tcp
@@ -43,7 +45,6 @@
       - homelab-public
     labels:
       traefik.enable: "true"
-      traefik.docker.network: homelab-public
 
       # Traefik routing for PiHole
       traefik.http.routers.pihole.rule: "Host(`{{ url_pihole }}`)"
@@ -74,7 +75,7 @@
       parallelism: 0
       order: stop-first
     state: present
-    mode: replicated
-    placement:
-      constraints:
-        - node.role == worker
+    mode: global
+    # placement:
+    #   constraints:
+    #     - node.labels.task == light
