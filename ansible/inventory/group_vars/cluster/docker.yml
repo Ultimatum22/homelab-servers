@@ -49,3 +49,13 @@ docker_jellyfin:
   data: "{{ docker_data_root }}/jellyfin"
   config: "{{ docker_config_root }}/jellyfin"
   image: jellyfin/jellyfin:2024090905
+
+docker_swarmpit:
+  data: "{{ docker_data_root }}/swarmpit"
+  config: "{{ docker_config_root }}/swarmpit"
+  database_influxdb: "{{ docker_database_root }}/swarmpit-influxdb"
+  database_couchdb: "{{ docker_database_root }}/swarmpit-couchdb"
+  image: swarmpit/swarmpit:1.9
+  image_collector: ghcr.io/analogj/scrutiny:v0.8.1-collector
+  image_influxdb: arm32v7/influxdb:1.8.10
+  image_database: treehouses/couchdb:2.3.1
