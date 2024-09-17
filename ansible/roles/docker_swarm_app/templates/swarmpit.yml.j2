@@ -23,7 +23,7 @@ services:
           memory: 512M
       placement:
         constraints:
-          - node.role == manager
+          - node.role == worker
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=traefik"  

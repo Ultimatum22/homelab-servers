@@ -82,7 +82,7 @@
     mode: replicated
     placement:
       constraints:
-        - node.role == manager
+        - node.role == worker
 
 - name: Homepage Settings Tasks
   ansible.builtin.include_tasks: "settings.yml"

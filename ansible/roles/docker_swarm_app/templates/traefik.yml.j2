@@ -49,7 +49,7 @@ services:
         order: stop-first
       placement:
         constraints:
-          - node.role == manager
+          - node.role == worker
       labels:
         - traefik.enable=true
 
@@ -106,7 +106,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == manager
+          - node.role == worker
     environment:
       - TIMEZONE={{ system_timezone }}
 

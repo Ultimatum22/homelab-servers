@@ -50,5 +50,5 @@
     mode: global
     placement:
       constraints:
-        - node.role == manager
+        - node.role == worker
   when: inventory_hostname == groups['cluster'][0]

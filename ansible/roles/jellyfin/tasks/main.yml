@@ -69,5 +69,5 @@
     mode: replicated
     placement:
       constraints:
-        - node.role == manager
+        - node.role == worker
 
